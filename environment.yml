@@ -1,12 +1,8 @@
-name: hand-gesture
-
+name: ktai-hand-gesture
 channels:
   - conda-forge
-  - nodefaults
-
 dependencies:
   - python=3.12
   - pip
   - pip:
-      # Keep package versions in one place, including the legacy Hands API pin.
       - -r requirements.txt
