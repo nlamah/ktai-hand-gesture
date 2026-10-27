@@ -4,9 +4,12 @@ from pathlib import Path
 from gesturelab.datasets.data import analyze_project, read_manifest
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--project',default='data/ngt')
+p.add_argument('--checkpoint-every', type=int, default=1, help='Save analysis after this many images.')
+p.add_argument('--no-cache-features', action='store_true', help='Store landmarks; recompute features during training.')
 if __name__=='__main__':
-    project=Path(p.parse_args().project).expanduser().resolve()
-    count=analyze_project(project)
+    args=p.parse_args()
+    project=Path(args.project).expanduser().resolve()
+    count=analyze_project(project, checkpoint_every=args.checkpoint_every, cache_features=not args.no_cache_features)
     samples=read_manifest(project)['samples']
     successful=sum(sample['status']=='ok' for sample in samples)
     pending=sum(sample['status']=='pending' for sample in samples)

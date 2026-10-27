@@ -1,5 +1,6 @@
 """Public training contracts: held-out isolation and safe result persistence."""
 from io import BytesIO
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -15,7 +16,7 @@ from scripts.demo import skeleton
 from gesturelab.training import fitting as training_workflow
 from gesturelab.training.comparison import compare_variants
 from gesturelab.training.experiment_plan import prepare_experiment, load_experiment
-from gesturelab.datasets.data import add_image
+from gesturelab.datasets.data import add_image, read_manifest, atomic_json
 from gesturelab.features.inspection import extract_features, FEATURE_VERSION
 
 
@@ -75,12 +76,42 @@ class TrainingTests(unittest.TestCase):
         with patch('gesturelab.training.comparison._final_test_predictions', side_effect=AssertionError('test repeated')):
             self.assertEqual(compare_variants(self.experiment, final_test=True, variants=variants), final)
 
+    def test_incomplete_test_coverage_requires_explicit_opt_in(self):
+        manifest = read_manifest(self.project)
+        for sample in manifest['samples']:
+            if sample['role'] == 'test' and sample['label'] == 'open_hand':
+                sample['included'] = False
+        atomic_json(self.project / 'manifest.json', manifest)
+        output = self.root / 'incomplete_experiment'
+        with self.assertRaisesRegex(ValueError, 'allow-incomplete-test'):
+            prepare_experiment(self.project, output, folds=3)
+        self.assertFalse(output.exists())
+        prepare_experiment(self.project, output, folds=3, allow_incomplete_test=True)
+        _, _, plan, _ = load_experiment(output)
+        self.assertEqual(plan['missing_test_labels'], ['open_hand'])
+        self.assertEqual(set(plan['labels']), {'fist', 'open_hand'})
+
     def test_dataset_change_during_training_prevents_saving_results(self):
         # Loading checks the real dataset; the training module detects a later change.
         with patch.object(training_workflow, 'fingerprint', return_value='changed'):
             with self.assertRaisesRegex(ValueError, 'changed during training'):
                 training_workflow.train_variant(self.experiment, 'without_features')
         self.assertFalse((self.experiment / 'without_features').exists())
+
+    def test_import_evaluation_limits_are_frozen_and_visible_in_results(self):
+        note = 'Filename blocks are not verified participants or recording sessions.'
+        manifest = read_manifest(self.project)
+        manifest['import'] = {'grouping_note': note, 'complete': True}
+        atomic_json(self.project / 'manifest.json', manifest)
+        output = prepare_experiment(self.project, self.root / 'noted_experiment', folds=3,
+                                    model='random_forest')
+        _, _, plan, _ = load_experiment(output)
+        self.assertEqual(plan['evaluation_note'], note)
+        for variant in ('without_features', 'with_features'):
+            training_workflow.train_variant(output, variant)
+        report = compare_variants(output)
+        self.assertEqual(json.loads((report / 'result.json').read_text())['evaluation_note'], note)
+        self.assertIn(note, (report / 'report.html').read_text())
 
 
 if __name__ == '__main__':

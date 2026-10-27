@@ -15,42 +15,17 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.base import clone
-from sklearn.dummy import DummyClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, recall_score, confusion_matrix
 from sklearn.model_selection import StratifiedGroupKFold
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
 import sklearn
 
 from gesturelab.datasets.data import analysis_table, read_manifest, fingerprint, atomic_json
 from gesturelab.features.inspection import FEATURE_VERSION, feature_columns
 from gesturelab.training.rules import UNKNOWN, predict_rule, validate_rules
+from gesturelab.training.classifiers import MODEL_NAMES, estimator
 
-MODEL_NAMES = {"knn":"k-NN", "svm":"SVM (RBF)", "logistic":"Logistic regression",
-               "random_forest":"Random forest", "decision_tree":"Decision tree"}
 SET_NAMES = {"raw":"Raw image landmarks", "normalized":"Normalized image landmarks",
              "geometry":"Finger features", "combined":"Image landmarks + finger features", "none":"No features"}
-
-
-def estimator(name, n_train=100, seed=42):
-    if name=="knn":
-        return make_pipeline(StandardScaler(),KNeighborsClassifier(n_neighbors=min(5,n_train),weights="distance"))
-    if name=="svm":
-        return make_pipeline(StandardScaler(),SVC(C=10,gamma="scale",kernel="rbf",class_weight="balanced"))
-    if name=="logistic":
-        return make_pipeline(StandardScaler(),LogisticRegression(C=1,max_iter=2000,class_weight="balanced",random_state=seed))
-    if name=="random_forest":
-        return RandomForestClassifier(n_estimators=150,min_samples_leaf=2,class_weight="balanced",random_state=seed,n_jobs=-1)
-    if name=="decision_tree":
-        return DecisionTreeClassifier(max_depth=6,min_samples_leaf=2,class_weight="balanced",random_state=seed)
-    if name=="dummy":
-        return DummyClassifier(strategy="most_frequent")
-    raise ValueError(f"Unknown model: {name}")
 
 
 def groups_for(df, grouping):
@@ -58,7 +33,24 @@ def groups_for(df, grouping):
         return df["participant"].astype(str).to_numpy()
     if grouping=="session":
         return np.array([json.dumps([str(a),str(b)]) for a,b in zip(df.participant,df.session)])
-    raise ValueError("Group by session or participant.")
+    if grouping == 'source':
+        if 'provenance' not in df:
+            raise ValueError('Source grouping requires source_group provenance for every image.')
+        groups = [value.get('source_group') for value in df.provenance]
+        if any(not isinstance(group, str) or not group for group in groups):
+            raise ValueError('Source grouping requires source_group provenance for every image.')
+        return np.asarray(groups)
+    raise ValueError("Group by session, participant or source.")
+
+
+def _insufficient_groups_message(df, counts, n_splits, grouping):
+    unit = {'session': 'sessions', 'participant': 'participants', 'source': 'source images'}[grouping]
+    photos = df.groupby('label').size()
+    details = '; '.join(f'{label}: {photos[label]} photos, {count} {unit}' for label, count in counts.items())
+    message = f'For {n_splits} folds each label must occur in at least {n_splits} different groups ({unit}). {details}.'
+    if grouping == 'source':
+        return message + ' Keep augmented versions of the same original image together; use fewer folds if needed.'
+    return message + ' Multiple photos with the same session name count as one session. Correct session names, record a new round, or choose fewer folds.'
 
 
 def grouped_folds(df, n_splits=3, grouping="session", seed=42):
@@ -70,10 +62,7 @@ def grouped_folds(df, n_splits=3, grouping="session", seed=42):
     if not isinstance(n_splits,int) or n_splits<2:
         raise ValueError("Choose at least two folds.")
     if int(counts.min())<n_splits:
-        unit="sessions" if grouping=="session" else "participants"
-        photos=df.groupby("label").size()
-        details="; ".join(f"{label}: {photos[label]} photos, {count} {unit}" for label,count in counts.items())
-        raise ValueError(f"For {n_splits} folds each label must occur in at least {n_splits} different groups ({unit}). {details}. Multiple photos with the same session name count as one session. Correct session names in View dataset, record a new round, or choose fewer folds. Two sessions require two folds.")
+        raise ValueError(_insufficient_groups_message(df, counts, n_splits, grouping))
 
     classes=set(y)
     for attempt in range(20):

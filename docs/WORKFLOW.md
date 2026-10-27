@@ -13,6 +13,9 @@ A possible research question:
 Start with eight letters to learn the workflow, then expand to 26.
 Photographs measure hand poses, not the complete execution of moving letters.
 
+For downloaded ASL photos, use [the external-data route below](#alternative-train-locally-with-external-asl-data)
+after installation. It replaces the NGT initialization and recording steps.
+
 ## 0. Extract and install
 
 Extract `ktai-hand-gesture.zip`. Open Terminal in **ktai-hand-gesture**, the
@@ -32,6 +35,147 @@ If the environment already exists:
 conda activate ktai-hand-gesture
 python -m pip install -r requirements.txt
 ```
+
+## Alternative: train locally with external ASL data
+
+Use this route when the photos are already downloaded onto your computer. A ZIP
+must be extracted first. Run the commands from the project root with
+`ktai-hand-gesture` active. Import, landmark analysis, classifier fitting and
+report generation run locally; a Roboflow API key is only needed for the optional
+[Roboflow download](ASL_DOWNLOAD.md). The first landmark analysis downloads
+`models/hand_landmarker.task` if it is missing. Once the raw photos, environment
+and MediaPipe model are present, you can train without downloading the dataset
+again. A webcam is only needed when trying the finished model live.
+
+### Understand the three directories
+
+| Argument | Purpose | Example |
+|---|---|---|
+| `--source` on an import command | Extracted original photos and labels | `data/external/archive-kaggle` |
+| `--project` on dataset commands | Imported dataset with `manifest.json`, images and landmarks | `data/asl_kaggle` |
+| `--out` on `prepare_split`, then `--experiment` on training/comparison commands | Frozen split, trained models and reports | `experiments/asl_kaggle_rf_01` |
+
+The raw folder is not itself a Gesture Lab dataset. Import converts its labels
+and file layout, analysis calculates MediaPipe landmarks, and training uses
+features calculated from those landmarks. COCO bounding boxes do not replace
+landmarks. Both model variants use the same successful development detections:
+126 normalized image/world coordinates, with 81 additional finger features in
+the second variant. Photos without a usable single-hand detection remain in the
+dataset but do not enter development training.
+
+Keep the external ASL datasets separate from `data/ngt`. The importers create
+their own dataset directories; skip `scripts.init_dataset` and the NGT recording
+steps for this route. Different external layouts need a matching importer;
+copying arbitrary image folders into `data/` does not register their labels.
+
+### Kaggle: full run with one command
+
+With the extracted download in `data/external/archive-kaggle`:
+
+```bash
+python -u -m scripts.train_kaggle_dataset --source data/external/archive-kaggle --project data/asl_kaggle --out experiments/asl_kaggle_rf_01
+```
+
+This processes all 78,000 A–Z training photos, analyzes pending images, freezes
+three folds, trains both Random Forest variants and writes the comparison.
+It excludes `del`, `space` and `nothing` from this letter experiment.
+
+Progress appears in the terminal and `data/asl_kaggle_run.json`. Repeat the same
+command to resume an interrupted run; leave the source files and options
+unchanged. Completed model variants are reused. An unfinished model fit starts
+again, while imported images and completed analysis batches are retained.
+
+All 26 supplied test photos duplicate training photos. The command keeps the
+training photos and excludes the test copies; this experiment has no independent
+final test. Cross-validation keeps consecutive filename-number blocks together,
+but those blocks are not verified people or recording sessions. See
+[KAGGLE_TRAINING.md](KAGGLE_TRAINING.md) for the expected folder layout, individual
+stage commands and evaluation limits.
+
+### COCO: import and train step by step
+
+For the supplied Roboflow export in `data/external/asl_letters_v1`, use:
+
+```bash
+python -m scripts.import_coco_dataset --source data/external/asl_letters_v1 --project data/asl
+python -m scripts.analyze_dataset --project data/asl --checkpoint-every 1000 --no-cache-features
+python -m scripts.prepare_split --project data/asl --out experiments/asl_rf_01 --folds 3 --grouping source --model random_forest --allow-incomplete-test
+python -m scripts.train_without_features --experiment experiments/asl_rf_01
+python -m scripts.train_with_features --experiment experiments/asl_rf_01
+python -m scripts.compare_results --experiment experiments/asl_rf_01
+```
+
+The importer expects `train/`, `valid/` and `test/`, each with
+`_annotations.coco.json` and the referenced photos. It requires exactly one A–Z
+annotation per image. Train and valid become development data; test stays
+reserved. Source grouping keeps augmented copies of the same original together.
+The supplied export has no test photos for E and L, which is why this command
+explicitly includes `--allow-incomplete-test`. See
+[ASL_TRAINING.md](ASL_TRAINING.md) for the split details and final-test procedure.
+
+### Reuse data, find results and train again
+
+If `data/asl/manifest.json` already exists, skip the COCO import. Repeating
+analysis only processes pending photos; `0 new images analyzed` means no images
+are waiting. Choose a fresh experiment name such as `experiments/asl_rf_02` to
+retrain on the same analyzed dataset, and use that name in all subsequent
+training and comparison commands. You do not need to download or analyze the
+same photos again just to fit another classifier.
+
+For Kaggle, change only the output experiment name for another run:
+
+```bash
+python -u -m scripts.train_kaggle_dataset --project data/asl_kaggle --out experiments/asl_kaggle_rf_02
+```
+
+The Kaggle convenience command always trains Random Forest. To choose another
+classifier, use the individual commands in [KAGGLE_TRAINING.md](KAGGLE_TRAINING.md)
+and change `--model` when preparing the new split. Changing data, feature code or
+model settings requires a new experiment; existing frozen runs are preserved.
+
+| Output inside the experiment directory | Purpose |
+|---|---|
+| `split.json` | Frozen labels, development/test assignments, folds and settings |
+| `without_features/model.joblib` | Classifier using normalized landmarks |
+| `with_features/model.joblib` | Classifier also using finger features |
+| `without_features/training.json`, `with_features/training.json` | Training counts and CV summaries |
+| `comparison_cv/report.html` | Readable development comparison |
+| `comparison_cv/metrics.csv` | Comparison scores for further analysis |
+
+Open the HTML report locally. To try the Kaggle model on your webcam:
+
+```bash
+python -m apps.webcam predict --project data/asl_kaggle --model experiments/asl_kaggle_rf_01/with_features/model.joblib
+```
+
+For the COCO model, use `--project data/asl` and
+`--model experiments/asl_rf_01/with_features/model.joblib`. Replace `with_features`
+with `without_features` for the baseline. Webcam viewing does not record new
+training photos or measure test accuracy. The supplied capture references are
+NGT; use the [ASL chart](../assets/asl_alphabet.jpg) for ASL pose guidance.
+
+### Compare the Shin 2021 method on the same external photos
+
+After import and analysis, compare both existing inputs with the three paper
+inputs (190 distances, 630 axis cosines, 820 combined) using SVM and LightGBM:
+
+```bash
+python -m scripts.run_shin2021 --project data/asl_kaggle --out experiments/shin2021_kaggle_01 --grouping source --folds 3 --allow-no-test
+```
+
+This creates fresh classifier experiments under the study directory, checks
+identical photo IDs/labels/folds, and writes a combined `report.html`. All letters
+remain available, including J and Z. For your own recordings use the corresponding
+dataset with `--grouping session` or `--grouping participant`; omit `--allow-no-test`
+when an independent test set is reserved. For the COCO export, use `data/asl` and
+`--allow-incomplete-test` instead of `--allow-no-test`.
+
+See [PAPER_SHIN2021.md](PAPER_SHIN2021.md) for the method, assumptions, OpenMP setup
+on macOS, classifier profiles and `--split-from` to copy the exact assignments
+from an existing experiment into a new one. Existing code-hash checks remain in
+force; old datasets/models/results are not overwritten. The command evaluates
+development CV only. Scores from filename groups or synthetic tests must not be
+reported as independent person-level ASL recognition results.
 
 ## 1. Initialize a dataset with alphabet references
 
@@ -342,6 +486,12 @@ Replace `with_features` with `without_features` to try the other model. Use
 not save training photos or provide reliable accuracy without independent
 correct labels. The classifier normally chooses among known letters, so an
 unfamiliar gesture may receive an incorrect known label.
+
+In the live window, **Raw prediction** is the model's output for the latest
+analyzed image. **Prediction** is the majority label among the last five model
+outputs, which reduces flickering. It shows `changing` when there is no majority.
+Add `--smoothing 1` to display the latest prediction without this stabilization;
+this changes the display behavior, not the trained model.
 
 Export the complete dataset:
 

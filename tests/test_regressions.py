@@ -35,6 +35,43 @@ class TemporaryDatasetTests(unittest.TestCase):
 
 
 class AnalysisRegressionTests(TemporaryDatasetTests):
+    def test_batch_interruption_preserves_completed_work_and_resumes_pending_only(self):
+        for value in (40, 80, 120):
+            self.add_photo(value)
+        with patch('gesturelab.datasets.data.Detector') as detector:
+            detector.return_value.analyze.side_effect = [{'status': 'no_hand'}, RuntimeError('interrupted')]
+            with self.assertRaisesRegex(RuntimeError, 'interrupted'):
+                analyze_project(self.project, checkpoint_every=1000)
+            detector.return_value.close.assert_called_once()
+        self.assertEqual([s['status'] for s in read_manifest(self.project)['samples']],
+                         ['no_hand', 'pending', 'pending'])
+        with patch('gesturelab.datasets.data.Detector') as detector:
+            detector.return_value.analyze.return_value = {'status': 'no_hand'}
+            self.assertEqual(analyze_project(self.project, checkpoint_every=1000), 2)
+            self.assertEqual(detector.return_value.analyze.call_count, 2)
+
+    def test_batch_saves_once_and_optional_feature_cache_is_recomputed(self):
+        from gesturelab.datasets.data import analysis_table
+        world = skeleton('open_hand') * .06
+        image = skeleton('open_hand') * .2 + .5
+        analysis = {'status': 'ok', 'image_landmarks': image.tolist(), 'world_landmarks': world.tolist(),
+                    'feature_version': 'geometry-v2.0', 'features': {'stale_cache': 1}}
+        for value in (40, 80, 120):
+            self.add_photo(value)
+        with patch('gesturelab.datasets.data.Detector') as detector, \
+             patch('gesturelab.datasets.data.atomic_json', wraps=atomic_json) as write:
+            detector.return_value.analyze.side_effect = lambda image: dict(analysis)
+            analyze_project(self.project, checkpoint_every=1000, cache_features=False)
+            self.assertEqual(write.call_count, 1)
+        self.assertTrue(all('features' not in sample for sample in read_manifest(self.project)['samples']))
+        table = analysis_table(self.project)
+        self.assertEqual(len(table), 3)
+        self.assertIn('geom_index_joint1_deg', table.columns)
+        self.assertNotIn('stale_cache', table.columns)
+        from gesturelab.features.training_inputs import input_table
+        training = input_table(read_manifest(self.project)['samples'], None, 'with_features')
+        self.assertEqual(len(training.filter(regex='^(norm_|world_|geom_)').columns), 207)
+
     def test_already_analyzed_photos_do_not_initialize_detector(self):
         self.add_photo()
         manifest = read_manifest(self.project)

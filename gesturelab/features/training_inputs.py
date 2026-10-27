@@ -14,6 +14,7 @@ import pandas as pd
 from gesturelab.features.inspection import FEATURE_VERSION
 from gesturelab.features.landmark_features import landmarks_for_sample
 from gesturelab.features.finger_features import finger_features_for_sample
+from gesturelab.features.paper_shin2021 import distance_for_sample, angle_for_sample, combined_for_sample, VERSION
 
 
 @dataclass(frozen=True)
@@ -23,6 +24,8 @@ class TrainingInput:
     prefixes: tuple[str, ...]
     expected_features: int
     dependencies: tuple[str, ...] = ()
+    standardize: bool = True
+    definition: str = 'project'
 
     def columns(self, available):
         # Prefix order explicitly defines the model's column order.
@@ -54,6 +57,8 @@ class TrainingInput:
 
 
 DEFAULT_VARIANTS = ('without_features', 'with_features')
+PAPER_VARIANTS = ('shin2021_distance', 'shin2021_angle', 'shin2021_combined')
+PAPER_COMPARISON = DEFAULT_VARIANTS + PAPER_VARIANTS
 TRAINING_INPUTS = {
     'finger_features_only': TrainingInput(
         title='Finger features only', extractors=(finger_features_for_sample,),
@@ -67,6 +72,18 @@ TRAINING_INPUTS = {
         title='With finger features',
         extractors=(landmarks_for_sample, finger_features_for_sample),
         prefixes=('norm_', 'geom_', 'world_'), expected_features=207,
+    ),
+    'shin2021_distance': TrainingInput(
+        'Shin 2021: distances', (distance_for_sample,), ('shin_dist_',), 190,
+        standardize=False, definition=VERSION,
+    ),
+    'shin2021_angle': TrainingInput(
+        'Shin 2021: axis cosines', (angle_for_sample,), ('shin_angle_',), 630,
+        standardize=False, definition=VERSION,
+    ),
+    'shin2021_combined': TrainingInput(
+        'Shin 2021: distances + axis cosines', (combined_for_sample,), ('shin_dist_', 'shin_angle_'), 820,
+        standardize=False, definition=VERSION,
     ),
 }
 
@@ -91,7 +108,11 @@ def input_table(samples, thresholds, variant):
     for sample in samples:
         if sample['status'] == 'ok':
             metadata = {key: sample[key] for key in metadata_keys}
-            rows.append({**metadata, **spec.features(sample, thresholds)})
+            try:
+                features = spec.features(sample, thresholds)
+            except ValueError as error:
+                raise ValueError(f'Cannot build {variant} for photo {sample["id"]}: {error}') from error
+            rows.append({**metadata, **features})
     return pd.DataFrame(rows)
 
 
@@ -102,6 +123,7 @@ def model_input_metadata(variant, thresholds, code_hashes):
         'training_input': variant,
         'feature_config': thresholds,
         'feature_version': FEATURE_VERSION,
+        'input_definition': training_input(variant).definition,
         'feature_code_hashes': {name: code_hashes[name] for name in sorted(sources)},
     }
 

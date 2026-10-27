@@ -10,11 +10,13 @@ inputs. Changing input variants does not create new photos or a different split.
 |---|---|
 | `gesturelab/features/finger_features.py` | `compute_finger_features()` calculates the 81 derived geometric measurements. It does not train a classifier or read letter labels. |
 | `gesturelab/features/landmark_features.py` | Normalizes image/world coordinates without calculating finger measurements. |
+| `gesturelab/features/paper_shin2021.py` | Computes the separate paper distances, axis cosines and their combination from stored image landmarks. |
 | `gesturelab/features/inspection.py` | Provides the complete feature view used for recording and inspection. This does not decide which input a model receives. |
 | `gesturelab/features/training_inputs.py` | Owns extractor composition, column selection, source dependencies and model-input reconstruction. |
 | `gesturelab/training/experiment_plan.py` | Freezes sample IDs, groups, folds, thresholds and source hashes. Splitting uses metadata, not derived features. |
 | `gesturelab/training/fitting.py` | Builds the chosen input matrix, fits fresh classifiers per CV fold, fits the final model and saves artifacts. It contains no finger formulas. |
-| `gesturelab/training/comparison.py` | Evaluates a selected pair on the same photo IDs and writes reports. |
+| `gesturelab/training/classifiers.py` | Constructs the classifier and its training-only preprocessing from the frozen profile. |
+| `gesturelab/training/comparison.py` | Evaluates two or more inputs on the same photo IDs and writes reports. |
 | `gesturelab/camera/runtime.py` | Asks `model_features()` for inputs; it has no feature-variant branches. |
 
 The feature inspection app also calls the finger calculations to compare them
@@ -29,6 +31,13 @@ rather than trusting previously cached feature values.
 | `without_features` | Normalized image and world landmarks | 126 |
 | `with_features` | Same landmarks plus geometric finger features | 207 |
 | `finger_features_only` | Geometric finger features, without landmark coordinates | 81 |
+| `shin2021_distance` | Table 2 distances with per-photo z-score | 190 |
+| `shin2021_angle` | Directed-pair x/y/z axis cosines | 630 |
+| `shin2021_combined` | Paper distances followed by axis cosines | 820 |
+
+See [PAPER_SHIN2021.md](PAPER_SHIN2021.md) for the paper's exact pairs, coordinate
+choice and documented ambiguities. All inputs share the selected photo IDs;
+the paper variants do not automatically exclude letters or drop invalid samples.
 
 The existing `scripts/train_without_features.py` and `scripts/train_with_features.py` commands
 remain shortcuts. The default comparison remains those original two variants.
@@ -41,6 +50,9 @@ python -m scripts.train_model --experiment experiments/ngt_02 --variant finger_f
 Prepare `ngt_02` first using the workflow's split command. You can train multiple
 variants in that same frozen experiment directory. Every variant uses the same
 development IDs, folds, classifier, seed and reserved test IDs.
+The default `project` profile shares classifier hyperparameters. The optional
+`shin2021_asl` profile has published feature-dependent parameters; it is a separate
+comparison setting rather than evidence of a feature-only effect.
 
 After training both selected variants, compare development CV:
 
@@ -52,6 +64,12 @@ The command prints the HTML report path. Custom pairs use a separate directory,
 such as `comparison_cv_without_features_vs_finger_features_only`. In result JSON,
 `first` and `second` follow the order passed to `--variants`; for example,
 `macro_f1_difference_second_minus_first` is the second score minus the first.
+For three or more inputs, pass every desired name to `--variants`. The report
+adds a wide per-photo comparison and `pairwise_comparisons.csv` for every pair;
+the default two-input output retains its established field names. The
+`scripts.run_shin2021` command runs both classifiers with all five comparison
+inputs and verifies identical assignments across classifiers.
+
 Only after all choices are fixed, add `--final-test`. Comparing many variants
 on the final test and selecting the best would turn that test into tuning data.
 
@@ -110,6 +128,11 @@ extractors; they do not need to use this complete feature view.
 Do not learn thresholds, normalization statistics or feature selections from
 the complete dataset in an extractor. Any learned preprocessing belongs inside
 the classifier's training pipeline, fitted separately for each fold.
+`TrainingInput.standardize` defaults to true for the existing scaler-based
+classifiers. Paper inputs set it to false because their input definition already
+specifies per-photo distance normalization and unscaled axis cosines. Their
+`definition` string records that convention in the model; it does not change
+the baseline's preprocessing. The fitted pipeline is saved with the classifier.
 
 ## Verify the experiment
 

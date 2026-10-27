@@ -6,7 +6,7 @@ import unittest
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from gesturelab.training.comparison import _pair_predictions
+from gesturelab.training.comparison import _pair_predictions, _prediction_scores
 
 
 class PairedComparisonTests(unittest.TestCase):
@@ -45,6 +45,17 @@ class PairedComparisonTests(unittest.TestCase):
             predictions[variant] = pd.concat([predictions[variant], predictions[variant].iloc[:1]])
             with self.subTest(variant=variant), self.assertRaisesRegex(ValueError, 'photo IDs'):
                 _pair_predictions(predictions)
+
+    def test_incomplete_test_macro_scores_exclude_absent_truth_but_keep_known_label_coverage(self):
+        plan = {'labels': ['A', 'B'], 'missing_test_labels': ['B']}
+        predictions = pd.DataFrame({'label': ['A'], 'prediction': ['A']})
+        final = _prediction_scores(predictions, plan, final_test=True)
+        self.assertEqual(final['macro_f1'], 1.0)
+        self.assertEqual(final['balanced_accuracy'], 1.0)
+        predictions['prediction'] = 'B'
+        wrong = _prediction_scores(predictions, plan, final_test=True)
+        self.assertEqual(wrong['macro_f1'], 0.0)
+        self.assertEqual(wrong['coverage'], 1.0)
 
     def test_conflicting_ground_truth_for_same_photo_is_rejected(self):
         predictions = self.predictions()

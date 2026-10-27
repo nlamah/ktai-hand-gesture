@@ -322,8 +322,12 @@ class _CameraSession:
             self.ml = None
             if self.result['status'] == 'ok':
                 sample = {**self.result, 'width': frame.width, 'height': frame.height}
-                values = model_features(self.bundle, sample)
-                self.ml = str(predict_bundle(self.bundle, [values])[0])
+                try:
+                    values = model_features(self.bundle, sample)
+                except ValueError as error:
+                    self.result.update(status='invalid_features', error=str(error))
+                else:
+                    self.ml = str(predict_bundle(self.bundle, [values])[0])
             self.ml_stable = self.stable_ml.update(self.ml)
 
     def _save_photo(self, frame, label):

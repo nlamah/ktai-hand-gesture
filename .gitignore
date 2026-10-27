@@ -219,3 +219,9 @@ __marimo__/
 /data
 /experiments
 /exports
+
+# Downloaded external datasets
+/data/external/
+
+# Generated synthetic paper-method checks
+/examples/shin2021_software_test*/

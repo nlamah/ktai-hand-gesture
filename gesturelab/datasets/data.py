@@ -24,12 +24,12 @@ EDGES = [(0,1),(1,2),(2,3),(3,4),(0,5),(5,6),(6,7),(7,8),(5,9),(9,10),(10,11),(1
          (9,13),(13,14),(14,15),(15,16),(13,17),(0,17),(17,18),(18,19),(19,20)]
 
 
-def atomic_json(path, value):
+def atomic_json(path, value, compact=False):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
         temp = Path(handle.name)
-        json.dump(value, handle, indent=2, ensure_ascii=False, allow_nan=False)
+        json.dump(value, handle, indent=None if compact else 2, ensure_ascii=False, allow_nan=False)
     temp.replace(path)
 
 
@@ -240,20 +240,40 @@ class Detector:
         self.model.close()
 
 
-def analyze_project(project, progress=None):
+def _analyze_pending(project, manifest, pending, detector, progress, checkpoint_every, cache_features):
+    completed, saved = 0, 0
+    try:
+        for sample in pending:
+            with Image.open(project / sample['image_path']) as image:
+                analysis = detector.analyze(image)
+            if not cache_features:
+                analysis.pop('features', None)
+            sample.update(analysis)
+            completed += 1
+            if completed % checkpoint_every == 0:
+                atomic_json(project / 'manifest.json', manifest, compact=checkpoint_every > 1)
+                saved = completed
+            if progress:
+                progress(completed / len(pending))
+    finally:
+        if completed != saved:
+            atomic_json(project / 'manifest.json', manifest, compact=checkpoint_every > 1)
+
+
+def analyze_project(project, progress=None, checkpoint_every=1, cache_features=True):
+    """Analyze pending inputs; checkpoint batches and retain completed work on interruption."""
+    if not isinstance(checkpoint_every, int) or checkpoint_every < 1:
+        raise ValueError('Checkpoint size must be a positive integer.')
     with project_lock(project) as project:
         manifest = read_manifest(project)
+        if manifest.get('import', {}).get('complete') is False:
+            raise ValueError('Finish or resume the dataset import before analyzing images.')
         pending = [s for s in manifest["samples"] if s["status"] == "pending"]
         if not pending:
             return 0
         detector = Detector()
         try:
-            for i, sample in enumerate(pending):
-                with Image.open(project / sample["image_path"]) as image:
-                    sample.update(detector.analyze(image))
-                atomic_json(project / "manifest.json",manifest)
-                if progress:
-                    progress((i+1)/len(pending))
+            _analyze_pending(project, manifest, pending, detector, progress, checkpoint_every, cache_features)
         finally:
             detector.close()
     return len(pending)
@@ -266,7 +286,11 @@ def analysis_table(project):
             if sample.get("feature_version") != FEATURE_VERSION:
                 raise ValueError("Outdated features found. Recompute the dataset with this version.")
             metadata = {k:sample[k] for k in ("id","label","session","participant","condition","role","image_path")}
-            rows.append({**metadata, **sample["features"]})
+            features = sample.get('features')
+            if features is None:
+                features = extract_features(sample['image_landmarks'], sample['world_landmarks'],
+                                            sample['width'], sample['height'])
+            rows.append({**metadata, **features})
     return pd.DataFrame(rows)
 
 

@@ -86,6 +86,69 @@ Python must run on the computer with the webcam. On macOS, Terminal/Python may
 need camera permission. The first hand analysis downloads the MediaPipe model.
 Minimal Linux installations may need `libgles2`.
 
+On macOS, LightGBM also needs OpenMP in the Conda environment:
+
+```bash
+conda install -n ktai-hand-gesture -c conda-forge llvm-openmp
+```
+
+## Train locally with external ASL data
+
+You can train on downloaded photos without recording your own dataset first.
+Extract the download into `data/external/`, activate `ktai-hand-gesture`, and use
+the importer for its format:
+
+| Download | Raw files | Local training guide |
+|---|---|---|
+| Roboflow COCO export | `data/external/asl_letters_v1/` with `train/`, `valid/` and `test/` | [ASL_TRAINING.md](docs/ASL_TRAINING.md) |
+| Kaggle ASL Alphabet | `data/external/archive-kaggle/` with the alphabet train/test folders | [KAGGLE_TRAINING.md](docs/KAGGLE_TRAINING.md) |
+
+For the extracted Kaggle dataset, this command imports all 78,000 letter photos,
+calculates landmarks, trains both Random Forest variants and creates a comparison:
+
+```bash
+conda activate ktai-hand-gesture
+python -u -m scripts.train_kaggle_dataset
+```
+
+The imported dataset is saved in `data/asl_kaggle/`; models and the HTML report
+are saved in `experiments/asl_kaggle_rf_01/`. Raw downloads, imported datasets and
+experiments are separate. If you already have a fully imported dataset with
+`manifest.json`, reuse it; do not initialize it with NGT references or import it again from scratch.
+The Kaggle command supports resuming the same run. For retraining after changes,
+choose a new experiment directory.
+
+See [the external-data workflow](docs/WORKFLOW.md#alternative-train-locally-with-external-asl-data)
+for both command sequences, output files and how to reuse existing data. These
+models use ASL labels; keep them separate from NGT recordings. The supplied
+Kaggle test photos duplicate training photos, so that run reports development
+cross-validation without an independent final test.
+
+If you still need the Roboflow files, [ASL_DOWNLOAD.md](docs/ASL_DOWNLOAD.md)
+explains the optional download step. Local import and training do not require a
+Roboflow API key. The first landmark analysis downloads the MediaPipe model if
+it is not already present.
+
+## Compare the Shin 2021 paper method
+
+Three independent inputs implement the distance/axis method from Shin et al.:
+190 distance values, 630 axis cosines and 820 combined values. They can be
+compared with the existing 126/207-value inputs on identical photo IDs and
+grouped folds, using SVM and LightGBM. No letters are automatically excluded.
+
+For the already imported and analyzed Kaggle data:
+
+```bash
+python -m scripts.run_shin2021 --project data/asl_kaggle --out experiments/shin2021_kaggle_01 --grouping source --folds 3 --allow-no-test
+```
+
+Open `experiments/shin2021_kaggle_01/report.html` afterward. Use a new output
+directory. This is an application of the article's method, not a reproduction
+of its scores. See [PAPER_SHIN2021.md](docs/PAPER_SHIN2021.md) for formulas,
+explicit assumptions, parameter profiles, exact split reuse, individual commands,
+final testing and webcam use. Old experiment/model files are preserved; updated
+input-code hashes require new training rather than disabling checks.
+
 ## Collaborating with dataset ZIPs
 
 Export the dataset, let the next student extract it and add photos under a unique
@@ -99,6 +162,7 @@ for commands and directory examples.
 ```bash
 python -m unittest discover -s tests -v
 python tests/smoke_modular.py --out examples/my_software_test
+python tests/smoke_shin2021.py --out examples/shin2021_software_test
 ```
 
 Use a new output directory. The smoke test creates explicitly synthetic skeleton
