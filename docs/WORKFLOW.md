@@ -33,19 +33,6 @@ conda activate ktai-hand-gesture
 python -m pip install -r requirements.txt
 ```
 
-Without Conda, use Python 3.12 and a virtual environment:
-
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-```
-
-On Windows, use `.venv\Scripts\activate` instead of `source .venv/bin/activate`.
-Run subsequent commands from the project directory with the environment active.
-The first real hand analysis downloads the MediaPipe model and stores it locally;
-an internet connection is needed for that first analysis.
-
 ## 1. Initialize a dataset with alphabet references
 
 ```bash
@@ -381,6 +368,70 @@ python -m scripts.compare_results --experiment experiments/ngt_01 --project extr
 Only the location changes. Contents must match the frozen dataset. Do not add
 new images to an existing experiment's data. Translated source code also changes
 code hashes: create a new experiment when using the updated implementation.
+
+### Sharing a dataset ZIP with classmates
+
+A dataset ZIP lets another student continue recording into your existing dataset.
+It contains images, labels, sessions, landmarks, reference images and feature
+assessments. Share the project code separately and use the same code version;
+follow the [installation instructions](../README.md#installation) on each computer.
+The dataset ZIP does not include the code or the separate experiment directories.
+
+1. **Export the current dataset** from the project root:
+
+   ```bash
+   python -m scripts.export_dataset --project data/ngt --out exports/ngt_dataset_v01.zip
+   ```
+
+2. **Send that ZIP to the next student.** They should extract it into a new
+   directory, keeping earlier versions separate. For example, after placing the
+   received ZIP in `exports/`:
+
+   ```bash
+   python -m zipfile -e exports/ngt_dataset_v01.zip data/shared_v01
+   ```
+
+   The dataset root is now `data/shared_v01/dataset`: use the directory containing
+   `manifest.json`, `images/` and `originals/`, not the directory above it.
+
+3. **Open the received dataset** in the capture app:
+
+   ```bash
+   python -m streamlit run apps/collect_app.py -- --project data/shared_v01/dataset
+   ```
+
+   Check that **Project directory** points to the extracted `dataset` directory.
+   There is no need to initialize a new dataset or copy individual image files.
+
+4. **Add the next student's photos** using **Guided capture**. Give each student
+   a unique **Participant** code, such as `student02`, and use the same agreed
+   letter labels and condition names. Each camera start creates a new session.
+   New photos are appended; existing photos remain in the dataset. Use
+   **Development** for development rounds and **Separate final test** only for
+   deliberately reserved test rounds. Keep existing test assignments unchanged.
+   Guided captures are analyzed immediately; uploaded photos need analysis.
+
+5. **Check and export the updated dataset.** Use **Check dataset** to verify the
+   new participant, sessions and photo counts, then stop the capture app and run:
+
+   ```bash
+   python -m scripts.export_dataset --project data/shared_v01/dataset --out exports/ngt_dataset_v02.zip
+   ```
+
+   Send `ngt_dataset_v02.zip` to the next student, who repeats the process in a
+   new extraction directory. Agree on who currently has the latest version.
+
+**Use one successive dataset version for now.** If several students independently
+extend the same original ZIP, their copies diverge. The project currently has no
+automatic dataset merge command. Copying image folders or overwriting
+`manifest.json` does not merge the labels, sessions and assessments correctly.
+Sequential handoff of the latest ZIP avoids that problem.
+
+After collecting everyone's contributions, keep the combined dataset in one
+chosen directory and create a **new experiment** using that path. Train both
+variants on the same new split; do not reuse a frozen experiment from before
+the additional photos were collected. Use development CV to make choices and
+leave the reserved final-test photos out of tuning.
 
 ## 10. Write your report
 

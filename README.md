@@ -86,6 +86,14 @@ Python must run on the computer with the webcam. On macOS, Terminal/Python may
 need camera permission. The first hand analysis downloads the MediaPipe model.
 Minimal Linux installations may need `libgles2`.
 
+## Collaborating with dataset ZIPs
+
+Export the dataset, let the next student extract it and add photos under a unique
+participant code, then pass on the updated ZIP. Use successive versions: automatic
+merging of independently extended datasets is not implemented. See the
+[step-by-step ZIP collaboration guide](docs/WORKFLOW.md#sharing-a-dataset-zip-with-classmates)
+for commands and directory examples.
+
 ## Tests and demonstration
 
 ```bash
