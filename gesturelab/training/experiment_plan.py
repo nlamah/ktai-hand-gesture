@@ -16,11 +16,16 @@ from gesturelab.features.audit import load_thresholds
 from gesturelab.training.experiments import estimator, grouped_folds, groups_for
 from gesturelab.training.classifiers import classifier_versions
 from gesturelab.training.splits import development_folds
+from gesturelab.training.distance_weighting import validate_tip_weight
+from gesturelab.training.mirror_augmentation import DEFINITION as MIRROR_DEFINITION
 
 VARIANTS = DEFAULT_VARIANTS
 CODE_FILES = (
     'features/inspection.py', 'training/experiment_plan.py', 'training/fitting.py', 'training/comparison.py', 'training/experiments.py',
     'training/classifiers.py',
+    'training/neural_network.py',
+    'training/distance_weighting.py',
+    'training/mirror_augmentation.py',
     'training/predictions.py',
     'training/splits.py', 'training/paper_study.py',
     'training/reporting.py',
@@ -114,18 +119,23 @@ def _dataset_evaluation_note(project):
     return ' '.join(filter(None, (state.get('grouping_note'), state.get('test_note'))))
 
 
-def prepare_experiment(project, out, folds=3, grouping='session', labels=None, model='svm', seed=42, allow_no_test=False, allow_incomplete_test=False, classifier_profile='project', split_from=None):
+def prepare_experiment(project, out, folds=3, grouping='session', labels=None, model='svm', seed=42, allow_no_test=False, allow_incomplete_test=False, classifier_profile='project', split_from=None, index_middle_tip_weight=1.0, mirror_training=False):
     """Validate the dataset and freeze one shared experiment for every input variant."""
     project, out = Path(project).resolve(), Path(out).resolve()
     if out.exists():
         raise ValueError('This experiment directory already exists. Use a new name; existing results are preserved.')
+    weight = validate_tip_weight(index_middle_tip_weight, model)
+    if not isinstance(mirror_training, bool):
+        raise ValueError('mirror_training must be a boolean.')
     selected, labels, development = _selected_development_samples(project, labels)
     config = load_thresholds(project)
     split, groups, parent = development_folds(project, development, selected, grouping, int(folds), int(seed), split_from)
     _validate_test_samples(selected, labels, grouping, allow_no_test, allow_incomplete_test)
     estimator(model, len(development), seed, profile=classifier_profile)
     parameters = dict(model=model, seed=int(seed), grouping=grouping, n_folds=int(folds),
-                      classifier_profile=classifier_profile, classifier_versions=classifier_versions(model), split_parent=parent)
+                      classifier_profile=classifier_profile, classifier_versions=classifier_versions(model), split_parent=parent,
+                      index_middle_tip_weight=weight, mirror_training=mirror_training,
+                      augmentation_definition=MIRROR_DEFINITION if mirror_training else None)
     plan = _build_experiment_plan(project, development, selected, labels, split, groups, config, parameters)
     plan['evaluation_note'] = _dataset_evaluation_note(project)
     _save_experiment(out, plan, config)

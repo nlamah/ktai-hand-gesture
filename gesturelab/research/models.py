@@ -7,6 +7,7 @@ from sklearn.svm import SVC
 
 from gesturelab.features.training_inputs import model_features, validate_model_input
 from gesturelab.training.experiments import predict_bundle
+from gesturelab.training.distance_weighting import weighting_metadata
 from gesturelab.validation.report import read_json, sha256, write_json
 
 
@@ -48,6 +49,16 @@ def _missing_metadata(bundle, plan, alphabet):
     return result
 
 
+def _input_metadata(bundle, columns):
+    return dict(input_code_hashes=bundle.get('feature_code_hashes'),
+        input_definition=bundle.get('input_definition'), feature_config=bundle.get('feature_config'),
+        input_preprocessing=bundle.get('input_preprocessing'),
+        mirror_training=bundle.get('config', {}).get('mirror_training', False),
+        augmentation_definition=bundle.get('config', {}).get('augmentation_definition'),
+        fit_diagnostics=bundle.get('fit_diagnostics'),
+        **weighting_metadata(columns, bundle.get('config', {}).get('index_middle_tip_weight', 1.0)))
+
+
 def inspect_model(model, experiment=None, alphabet=None, name=None):
     model = Path(model).resolve()
     bundle = joblib.load(model)
@@ -67,9 +78,7 @@ def inspect_model(model, experiment=None, alphabet=None, name=None):
         experiment=str(experiment), split_sha256=split_digest,
         dataset_fingerprint=plan.get('dataset_fingerprint'), code_hashes=plan.get('code_hashes'),
         training_environment={key: plan.get(key) for key in ('seed', 'python_version', 'sklearn_version', 'numpy_version', 'pandas_version', 'classifier_versions')},
-        input_code_hashes=bundle.get('feature_code_hashes'), classifier=type(classifier).__name__,
-        input_definition=bundle.get('input_definition'), feature_config=bundle.get('feature_config'),
-        input_preprocessing=bundle.get('input_preprocessing'),
+        classifier=type(classifier).__name__, **_input_metadata(bundle, columns),
         parameters=_parameters(classifier), variant=variant, features=len(columns), columns=columns,
         preprocessing=[dict(name=n, type=type(step).__name__, parameters=_parameters(step)) for n, step in getattr(bundle['estimator'], 'steps', [])[:-1]],
         labels=labels, alphabet=alphabet, alphabet_evidence='Researcher declaration; class names alone do not establish sign language.',

@@ -4,6 +4,8 @@
 def summary_html(table):
     names = {
         'classifier': 'Classifier', 'variant': 'Input', 'n_features': 'Features', 'n_train': 'Training photos',
+        'index_middle_tip_weight': 'Index/middle tip weight',
+        'mirror_training': 'Mirror training', 'n_training_rows': 'Fit rows',
         'accuracy': 'Accuracy', 'macro_f1': 'Macro-F1', 'cv_macro_f1_mean': 'CV F1 mean',
         'cv_macro_f1_std': 'CV F1 SD', 'model_training_seconds': 'Model training (s)',
     }

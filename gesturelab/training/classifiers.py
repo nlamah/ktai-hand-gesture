@@ -12,9 +12,12 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from gesturelab.features.training_inputs import training_input
+from gesturelab.training.distance_weighting import validate_tip_weight, tip_weighting_step
+from gesturelab.training.neural_network import BalancedMLPClassifier, mlp_parameters
 
 MODEL_NAMES = {'knn': 'k-NN', 'svm': 'SVM (RBF)', 'logistic': 'Logistic regression',
-               'random_forest': 'Random forest', 'decision_tree': 'Decision tree', 'lightgbm': 'LightGBM'}
+               'random_forest': 'Random forest', 'decision_tree': 'Decision tree', 'lightgbm': 'LightGBM',
+               'mlp': 'MLP (64, 32)'}
 PROFILES = ('project', 'shin2021_asl')
 
 
@@ -41,6 +44,7 @@ def classifier_parameters(name, variant=None, profile='project', n_train=100, se
         'decision_tree': dict(max_depth=6, min_samples_leaf=2, class_weight='balanced', random_state=seed),
         'lightgbm': dict(num_leaves=31, learning_rate=.1, min_child_samples=20, n_estimators=100),
         'dummy': dict(strategy='most_frequent'),
+        'mlp': mlp_parameters(seed),
     }
     if name not in defaults:
         raise ValueError(f'Unknown model: {name}')
@@ -72,15 +76,19 @@ def _preprocessor(variant, columns):
     return StandardScaler() if spec is None or spec.standardize else None
 
 
-def estimator(name, n_train=100, seed=42, variant=None, profile='project', columns=None):
+def estimator(name, n_train=100, seed=42, variant=None, profile='project', columns=None, index_middle_tip_weight=1.0):
     """Keep learned scaling inside each fit; paper inputs already define their own normalization."""
+    weight = validate_tip_weight(index_middle_tip_weight, name)
     parameters = classifier_parameters(name, variant, profile, n_train, seed)
     factories = {'knn': KNeighborsClassifier, 'svm': SVC, 'logistic': LogisticRegression,
                  'random_forest': RandomForestClassifier, 'decision_tree': DecisionTreeClassifier,
-                 'dummy': DummyClassifier, 'lightgbm': _lightgbm}
+                 'dummy': DummyClassifier, 'lightgbm': _lightgbm, 'mlp': BalancedMLPClassifier}
     model = _lightgbm(parameters) if name == 'lightgbm' else factories[name](**parameters)
-    preprocessing = _preprocessor(variant, columns) if name in ('knn', 'svm', 'logistic') else None
-    return make_pipeline(preprocessing, model) if preprocessing is not None else model
+    preprocessing = _preprocessor(variant, columns) if name in ('knn', 'svm', 'logistic', 'mlp') else None
+    steps = [preprocessing] if preprocessing is not None else []
+    if weight != 1:
+        steps.append(tip_weighting_step(preprocessing, columns, weight))
+    return make_pipeline(*steps, model) if steps else model
 
 
 def classifier_versions(name):

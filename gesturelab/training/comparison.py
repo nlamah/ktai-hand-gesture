@@ -155,6 +155,9 @@ def _write_scores_and_charts(out, predictions, training, plan, note, final_test=
         info = training[variant]
         rows.append({
             'variant': variant, 'n_features': info['n_features'],
+            'index_middle_tip_weight': info.get('index_middle_tip_weight', 1.0),
+            'mirror_training': info.get('mirror_training', False),
+            'n_training_rows': info.get('n_training_rows', info['n_train']),
             **_prediction_scores(predicted, plan, final_test),
             'cv_macro_f1_mean': info['cv_macro_f1_mean'],
             'cv_macro_f1_std': info['cv_macro_f1_std'],
@@ -177,6 +180,9 @@ def _comparison_result(stage, split_hash, model_hashes, plan, summary, paired, n
         'evaluation_note': plan.get('evaluation_note', ''),
         'missing_test_labels': plan.get('missing_test_labels', []) if stage == 'final_test' else [],
         'classifier': plan['model'], 'classifier_profile': plan.get('classifier_profile', 'project'),
+        'index_middle_tip_weight': plan.get('index_middle_tip_weight', 1.0),
+        'mirror_training': plan.get('mirror_training', False),
+        'augmentation_definition': plan.get('augmentation_definition'),
         'excluded_development_detections': len(plan['excluded_development_ids']),
         'interpretation': note + '. No claim of statistical significance.',
     }

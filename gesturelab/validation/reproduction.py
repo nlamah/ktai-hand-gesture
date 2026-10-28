@@ -9,6 +9,7 @@ import numpy as np
 
 from gesturelab.training import fitting
 from gesturelab.training.experiment_plan import load_experiment
+from gesturelab.training.mirror_augmentation import fit_row_ids
 from gesturelab.validation.metrics import read_csv, score_rows, fold_summary
 from gesturelab.validation.provenance import environment_record, InputWatch
 from gesturelab.validation.report import AuditReport, new_output, read_json, sha256, write_json
@@ -41,6 +42,7 @@ class FitObserver:
         index = len(self.events)
         ids = (self.plan['folds'][index]['train_ids'] if index < len(self.plan['folds'])
                else self.plan['development_ids'])
+        ids = fit_row_ids(self.plan, ids)
         original_fit = model.fit
         def fit(matrix, labels, *more, **kwargs):
             expected = self.training.loc[ids]

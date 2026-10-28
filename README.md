@@ -6,6 +6,13 @@ capture, A/B comparison and a selected improvement, read
 [RESEARCH_PROTOCOL.md](docs/RESEARCH_PROTOCOL.md).
 The read-only experiment audit and one-variant replay are in
 [VALIDATION.md](docs/VALIDATION.md).
+For an optional SVM weight on the existing index/middle fingertip distance and
+the U/V/R development confusion analysis, see
+[FINGERTIP_WEIGHTING.md](docs/FINGERTIP_WEIGHTING.md).
+To train on original and reflected landmarks for left/right-hand robustness,
+see [MIRROR_TRAINING.md](docs/MIRROR_TRAINING.md).
+For a controlled MLP-versus-SVM comparison on the original Shin inputs and folds,
+see [MLP_TRAINING.md](docs/MLP_TRAINING.md).
 This project compares landmark representations for manual-alphabet pose
 classification. It supports your own Dutch manual-alphabet photos, imported
 ASL datasets and a separate webcam study using a fixed SVM/Shin baseline.

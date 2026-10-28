@@ -16,6 +16,10 @@ inputs. Changing input variants does not create new photos or a different split.
 | `gesturelab/training/experiment_plan.py` | Freezes sample IDs, groups, folds, thresholds and source hashes. Splitting uses metadata, not derived features. |
 | `gesturelab/training/fitting.py` | Builds the chosen input matrix, fits fresh classifiers per CV fold, fits the final model and saves artifacts. It contains no finger formulas. |
 | `gesturelab/training/classifiers.py` | Constructs the classifier and its training-only preprocessing from the frozen profile. |
+| `gesturelab/training/distance_weighting.py` | Applies optional index/middle fingertip weighting after preprocessing; feature extraction stays unchanged. |
+| `gesturelab/training/mirror_augmentation.py` | Creates reflected development landmarks and selects original/mirror fit rows after splitting; validation/test stay original. |
+| `gesturelab/training/neural_network.py` | Defines the fixed MLP preset and balances classes from each fit's training labels only. |
+| `gesturelab/training/classifier_comparison.py` | Compares saved classifier runs only after checking matching numeric inputs, policies, original IDs and folds. |
 | `gesturelab/training/comparison.py` | Evaluates two or more inputs on the same photo IDs and writes reports. |
 | `gesturelab/camera/runtime.py` | Asks `model_features()` for inputs; it has no feature-variant branches. |
 
@@ -80,6 +84,33 @@ or results claimed by the paper.
 
 Only after all choices are fixed, add `--final-test`. Comparing many variants
 on the final test and selecting the best would turn that test into tuning data.
+
+## Weight the index/middle fingertip distance
+
+For SVM, set `--index-middle-tip-weight` when preparing a new experiment.
+The default `1` preserves existing behavior. The weight applies after learned
+scaling and is stored in the model pipeline for identical live inference.
+Shin inputs weight `shin_dist_08_12`; finger inputs weight
+`geom_tip_distance_index_middle`; hybrids with both weight both columns.
+See [FINGERTIP_WEIGHTING.md](FINGERTIP_WEIGHTING.md) for exact commands, supported
+variants, interpretation and the existing U/V/R confusion analysis.
+
+## Train on reflected landmarks
+
+Set `--mirror-training` when preparing a new experiment to fit each original
+training example and its geometric reflection. Validation and reserved test
+photos remain original. Feature extraction stays unchanged, and no mirrored
+photo files are added to the source dataset. See
+[MIRROR_TRAINING.md](MIRROR_TRAINING.md) for the definition, limitations, counts
+and commands to compare the resulting model live.
+
+## Compare MLP with the SVM baseline
+
+Prepare a new experiment with `--model mlp` and reuse the original SVM split.
+For the controlled 820-value Shin comparison, retain weight 1, no mirror training
+and the same preprocessing. The preset has hidden layers `(64, 32)` and no
+random internal validation holdout. See [MLP_TRAINING.md](MLP_TRAINING.md) for
+training, numeric/OOF comparison and live A/B commands.
 
 ## Add another variant
 

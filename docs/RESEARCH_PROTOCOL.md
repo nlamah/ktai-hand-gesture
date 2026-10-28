@@ -188,6 +188,20 @@ select favorable photos. This control is not run automatically.
 
 ## 7. Freeze models and the final-test protocol
 
+For a separate classifier experiment using the same original Shin inputs and
+folds, see [MLP_TRAINING.md](MLP_TRAINING.md). It compares a fixed small MLP with
+the unweighted, unaugmented SVM baseline before any independent final test.
+
+For an optional original-plus-mirror training experiment targeting left/right
+hand differences, see [MIRROR_TRAINING.md](MIRROR_TRAINING.md). It augments only
+training landmarks; the resulting model accepts ordinary webcam input.
+
+An alternative targeted experiment is to weight the existing index/middle
+fingertip distance when U/V/R are confused. See
+[FINGERTIP_WEIGHTING.md](FINGERTIP_WEIGHTING.md) for that separate training route.
+Choose its weight using development data and register the new model before
+freezing the final comparison below.
+
 Choose the final letters, participants, conditions and settings before recording
 and evaluation. Use a new session and new photos; changing a flag does not turn
 previously viewed live images into an unseen final test.

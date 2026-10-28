@@ -55,6 +55,9 @@ mirroring and inaccurate landmark estimates are outside that guarantee.
 | **Total** | **81** | |
 
 The crossing indicator is a geometric approximation; perspective can mislead it.
+For an optional SVM weight on the existing index/middle fingertip distance, see
+[FINGERTIP_WEIGHTING.md](FINGERTIP_WEIGHTING.md). This training setting does not
+change the geometric measurements or their manual inspection thresholds.
 The precision/recall table checks extended/bent indicators. It does not prove
 that the remaining 71 numeric features are correct or useful. Inspect angles,
 fingertip distances and difficult photos too.

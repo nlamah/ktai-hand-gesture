@@ -7,12 +7,13 @@ import shutil
 import time
 
 import joblib
+import pandas as pd
 from sklearn.base import clone
 
 from gesturelab.datasets.data import read_manifest, atomic_json, fingerprint, ensure_project
-from gesturelab.features.training_inputs import input_table
 from gesturelab.research.models import ModelHandle, register_model
 from gesturelab.training.experiment_plan import load_experiment, _save_experiment
+from gesturelab.training.mirror_augmentation import training_input_table, augmentation_metadata, row_provenance
 from gesturelab.validation.provenance import environment_record
 from gesturelab.validation.report import sha256, write_json
 
@@ -80,7 +81,8 @@ def _augmentation_plan(original, target, samples, hypothesis, change, expected):
 
 def _fit_improvement(handle, plan, records, experiment):
     columns = handle.bundle['config']['columns']
-    table = input_table(records, plan['feature_config'], handle.metadata['variant']).set_index('id')
+    table = training_input_table(records, plan['feature_config'], handle.metadata['variant'],
+                                plan.get('mirror_training', False)).set_index('id')
     matrix = table[columns].to_numpy()
     estimator = clone(handle.bundle['estimator'])
     started = time.perf_counter()
@@ -89,11 +91,14 @@ def _fit_improvement(handle, plan, records, experiment):
         raise ValueError('The new training dataset changed during fitting; no model is saved.')
     bundle = deepcopy(handle.bundle)
     bundle.update(estimator=estimator, split_sha256=sha256(experiment / 'split.json'), synthetic=plan['synthetic'])
+    bundle['config'].update(augmentation_metadata(plan))
     folder = experiment / handle.metadata['variant']
     folder.mkdir()
     joblib.dump(bundle, folder / 'model.joblib')
     table[columns].to_csv(folder / 'training_features.csv')
-    write_json(folder / 'training.json', dict(variant=handle.metadata['variant'], n_train=len(table),
+    if plan.get('mirror_training'):
+        pd.DataFrame(row_provenance(plan, {s['id']: s for s in records})).to_csv(folder / 'training_row_provenance.csv', index=False)
+    write_json(folder / 'training.json', dict(variant=handle.metadata['variant'], n_train=len(records), **augmentation_metadata(plan),
         n_features=len(columns), feature_columns=columns, model_sha256=sha256(folder / 'model.joblib'),
         fit_seconds=time.perf_counter() - started, synthetic=plan['synthetic'],
         note='Cloned actual baseline estimator with identical parameters; all learned preprocessing fitted afresh on development rows only. No CV/test scores.'))

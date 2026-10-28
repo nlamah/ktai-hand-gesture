@@ -5,6 +5,8 @@ For the SVM/Shin webcam study, follow the
 viewpoint recordings, a selected development-data refit and a separately sealed
 final test. For read-only checks of existing experiments and one-variant replay,
 see [VALIDATION.md](VALIDATION.md).
+For a controlled MLP-versus-SVM experiment with the same Shin inputs and folds,
+see [MLP_TRAINING.md](MLP_TRAINING.md).
 
 The separate components share one dataset. You do not need to record videos:
 the webcam saves individual photos. The classifier learns letter labels from

@@ -27,16 +27,23 @@ def training_matrix_identity(path, expected_ids):
                 correct=Counter(ids) == Counter(expected_ids), examples=examples)
 
 
+def _expected_fit_ids(plan):
+    expected = list(plan['development_ids'])
+    if plan.get('mirror_training'):
+        expected += [identity + '::horizontal_mirror' for identity in plan['development_ids']]
+    return expected
+
+
 def audit_artifacts(report, context, variant):
     folder = context['experiment'] / variant
     info = read_json(folder / 'training.json')
     path = folder / 'training_features.csv'
-    matrix = training_matrix_identity(path, context['plan']['development_ids'])
+    matrix = training_matrix_identity(path, _expected_fit_ids(context['plan']))
     columns = matrix['header'][1:]
     correct = (matrix['header'][0] == 'id' and columns == info['feature_columns']
                and len(columns) == info['n_features'] and not RESERVED_COLUMNS & set(columns))
     report.add('inputs.final_fit_matrix', 'Stream every saved final-fit row ID and inspect all input column names.',
-        'Exactly the declared development rows, no test IDs or metadata columns.',
+        'Exactly the declared original and optional mirror-training rows, no test IDs or metadata columns.',
         dict(rows=matrix['rows'], unique=matrix['unique'], correct_ids=matrix['correct'], correct_columns=correct),
         matrix['correct'] and correct, [path], limitation='This CSV describes the final input matrix, not historical per-fold execution.')
     model_path = folder / 'model.joblib'
