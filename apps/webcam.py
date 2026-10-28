@@ -1,11 +1,10 @@
 """Start the local camera window directly, without Streamlit."""
 import argparse
 from gesturelab.camera.runtime import run_camera,new_session_name
+from gesturelab.research.cli import add_native_commands, execute
 
 
-def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    sub=parser.add_subparsers(dest="mode",required=True)
+def _legacy_commands(sub):
     record=sub.add_parser("record",help="Guided photo capture with reference and countdown.")
     record.add_argument("--labels",nargs="+",required=True)
     record.add_argument("--photos",type=int,default=3)
@@ -22,7 +21,16 @@ def main():
         p.add_argument("--project",default="projects/my_gestures")
         p.add_argument("--camera",type=int,default=0)
         p.add_argument("--no-mirror",action="store_true")
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    sub=parser.add_subparsers(dest="mode",required=True)
+    add_native_commands(sub)
+    _legacy_commands(sub)
     args=vars(parser.parse_args())
+    if 'function' in args:
+        return execute(parser, args)
     args["mode"]="capture" if args["mode"]=="record" else "predict"
     args["camera_index"]=args.pop("camera")
     args["mirror"]=not args.pop("no_mirror")

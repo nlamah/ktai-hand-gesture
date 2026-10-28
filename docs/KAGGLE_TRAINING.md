@@ -158,7 +158,7 @@ use that selected classifier on the same frozen folds.
 ## Compare against the Shin 2021 inputs
 
 Reuse this analyzed dataset with the separate
-[paper-method study](PAPER_SHIN2021.md). It trains five inputs with SVM and
+[paper-method study](PAPER_SHIN2021.md). It trains eight inputs with SVM and
 LightGBM on shared assignments; it does not reuse or overwrite these Random
 Forest models. Use `--split-from experiments/asl_kaggle_rf_01` with source
 grouping, three folds and seed 42 to retain that experiment's exact membership.

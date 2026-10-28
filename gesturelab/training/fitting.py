@@ -20,9 +20,9 @@ def _training_data(plan, records, variant):
     return training, columns
 
 
-def _estimator_for(plan, variant, n_train):
+def _estimator_for(plan, variant, n_train, columns):
     return estimator(plan['model'], n_train, plan['seed'], variant=variant,
-                     profile=plan.get('classifier_profile', 'project'))
+                     profile=plan.get('classifier_profile', 'project'), columns=columns)
 
 
 def _fold_predictions(validation, predicted, index):
@@ -39,7 +39,7 @@ def _cross_validate(training, columns, plan, variant):
     for index, fold in enumerate(plan['folds']):
         train = training.loc[fold['train_ids']]
         validation = training.loc[fold['validation_ids']]
-        model = _estimator_for(plan, variant, len(train))
+        model = _estimator_for(plan, variant, len(train), columns)
 
         start = time.perf_counter()
         model.fit(train[columns].to_numpy(), train.label.to_numpy())
@@ -60,7 +60,7 @@ def _cross_validate(training, columns, plan, variant):
 
 def _fit_final_model(training, columns, plan, variant):
     """Refit the selected classifier on all development photos, without test data."""
-    model = _estimator_for(plan, variant, len(training))
+    model = _estimator_for(plan, variant, len(training), columns)
     model.fit(training[columns].to_numpy(), training.label.to_numpy())
     return model
 

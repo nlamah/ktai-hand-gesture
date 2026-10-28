@@ -1,8 +1,9 @@
-"""Compare both project inputs and three Shin 2021 inputs on the same grouped data."""
+"""Compare project, Shin 2021 and combined inputs on the same grouped data."""
 import argparse
 
 from gesturelab.training.classifiers import PROFILES
 from gesturelab.training.paper_study import run_paper_study
+from gesturelab.features.training_inputs import TRAINING_INPUTS, PAPER_COMPARISON
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
     parser.add_argument('--project', required=True)
     parser.add_argument('--out', default='experiments/shin2021_01')
     parser.add_argument('--models', nargs='+', choices=('svm', 'lightgbm'), default=['svm', 'lightgbm'])
+    parser.add_argument('--variants', nargs='+', choices=tuple(TRAINING_INPUTS), default=PAPER_COMPARISON)
     parser.add_argument('--folds', type=int, default=3)
     parser.add_argument('--grouping', choices=('session', 'participant', 'source'), default='session')
     parser.add_argument('--seed', type=int, default=42)

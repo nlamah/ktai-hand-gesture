@@ -1,4 +1,4 @@
-"""Run the five-input Shin 2021 application with identical folds for both classifiers."""
+"""Compare Shin inputs and project feature combinations on shared grouped folds."""
 import html
 import json
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from gesturelab.datasets.data import atomic_json
-from gesturelab.features.training_inputs import PAPER_COMPARISON
+from gesturelab.features.training_inputs import PAPER_COMPARISON, training_input
 from gesturelab.training.comparison import compare_variants
 from gesturelab.training.experiment_plan import prepare_experiment
 from gesturelab.training.fitting import train_variant
@@ -48,32 +48,37 @@ def _study_report(out, rows, note):
     (out / 'report.html').write_text(body, encoding='utf-8')
 
 
-def _train_study(out, models):
+def _train_study(out, models, variants):
     rows = []
     for model in models:
         experiment = out / model
-        for variant in PAPER_COMPARISON:
+        for variant in variants:
             print(f'Training {model}: {variant}', flush=True)
             train_variant(experiment, variant)
-        report = compare_variants(experiment, variants=PAPER_COMPARISON)
+        report = compare_variants(experiment, variants=variants)
         rows.append(pd.read_csv(report / 'metrics.csv').assign(classifier=model, report=report.name + '/report.html'))
     return rows
 
 
-def run_paper_study(project, out, models=('svm', 'lightgbm'), **split_options):
+def run_paper_study(project, out, models=('svm', 'lightgbm'), variants=PAPER_COMPARISON, **split_options):
     """Create a new study; select all dataset letters unless explicitly requested otherwise."""
     out = Path(out).resolve()
     models = tuple(models)
+    variants = tuple(variants)
     if out.exists():
         raise FileExistsError('Study output already exists. Choose a new --out; old results are preserved.')
     if not models or len(set(models)) != len(models) or set(models) - {'svm', 'lightgbm'}:
         raise ValueError('Choose distinct study classifiers from svm and lightgbm.')
+    if len(variants) < 2 or len(set(variants)) != len(variants):
+        raise ValueError('Choose at least two distinct study inputs.')
+    for variant in variants:
+        training_input(variant)
     _prepare_study(project, out, models, split_options)
     plan = json.loads((out / models[0] / 'split.json').read_text())
     note = ('SYNTHETIC SOFTWARE TEST. ' if plan['synthetic'] else '') + STUDY_NOTE
     note += ' ' + plan.get('evaluation_note', '')
-    rows = _train_study(out, models)
+    rows = _train_study(out, models, variants)
     _study_report(out, rows, note)
-    atomic_json(out / 'study.json', {'note': note, 'models': models, 'variants': PAPER_COMPARISON,
+    atomic_json(out / 'study.json', {'note': note, 'models': models, 'variants': variants,
                 'classifier_profile': plan.get('classifier_profile', 'project'), 'final_test_evaluated': False})
     return out

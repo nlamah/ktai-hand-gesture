@@ -25,7 +25,7 @@ J and Z. A still image does not capture their complete motion.
 | Fold fitting, final fitting, timings and saved model | `gesturelab/training/fitting.py` |
 | Prediction alignment and fold-membership checks | `gesturelab/training/predictions.py` |
 | CSV, figures and HTML comparisons | `gesturelab/training/comparison.py` |
-| Five-input, two-classifier study | `gesturelab/training/paper_study.py`, `scripts/run_shin2021.py` |
+| Eight-input, two-classifier study | `gesturelab/training/paper_study.py`, `scripts/run_shin2021.py` |
 | Shared live input reconstruction | `model_features()` and `gesturelab/camera/runtime.py` |
 
 The existing two training shortcuts and their default comparison remain
@@ -130,9 +130,19 @@ values unchanged; rotation generally changes them, which preserves tilt informat
 |---|---:|---|
 | `without_features` | 126 | Existing normalized image and world coordinates |
 | `with_features` | 207 | Existing coordinates plus 81 finger features |
+| `finger_features_only` | 81 | Existing finger features without coordinate inputs |
 | `shin2021_distance` | 190 | Table 2 distances, per-photo z-score |
 | `shin2021_angle` | 630 | Table 3 directed-pair axis cosines |
 | `shin2021_combined` | 820 | All 190 normalized distances, then all 630 cosines |
+| `shin2021_with_finger_features` | 901 | The same 820 Shin values followed by 81 finger values |
+| `all_features` | 1,027 | The same 820 Shin values, 126 normalized landmark values and 81 finger values |
+
+The last two inputs are **project extensions**, not methods or results attributed
+to the paper. Comparing 820 with 901 tests whether the finger representation adds
+predictive value beyond Shin's inputs. Finger features alone provide an additional
+reference. Comparing 901 with 1,027 tests whether adding the original landmark
+coordinates helps further. More input values do not guarantee better validation
+performance; judge the held-out predictions, per-letter errors and fold variation.
 
 All feature functions require finite 21×3 arrays and do not modify their input.
 An axis vector of length at most `1e-12` is undefined and rejected, rather than
@@ -147,7 +157,7 @@ invalid feature input, then continues processing later frames.
 
 Two explicit profiles are supported by `--classifier-profile`:
 
-- **`project` (default):** shared classifier hyperparameters across all five
+- **`project` (default):** shared classifier hyperparameters across all eight
   inputs. SVM keeps the project's RBF settings `C=10`, `gamma=scale` and balanced
   class weighting. LightGBM uses 31 leaves, learning rate 0.1, minimum child
   samples 20 and 100 estimators. These LightGBM choices are project defaults,
@@ -162,8 +172,9 @@ Two explicit profiles are supported by `--classifier-profile`:
 | Axis cosines | 1000 | 0.001 | 100 | 0.1 | 25 | 13 |
 | Combined | 1000 | scale | 100 | 0.1 | 25 | 14 |
 
-The paper has no corresponding preset for this project's existing 126/207-value
-inputs. Under `shin2021_asl`, these use the combined row as an explicit fallback.
+The paper has no corresponding preset for this project's existing 81/126/207-value
+inputs or the 901/1,027-value extensions. Under `shin2021_asl`, these use the
+combined row as an explicit fallback, not a tuned setting for the new combination.
 The paper does not specify class weights, seed, thread count or all LightGBM
 options. The paper profile uses no class weighting; this project sets the
 experiment seed, CPU execution, one LightGBM thread, deterministic mode and
@@ -190,7 +201,12 @@ training fold. The reserved test set must not guide feature or parameter choices
 
 The existing inputs use `StandardScaler` inside the SVM training pipeline, fitted
 only on the training rows of each fold. Paper inputs already define their own
-normalization; SVM receives them without a second scaler. LightGBM has no scaler.
+normalization; SVM receives them without a second scaler. The hybrid inputs pass
+these same 820 values through unchanged and fit a `StandardScaler` only on the
+added columns within each training fold: 81 finger columns for the 901-value
+input, and 207 landmark/finger columns for the 1,027-value input. This prevents
+finger joint angles in degrees from dominating unscaled axis cosines merely due
+to their units. LightGBM has no scaler.
 The fitted pipeline, exact feature-column order, input definition, parameters and
 input-code hashes are saved in `model.joblib`. Training and webcam inference both
 call the same registered extractor. No image/world selection occurs in the camera.
@@ -245,13 +261,14 @@ For the imported COCO export, acknowledge missing E/L test examples:
 python -m scripts.run_shin2021 --project data/asl --out experiments/shin2021_coco_01 --grouping source --folds 3 --allow-incomplete-test
 ```
 
-The command creates `svm/` and `lightgbm/` experiments, trains all five inputs and
+The command creates `svm/` and `lightgbm/` experiments, trains all eight inputs and
 writes `report.html`, `metrics.csv` and `shared_split.json` in the study directory.
 It verifies identical photo IDs, labels and fold assignments across classifiers.
 It does **not** evaluate the reserved test. Use a new output name for another run.
 There is no automatic subsampling. RBF SVM can require substantial time and
 memory on large datasets; `--models lightgbm` runs just that classifier with all
-five inputs if you want to run the classifiers separately.
+eight inputs if you want to run the classifiers separately. Use `--variants`
+to select a smaller set of at least two registered inputs.
 For a separate published-preset study, add `--classifier-profile shin2021_asl`
 and choose a different `--out`.
 
@@ -274,6 +291,19 @@ If data or labels changed, omit the template and make a fresh shared split.
 
 ### Split, train and compare individual stages
 
+For a focused test of the new combinations on all analyzed Kaggle photos, keep
+the original Shin experiment's assignments and run four inputs with SVM:
+
+```bash
+python -m scripts.run_shin2021 --project data/asl_kaggle --out experiments/shin2021_finger_kaggle_01 --models svm --variants finger_features_only shin2021_combined shin2021_with_finger_features all_features --grouping source --folds 3 --seed 42 --allow-no-test --split-from experiments/shin2021_kaggle_01/svm
+```
+
+This retrains all four inputs under the current code and shared classifier
+profile; it does not copy old models or weaken code-hash guards. Open
+`experiments/shin2021_finger_kaggle_01/report.html` for results. To repeat with
+LightGBM, use `--models lightgbm` and a new output directory. No independent
+test set is created from the duplicate Kaggle test photos.
+
 For example, prepare a fresh SVM experiment on the analyzed Kaggle dataset:
 
 ```bash
@@ -283,7 +313,10 @@ python -m scripts.train_with_features --experiment experiments/shin2021_svm_01
 python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant shin2021_distance
 python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant shin2021_angle
 python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant shin2021_combined
-python -m scripts.compare_results --experiment experiments/shin2021_svm_01 --variants without_features with_features shin2021_distance shin2021_angle shin2021_combined
+python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant finger_features_only
+python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant shin2021_with_finger_features
+python -m scripts.train_model --experiment experiments/shin2021_svm_01 --variant all_features
+python -m scripts.compare_results --experiment experiments/shin2021_svm_01 --variants without_features with_features finger_features_only shin2021_distance shin2021_angle shin2021_combined shin2021_with_finger_features all_features
 ```
 
 Use `--model lightgbm` and a new experiment directory for LightGBM. Add
@@ -325,7 +358,7 @@ After feature/classifier choices are fixed, explicitly evaluate a reserved set,
 for example in the COCO study:
 
 ```bash
-python -m scripts.compare_results --experiment experiments/shin2021_coco_01/svm --final-test --variants without_features with_features shin2021_distance shin2021_angle shin2021_combined
+python -m scripts.compare_results --experiment experiments/shin2021_coco_01/svm --final-test --variants without_features with_features finger_features_only shin2021_distance shin2021_angle shin2021_combined shin2021_with_finger_features all_features
 ```
 
 The output uses a separate `final_test_...` directory. Repeating an identical
@@ -346,6 +379,16 @@ hashes predate this update need retraining in a new experiment; no checks are
 disabled for compatibility. Raw/stabilized prediction, mirroring and keyboard
 controls retain their existing behavior.
 
+For a model from the focused combination run:
+
+```bash
+python -m apps.webcam predict --project data/asl_kaggle --model experiments/shin2021_finger_kaggle_01/svm/shin2021_with_finger_features/model.joblib
+```
+
+Replace the input directory with `all_features` for the 1,027-value model. Its
+saved pipeline applies the training-fitted scaling automatically; do not scale
+webcam values separately.
+
 ## Executed checks and limitations
 
 ```bash
@@ -354,16 +397,18 @@ python tests/smoke_shin2021.py --out examples/shin2021_software_test
 python tests/smoke_modular.py --out examples/original_workflow_check
 ```
 
-Use unused output directories. The full unit suite passed with **105 tests**.
+Use unused output directories. The full unit suite passed with **108 tests**.
 New tests cover known Euclidean distances and signed axis cosines, the literal
 Table 2 rows, feature counts/order, no input mutation, finite/shape validation,
 zero variance/vectors, translation/scale invariance and rotation sensitivity.
 They also test training-only fitted scaling, retained J/Z labels, participant
 separation, LightGBM presets/version recording, exact split-template reuse and
 rejection of changed data/folds, and real paper-model predictions through a fake
-camera session. Hardware is not needed for these checks.
+camera session. Hybrid tests also verify exact 901/1,027-value composition,
+source-code provenance, unchanged Shin values through preprocessing, and scaling
+of only the added columns on training rows. Hardware is not needed for these checks.
 
-The complete paper smoke run trained **all ten combinations** (five inputs ×
+The complete paper smoke run trained **all sixteen combinations** (eight inputs ×
 SVM/LightGBM), compared their shared CV assignments, checked the saved input
 columns against inference, generated CSV/PNG/HTML reports, and exercised a
 separate, reusable final evaluation on **synthetic** data. One development and
@@ -371,6 +416,34 @@ one test detection failure were simulated and verified. The existing workflow
 smoke run also passed.
 
 These synthetic scores are software checks, not measured ASL recognition rates.
-No new large real-data benchmark or physical webcam session was run as part of
-this implementation. A proper comparison requires your analyzed ASL dataset,
-its grouped development data and an independent test set where available.
+Physical webcam operation was not tested by these automated checks.
+
+## Measured Kaggle combination experiment
+
+The focused SVM run at `experiments/shin2021_finger_kaggle_01` was completed on
+all **60,251 successfully detected photos**, with **all 26 letters**. It reused
+the exact IDs and three source-grouped folds of `shin2021_kaggle_01/svm` through
+`--split-from`. All four models were trained again under the current code and
+the shared `project` profile. The 820-value reference reproduced the original
+held-out predictions.
+
+| Input | Values | Mean CV accuracy | Mean CV macro-F1 | Macro-F1 SD |
+|---|---:|---:|---:|---:|
+| Finger features only | 81 | 0.9371 | 0.9321 | 0.0292 |
+| Shin combined | 820 | 0.9743 | 0.9716 | 0.0135 |
+| Shin + finger features | 901 | 0.9736 | 0.9708 | 0.0135 |
+| Landmarks + Shin + finger features | 1,027 | 0.9729 | 0.9697 | 0.0142 |
+
+With these settings, adding finger features did not improve the average score;
+adding all input sources also did not improve it. These small differences are
+not evidence of statistical significance or a claim that combinations cannot
+help under other settings or data. This run does not search hyperparameters or
+establish independent person-level accuracy. All scores are development CV;
+the duplicate supplied test photos were not evaluated as an independent test.
+The 17,749 original detection failures remain outside these classifier scores.
+
+The study's `report.html` summarizes the four methods. Its classifier report
+also contains per-letter scores/confusion matrices, fold scores, timings,
+aligned per-photo predictions and all six pairwise error comparisons. The
+`metrics.csv` file retains full precision. LightGBM supports the same inputs and
+passes the synthetic checks, but this measured combination benchmark used SVM.

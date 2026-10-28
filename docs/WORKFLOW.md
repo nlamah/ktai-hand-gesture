@@ -1,5 +1,11 @@
 # Workflow — training data → finger inspection → two models → comparison
 
+For the SVM/Shin webcam study, follow the
+[practical research protocol](RESEARCH_PROTOCOL.md): same-frame live A/B,
+viewpoint recordings, a selected development-data refit and a separately sealed
+final test. For read-only checks of existing experiments and one-variant replay,
+see [VALIDATION.md](VALIDATION.md).
+
 The separate components share one dataset. You do not need to record videos:
 the webcam saves individual photos. The classifier learns letter labels from
 the landmarks in your own photos. The supplied drawings are recording guides.
@@ -156,8 +162,9 @@ NGT; use the [ASL chart](../assets/asl_alphabet.jpg) for ASL pose guidance.
 
 ### Compare the Shin 2021 method on the same external photos
 
-After import and analysis, compare both existing inputs with the three paper
-inputs (190 distances, 630 axis cosines, 820 combined) using SVM and LightGBM:
+After import and analysis, compare the existing inputs, finger features alone,
+the three paper inputs (190 distances, 630 axis cosines, 820 combined), and the
+Shin/finger (901) and full (1,027) combinations using SVM and LightGBM:
 
 ```bash
 python -m scripts.run_shin2021 --project data/asl_kaggle --out experiments/shin2021_kaggle_01 --grouping source --folds 3 --allow-no-test

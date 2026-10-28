@@ -26,6 +26,7 @@ class TrainingInput:
     dependencies: tuple[str, ...] = ()
     standardize: bool = True
     definition: str = 'project'
+    scaled_prefixes: tuple[str, ...] = ()
 
     def columns(self, available):
         # Prefix order explicitly defines the model's column order.
@@ -58,7 +59,8 @@ class TrainingInput:
 
 DEFAULT_VARIANTS = ('without_features', 'with_features')
 PAPER_VARIANTS = ('shin2021_distance', 'shin2021_angle', 'shin2021_combined')
-PAPER_COMPARISON = DEFAULT_VARIANTS + PAPER_VARIANTS
+HYBRID_VARIANTS = ('shin2021_with_finger_features', 'all_features')
+PAPER_COMPARISON = DEFAULT_VARIANTS + ('finger_features_only',) + PAPER_VARIANTS + HYBRID_VARIANTS
 TRAINING_INPUTS = {
     'finger_features_only': TrainingInput(
         title='Finger features only', extractors=(finger_features_for_sample,),
@@ -84,6 +86,17 @@ TRAINING_INPUTS = {
     'shin2021_combined': TrainingInput(
         'Shin 2021: distances + axis cosines', (combined_for_sample,), ('shin_dist_', 'shin_angle_'), 820,
         standardize=False, definition=VERSION,
+    ),
+    'shin2021_with_finger_features': TrainingInput(
+        'Shin 2021 + finger features', (combined_for_sample, finger_features_for_sample),
+        ('shin_dist_', 'shin_angle_', 'geom_'), 901, standardize=False,
+        definition=VERSION + '+finger-v1', scaled_prefixes=('geom_',),
+    ),
+    'all_features': TrainingInput(
+        'Landmarks + Shin 2021 + finger features',
+        (combined_for_sample, landmarks_for_sample, finger_features_for_sample),
+        ('shin_dist_', 'shin_angle_', 'norm_', 'world_', 'geom_'), 1027, standardize=False,
+        definition=VERSION + '+landmark-finger-v1', scaled_prefixes=('norm_', 'world_', 'geom_'),
     ),
 }
 
@@ -124,6 +137,8 @@ def model_input_metadata(variant, thresholds, code_hashes):
         'feature_config': thresholds,
         'feature_version': FEATURE_VERSION,
         'input_definition': training_input(variant).definition,
+        'input_preprocessing': {'standardize': training_input(variant).standardize,
+                                'scaled_prefixes': training_input(variant).scaled_prefixes},
         'feature_code_hashes': {name: code_hashes[name] for name in sorted(sources)},
     }
 

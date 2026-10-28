@@ -1,4 +1,4 @@
-"""Synthetic end-to-end check for five inputs, both classifiers, reports and inference."""
+"""Synthetic end-to-end check for eight inputs, both classifiers, reports and inference."""
 import argparse
 import json
 from pathlib import Path
@@ -30,7 +30,7 @@ def _synthetic_failures(project):
 
 def _verify_inputs(experiment, plan, records):
     sample = records[plan['development_ids'][0]]
-    for variant, count in zip(PAPER_COMPARISON, (126, 207, 190, 630, 820)):
+    for variant, count in zip(PAPER_COMPARISON, (126, 207, 81, 190, 630, 820, 901, 1027)):
         folder = experiment / variant
         bundle = joblib.load(folder / 'model.joblib')
         validate_model_input(bundle)
@@ -48,8 +48,8 @@ def _verify_reports(experiment, plan, records):
     cv = compare_variants(experiment, variants=PAPER_COMPARISON)
     final = compare_variants(experiment, final_test=True, variants=PAPER_COMPARISON)
     assert compare_variants(experiment, final_test=True, variants=PAPER_COMPARISON) == final
-    assert len(pd.read_csv(cv / 'cv_folds.csv')) == 15
-    assert len(pd.read_csv(cv / 'pairwise_comparisons.csv')) == 10
+    assert len(pd.read_csv(cv / 'cv_folds.csv')) == 24
+    assert len(pd.read_csv(cv / 'pairwise_comparisons.csv')) == 28
     assert not (final / 'cv_folds.csv').exists()
     for variant in PAPER_COMPARISON:
         predictions = pd.read_csv(final / (variant + '_predictions.csv'))
@@ -79,8 +79,8 @@ def main():
         _verify_inputs(experiment, plan, records)
         _verify_reports(experiment, plan, records)
     assert assignments[0] == assignments[1]
-    assert len(pd.read_csv(study / 'metrics.csv')) == 10
-    print('SYNTHETIC SOFTWARE TEST PASSED: five inputs, SVM/LightGBM, shared IDs/folds, detection failures, reports, inference.')
+    assert len(pd.read_csv(study / 'metrics.csv')) == 16
+    print('SYNTHETIC SOFTWARE TEST PASSED: eight inputs, SVM/LightGBM, shared IDs/folds, detection failures, reports, inference.')
     print('These scores do not measure real ASL performance.')
     print(study / 'report.html')
 

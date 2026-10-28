@@ -49,3 +49,10 @@ copyrighted; it is not a public-domain asset. Accessed: 27 October 2026.
 
 The ASL chart is separate from `assets/alphabet/`, which still contains the NGT
 recording references. Neither the chart nor its drawings are training samples.
+
+The native research protocol displays per-letter regions of this unchanged ASL
+chart. Display coordinates are defined in `gesturelab/research/protocol.py` and
+copied into each immutable protocol with the chart hash and attribution. The
+regions were visually inspected by Codex; researcher review of execution/label
+validity is still required. Movement arrows for J/Z are retained. The original
+image is not edited and missing alphabet-specific images have no NGT fallback.

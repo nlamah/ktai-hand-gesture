@@ -88,6 +88,29 @@ class TrainingInputTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unknown training input variant'):
             training_input('misspelled')
 
+    def test_hybrid_inputs_are_exact_compositions_of_the_existing_measurements(self):
+        paper = training_input('shin2021_combined').features(self.sample, None)
+        finger = training_input('finger_features_only').features(self.sample, None)
+        landmarks = training_input('without_features').features(self.sample, None)
+        hybrid = training_input('shin2021_with_finger_features').features(self.sample, None)
+        full = training_input('all_features').features(self.sample, None)
+        self.assertEqual(len(hybrid), 901)
+        self.assertEqual(len(full), 1027)
+        self.assertEqual(hybrid, {**paper, **finger})
+        self.assertEqual(full, {**paper, **landmarks, **finger})
+        self.assertEqual(list(hybrid)[:820], list(paper))
+        self.assertEqual(list(full)[:820], list(paper))
+        self.assertFalse(any(name.startswith('raw_') for name in full))
+
+    def test_hybrid_provenance_tracks_every_extractor_it_actually_uses(self):
+        hashes = code_hashes()
+        hybrid = model_input_metadata('shin2021_with_finger_features', None, hashes)
+        full = model_input_metadata('all_features', None, hashes)
+        required = {'features/paper_shin2021.py', 'features/finger_features.py'}
+        self.assertTrue(required <= hybrid['feature_code_hashes'].keys())
+        self.assertNotIn('features/landmark_features.py', hybrid['feature_code_hashes'])
+        self.assertTrue(required | {'features/landmark_features.py'} <= full['feature_code_hashes'].keys())
+
 
 if __name__ == '__main__':
     unittest.main()

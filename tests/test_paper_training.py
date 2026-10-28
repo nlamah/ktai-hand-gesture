@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.demo import skeleton
 from gesturelab.camera.runtime import _CameraSession
 from gesturelab.datasets.data import add_image, atomic_json, read_manifest
-from gesturelab.features.training_inputs import PAPER_COMPARISON, model_features, validate_model_input
+from gesturelab.features.training_inputs import PAPER_COMPARISON, PAPER_VARIANTS, model_features, validate_model_input
 from gesturelab.training.classifiers import classifier_parameters, estimator
 from gesturelab.training.comparison import compare_variants
 from gesturelab.training.experiment_plan import prepare_experiment, load_experiment
@@ -48,14 +48,14 @@ class PaperTrainingTests(unittest.TestCase):
         self.experiment = prepare_experiment(self.project, self.root / 'experiment',
                                              folds=3, grouping='participant', model='svm')
 
-    def test_all_five_inputs_keep_j_z_ids_person_groups_and_live_column_order(self):
+    def test_all_inputs_keep_j_z_ids_person_groups_and_live_column_order(self):
         _, _, plan, records = load_experiment(self.experiment)
         self.assertEqual(plan['labels'], ['A', 'J', 'Z'])
         for fold in plan['folds']:
             train = {records[i]['participant'] for i in fold['train_ids']}
             valid = {records[i]['participant'] for i in fold['validation_ids']}
             self.assertFalse(train & valid)
-        for variant, count in zip(PAPER_COMPARISON, (126, 207, 190, 630, 820)):
+        for variant, count in zip(PAPER_COMPARISON, (126, 207, 81, 190, 630, 820, 901, 1027)):
             folder = train_variant(self.experiment, variant)
             bundle = joblib.load(folder / 'model.joblib')
             validate_model_input(bundle)
@@ -66,9 +66,9 @@ class PaperTrainingTests(unittest.TestCase):
             self.assertEqual(list(live), bundle['config']['columns'])
             np.testing.assert_allclose(list(live.values()), matrix.loc[sample['id']].to_numpy(), atol=1e-12)
         report = compare_variants(self.experiment, variants=PAPER_COMPARISON)
-        self.assertEqual(pd.read_csv(report / 'metrics.csv').n_features.tolist(), [126, 207, 190, 630, 820])
-        self.assertEqual(len(pd.read_csv(report / 'cv_folds.csv')), 15)
-        self.assertEqual(len(pd.read_csv(report / 'pairwise_comparisons.csv')), 10)
+        self.assertEqual(pd.read_csv(report / 'metrics.csv').n_features.tolist(), [126, 207, 81, 190, 630, 820, 901, 1027])
+        self.assertEqual(len(pd.read_csv(report / 'cv_folds.csv')), 24)
+        self.assertEqual(len(pd.read_csv(report / 'pairwise_comparisons.csv')), 28)
         self.assertTrue((report / 'detection_counts.csv').exists())
 
     def test_preprocessing_statistics_are_fit_on_each_fold_training_rows_only(self):
@@ -85,7 +85,7 @@ class PaperTrainingTests(unittest.TestCase):
             train_variant(self.experiment, 'shin2021_angle')
 
     def test_published_presets_and_controlled_project_profile_are_distinct(self):
-        for variant, rounds in zip(PAPER_COMPARISON[-3:], (12, 13, 14)):
+        for variant, rounds in zip(PAPER_VARIANTS, (12, 13, 14)):
             parameters = classifier_parameters('lightgbm', variant, 'shin2021_asl')
             self.assertEqual((parameters['num_leaves'], parameters['min_child_samples']), (100, 25))
             self.assertEqual(parameters['n_estimators'], rounds)
@@ -100,7 +100,7 @@ class PaperTrainingTests(unittest.TestCase):
                                         grouping='participant', model='lightgbm', classifier_profile='shin2021_asl')
         _, _, plan, _ = load_experiment(experiment)
         self.assertIn('lightgbm', plan['classifier_versions'])
-        for variant, rounds in zip(PAPER_COMPARISON[-3:], (12, 13, 14)):
+        for variant, rounds in zip(PAPER_VARIANTS, (12, 13, 14)):
             folder = train_variant(experiment, variant)
             bundle = joblib.load(folder / 'model.joblib')
             self.assertEqual(bundle['estimator'].n_estimators, rounds)
@@ -180,6 +180,25 @@ class PaperTrainingTests(unittest.TestCase):
         _, _, plan, _ = load_experiment(target)
         self.assertEqual(plan['labels'], ['A', 'J', 'Z'])
         self.assertEqual(plan['test_ids'], [])
+
+    def test_hybrid_scaling_fits_added_columns_only_and_preserves_all_shin_values(self):
+        from sklearn.preprocessing import StandardScaler
+        observed = []
+        original = StandardScaler.fit
+        def record_fit(scaler, data, *args, **kwargs):
+            observed.append(data.shape)
+            return original(scaler, data, *args, **kwargs)
+        with patch.object(StandardScaler, 'fit', new=record_fit):
+            folder = train_variant(self.experiment, 'shin2021_with_finger_features')
+        self.assertEqual(observed, [(6, 81), (6, 81), (6, 81), (9, 81)])
+        bundle = joblib.load(folder / 'model.joblib')
+        matrix = pd.read_csv(folder / 'training_features.csv', index_col=0).to_numpy()
+        preprocessor = bundle['estimator'].steps[0][1]
+        transformed = preprocessor.transform(matrix)
+        np.testing.assert_array_equal(transformed[:, :820], matrix[:, :820])
+        scaler = preprocessor.named_transformers_['additions']
+        np.testing.assert_allclose(scaler.mean_, matrix[:, 820:].mean(axis=0), atol=1e-12)
+        self.assertEqual(bundle['input_preprocessing']['scaled_prefixes'], ('geom_',))
 
 
 if __name__ == '__main__':

@@ -1,8 +1,14 @@
 # Hand-gesture Lab 4 — separate steps, inspectable code
 
 Read [WORKFLOW.md](docs/WORKFLOW.md) for the complete workflow and commands.
-This project investigates whether explicit geometric finger features improve
-recognition of Dutch manual-alphabet poses from your own photographs.
+For the practical guide to the SVM/Shin webcam study, development/test
+capture, A/B comparison and a selected improvement, read
+[RESEARCH_PROTOCOL.md](docs/RESEARCH_PROTOCOL.md).
+The read-only experiment audit and one-variant replay are in
+[VALIDATION.md](docs/VALIDATION.md).
+This project compares landmark representations for manual-alphabet pose
+classification. It supports your own Dutch manual-alphabet photos, imported
+ASL datasets and a separate webcam study using a fixed SVM/Shin baseline.
 
 | Component | Command or file |
 |---|---|
@@ -17,7 +23,7 @@ recognition of Dutch manual-alphabet poses from your own photographs.
 | Evaluate both models on reserved test photos | Add `--final-test` to the comparison command |
 | Try a trained model with the webcam | `python -m apps.webcam predict --project data/ngt --model experiments/ngt_01/with_features/model.joblib` |
 
-Both variants receive the same 21 image landmarks and 21 estimated world
+In the basic two-variant experiment, both receive the same 21 image landmarks and 21 estimated world
 landmarks: 126 normalized coordinates. The second receives 81 additional
 geometric features, for 207 inputs. Images, splits, classifier, settings and
 normalization are otherwise identical. SVM is the default;
@@ -48,7 +54,9 @@ ktai-hand-gesture/
 │   ├── datasets/
 │   ├── features/
 │   ├── training/
-│   └── camera/
+│   ├── camera/
+│   ├── research/   # Protocol capture, live A/B, selected refit and fixed tests
+│   └── validation/ # Independent feature/split/score audit and one-run replay
 ├── tests/          # Unit tests and complete synthetic workflow check
 ├── assets/         # Alphabet references and attribution
 ├── config/         # Configuration defaults
@@ -135,6 +143,9 @@ Three independent inputs implement the distance/axis method from Shin et al.:
 190 distance values, 630 axis cosines and 820 combined values. They can be
 compared with the existing 126/207-value inputs on identical photo IDs and
 grouped folds, using SVM and LightGBM. No letters are automatically excluded.
+The comparison also includes finger features alone (81), Shin plus finger
+features (901), and all three sources together (1,027). The 820-versus-901
+comparison tests whether the finger features add value beyond the Shin inputs.
 
 For the already imported and analyzed Kaggle data:
 

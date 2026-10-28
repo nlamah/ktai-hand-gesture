@@ -172,7 +172,7 @@ NGT recording workflow in [WORKFLOW.md](WORKFLOW.md).
 
 ## Reuse the dataset and train another experiment
 
-For the five-input SVM/LightGBM comparison based on the article, follow
+For the eight-input SVM/LightGBM comparison, including Shin/finger combinations, follow
 [PAPER_SHIN2021.md](PAPER_SHIN2021.md). It reuses these stored landmarks and can
 copy verified assignments with `--split-from` into a fresh experiment. No letters
 are automatically excluded by that method.

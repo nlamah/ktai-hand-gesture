@@ -34,6 +34,8 @@ rather than trusting previously cached feature values.
 | `shin2021_distance` | Table 2 distances with per-photo z-score | 190 |
 | `shin2021_angle` | Directed-pair x/y/z axis cosines | 630 |
 | `shin2021_combined` | Paper distances followed by axis cosines | 820 |
+| `shin2021_with_finger_features` | Shin combined values plus 81 finger features | 901 |
+| `all_features` | Shin combined values plus 126 landmark and 81 finger values | 1,027 |
 
 See [PAPER_SHIN2021.md](PAPER_SHIN2021.md) for the paper's exact pairs, coordinate
 choice and documented ambiguities. All inputs share the selected photo IDs;
@@ -67,8 +69,14 @@ such as `comparison_cv_without_features_vs_finger_features_only`. In result JSON
 For three or more inputs, pass every desired name to `--variants`. The report
 adds a wide per-photo comparison and `pairwise_comparisons.csv` for every pair;
 the default two-input output retains its established field names. The
-`scripts.run_shin2021` command runs both classifiers with all five comparison
+`scripts.run_shin2021` command runs both classifiers with all eight comparison
 inputs and verifies identical assignments across classifiers.
+Use its `--variants` option to choose a focused comparison, for example
+`finger_features_only shin2021_combined shin2021_with_finger_features all_features`.
+The 901-value input versus the 820-value input isolates the addition of finger
+features to the Shin representation; the 1,027-value input additionally includes
+the baseline landmark coordinates. These are project extensions, not features
+or results claimed by the paper.
 
 Only after all choices are fixed, add `--final-test`. Comparing many variants
 on the final test and selecting the best would turn that test into tuning data.
@@ -133,6 +141,11 @@ classifiers. Paper inputs set it to false because their input definition already
 specifies per-photo distance normalization and unscaled axis cosines. Their
 `definition` string records that convention in the model; it does not change
 the baseline's preprocessing. The fitted pipeline is saved with the classifier.
+Hybrid inputs use `scaled_prefixes` to scale only their added columns inside the
+training fold: `geom_` for the 901-value input; `norm_`, `world_` and `geom_` for
+the 1,027-value input. The first 820 Shin values pass through unchanged. LightGBM
+does not use this scaler. Both composition and scaling selection belong to the
+input definition; the camera continues to call the same reconstruction interface.
 
 ## Verify the experiment
 

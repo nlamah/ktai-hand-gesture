@@ -2,6 +2,7 @@
 from importlib.metadata import version
 
 from sklearn.dummy import DummyClassifier
+from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
@@ -57,15 +58,29 @@ def _lightgbm(parameters):
     return LGBMClassifier(**parameters)
 
 
-def estimator(name, n_train=100, seed=42, variant=None, profile='project'):
+def _preprocessor(variant, columns):
+    spec = training_input(variant) if variant is not None else None
+    if spec is not None and spec.scaled_prefixes:
+        if columns is None:
+            raise ValueError('Column names are required for selective input scaling.')
+        scaled = [i for i, column in enumerate(columns) if column.startswith(spec.scaled_prefixes)]
+        unscaled = [i for i in range(len(columns)) if i not in scaled]
+        if not scaled:
+            raise ValueError('No columns match the input scaling definition.')
+        return ColumnTransformer([('paper', 'passthrough', unscaled),
+                                  ('additions', StandardScaler(), scaled)], sparse_threshold=0)
+    return StandardScaler() if spec is None or spec.standardize else None
+
+
+def estimator(name, n_train=100, seed=42, variant=None, profile='project', columns=None):
     """Keep learned scaling inside each fit; paper inputs already define their own normalization."""
     parameters = classifier_parameters(name, variant, profile, n_train, seed)
     factories = {'knn': KNeighborsClassifier, 'svm': SVC, 'logistic': LogisticRegression,
                  'random_forest': RandomForestClassifier, 'decision_tree': DecisionTreeClassifier,
                  'dummy': DummyClassifier, 'lightgbm': _lightgbm}
     model = _lightgbm(parameters) if name == 'lightgbm' else factories[name](**parameters)
-    scale = variant is None or training_input(variant).standardize
-    return make_pipeline(StandardScaler(), model) if name in ('knn', 'svm', 'logistic') and scale else model
+    preprocessing = _preprocessor(variant, columns) if name in ('knn', 'svm', 'logistic') else None
+    return make_pipeline(preprocessing, model) if preprocessing is not None else model
 
 
 def classifier_versions(name):
