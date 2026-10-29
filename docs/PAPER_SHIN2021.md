@@ -14,6 +14,124 @@ some details unspecified and contains inconsistencies; the choices below are
 part of the implementation. No letters are automatically excluded, including
 J and Z. A still image does not capture their complete motion.
 
+## Start from scratch: Kaggle ASL Alphabet
+
+These steps download the data, create the Python environment, calculate
+MediaPipe landmarks and run a focused Shin-feature comparison. Run commands
+from the repository root (`ktai-hand-gesture`). The resulting study uses the
+Kaggle ASL Alphabet dataset; it is not the NGT dataset or the data used to
+produce the paper's published scores.
+
+### 1. Get the code and create the environment
+
+If you do not already have the repository, clone it and enter its folder:
+
+```bash
+git clone https://github.com/nlamah/ktai-hand-gesture.git
+cd ktai-hand-gesture
+```
+
+Create and activate the Conda environment from the project manifest:
+
+```bash
+conda env create -f environment.yml
+conda activate ktai-hand-gesture
+```
+
+If the environment already exists, activate it and update its Python packages:
+
+```bash
+conda activate ktai-hand-gesture
+python -m pip install -r requirements.txt
+```
+
+### 2. Download and extract the dataset
+
+Download the **ASL Alphabet** dataset from
+[Kaggle: grassknoted/asl-alphabet](https://www.kaggle.com/datasets/grassknoted/asl-alphabet).
+Kaggle may require an account. Download the dataset archive from its page and
+extract it so the folders have this layout (the repeated folder name is
+intentional):
+
+```text
+data/external/archive-kaggle/
+├── asl_alphabet_train/
+│   └── asl_alphabet_train/
+│       ├── A/ ... Z/
+└── asl_alphabet_test/
+    └── asl_alphabet_test/
+        ├── A_test.jpg ... Z_test.jpg
+```
+
+The training folders contain the A–Z photos. The 26 supplied test photos in
+this download are exact pixel duplicates of training photos, so they cannot
+serve as an independent test set. Check the dataset's Kaggle page for its
+current license and terms.
+
+### 3. Import the photos and calculate landmarks
+
+Import the extracted files into the project's dataset format, excluding the
+overlapping test copies:
+
+```bash
+python -m scripts.import_kaggle_dataset \
+  --source data/external/archive-kaggle \
+  --project data/asl_kaggle \
+  --exclude-overlapping-test
+```
+
+Calculate and save MediaPipe landmarks for the imported photos:
+
+```bash
+python -m scripts.analyze_dataset \
+  --project data/asl_kaggle \
+  --checkpoint-every 1000 \
+  --no-cache-features
+```
+
+The first analysis downloads the MediaPipe Hand Landmarker model if it is not
+already present. Review the printed counts: only photos with successful,
+single-hand detections enter development cross-validation; failures remain
+recorded in the dataset.
+
+### 4. Run the Shin feature comparison
+
+This focused run compares Shin distances, axis cosines and the combined
+820-feature input, using the project's SVM profile and three source-grouped
+cross-validation folds:
+
+```bash
+python -m scripts.run_shin2021 \
+  --project data/asl_kaggle \
+  --out experiments/shin2021_kaggle_01 \
+  --models svm \
+  --variants shin2021_distance shin2021_angle shin2021_combined \
+  --grouping source \
+  --folds 3 \
+  --allow-no-test
+```
+
+`--out` must be a new directory; use a different name for another run. When it
+finishes, open `experiments/shin2021_kaggle_01/report.html`. The report and
+machine-readable results are saved there. This is a grouped development
+cross-validation comparison, not a final-test evaluation or a reproduction of
+Shin et al.'s scores. The source groups are filename blocks, not verified
+participants or recording sessions.
+
+For the complete study, omit `--models` and `--variants` to use the script's
+defaults: two classifiers and all eight project input variants. This can take
+substantially longer and require more memory. On macOS, install the OpenMP
+runtime before including LightGBM:
+
+```bash
+conda install -n ktai-hand-gesture -c conda-forge llvm-openmp
+```
+
+To use the fixed classifier parameters reported by Shin instead of the
+project's default profile, add `--classifier-profile shin2021_asl` and choose a
+new output directory. This is still an application of the feature method to
+this dataset, not a reproduction of the paper's experiment.
+
 ## Implementation map
 
 | Component | File |
