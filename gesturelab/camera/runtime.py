@@ -27,6 +27,7 @@ from gesturelab.datasets.data import (Detector, add_image, atomic_json, decode_i
 from gesturelab.training.experiments import predict_bundle
 from gesturelab.features.inspection import FEATURE_VERSION
 from gesturelab.features.training_inputs import model_features, validate_model_input
+from gesturelab.features.asl_models import INPUT_MODE, model_features_for_asl_bundle
 from gesturelab.training.rules import UNKNOWN
 
 
@@ -323,7 +324,10 @@ class _CameraSession:
             if self.result['status'] == 'ok':
                 sample = {**self.result, 'width': frame.width, 'height': frame.height}
                 try:
-                    values = model_features(self.bundle, sample)
+                    if self.bundle.get('input_mode') == INPUT_MODE:
+                        values = model_features_for_asl_bundle(self.bundle, sample)
+                    else:
+                        values = model_features(self.bundle, sample)
                 except ValueError as error:
                     self.result.update(status='invalid_features', error=str(error))
                 else:

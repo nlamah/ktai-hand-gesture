@@ -6,6 +6,7 @@ import joblib
 from sklearn.svm import SVC
 
 from gesturelab.features.training_inputs import model_features, validate_model_input
+from gesturelab.features.asl_models import INPUT_MODE, model_features_for_asl_bundle
 from gesturelab.training.experiments import predict_bundle
 from gesturelab.training.distance_weighting import weighting_metadata
 from gesturelab.validation.report import read_json, sha256, write_json
@@ -116,7 +117,11 @@ class ModelHandle:
         return cls(metadata, bundle)
 
     def predict(self, detection, width, height):
-        values = model_features(self.bundle, {**detection, 'width': width, 'height': height})
+        sample = {**detection, 'width': width, 'height': height}
+        if self.bundle.get('input_mode') == INPUT_MODE:
+            values = model_features_for_asl_bundle(self.bundle, sample)
+        else:
+            values = model_features(self.bundle, sample)
         return str(predict_bundle(self.bundle, [values])[0])
 
 

@@ -80,6 +80,9 @@ always selects Random Forest; it has no `--model` option.
 
 ## Grouping and evaluation limits
 
+To compare MediaPipe confidence thresholds without changing this imported
+dataset, see [Tuning MediaPipe hand-detection thresholds](DETECTOR_TUNING.md).
+
 The download has no reliable participant or recording-session metadata. The
 participant is recorded as `unknown`. Consecutive numbered training photos are
 kept together in blocks of 500 per letter: A1–A500 and B1–B500, for example, belong

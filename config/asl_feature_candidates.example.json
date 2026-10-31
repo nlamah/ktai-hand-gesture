@@ -1,0 +1,16 @@
+{
+  "candidates": [
+    {},
+    {
+      "flexion": {
+        "extended_min_deg": 155.0,
+        "bent_max_deg": 120.0
+      }
+    },
+    {
+      "spread": {
+        "minimum_spread_ratio": 0.5
+      }
+    }
+  ]
+}

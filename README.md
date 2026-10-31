@@ -13,6 +13,14 @@ To train on original and reflected landmarks for left/right-hand robustness,
 see [MIRROR_TRAINING.md](docs/MIRROR_TRAINING.md).
 For a controlled MLP-versus-SVM comparison on the original Shin inputs and folds,
 see [MLP_TRAINING.md](docs/MLP_TRAINING.md).
+For the label-independent ASL categorical feature schema and editable reference matrix,
+see [ASL_FEATURE_MATRIX.md](docs/ASL_FEATURE_MATRIX.md).
+For the complete local ASL import, annotation, calibration and model workflow,
+see [LOKAAL_STAPPENPLAN.md](docs/LOKAAL_STAPPENPLAN.md).
+For real-time webcam checks against an entered letter, see
+[ASL_LIVE_FEATURE_CHECK.md](docs/ASL_LIVE_FEATURE_CHECK.md).
+For blind, independent per-image feature labels and inter-annotator agreement,
+see the annotation section in the same guide.
 This project compares landmark representations for manual-alphabet pose
 classification. It supports your own Dutch manual-alphabet photos, imported
 ASL datasets and a separate webcam study using a fixed SVM/Shin baseline.
@@ -21,6 +29,15 @@ ASL datasets and a separate webcam study using a fixed SVM/Shin baseline.
 |---|---|
 | Collect training photos using alphabet references | `python -m streamlit run apps/collect_app.py -- --project data/ngt` |
 | Inspect and assess finger features and thresholds | `python -m streamlit run apps/feature_check_app.py -- --project data/ngt` |
+| Review and edit the ASL letter-feature reference matrix | `python -m streamlit run apps/asl_feature_matrix_app.py` |
+| Blindly annotate visible ASL features in development photos | `python -m streamlit run apps/asl_feature_annotation_app.py` |
+| Compare webcam features with a typed ASL letter | `python -m streamlit run apps/asl_live_feature_check_app.py --server.address 127.0.0.1 --server.port 8503` |
+| Freeze grouped ASL calibration roles | `python -m scripts.prepare_asl_roles --project data/asl_kaggle --out exports/asl_feature_roles.json` |
+| Calibrate categorical thresholds from human annotations | `python -m scripts.calibrate_asl_features --project data/asl_kaggle --role-map exports/asl_feature_roles.json --candidates config/asl_feature_candidates.example.json --out experiments/asl_feature_calibration_01` |
+| Train or validate an ASL categorical route | `python -m scripts.train_asl_categorical --project data/asl_kaggle --role-map exports/asl_feature_roles.json --model svm --out experiments/asl_categorical_svm_01` |
+| Compare ASL model routes on the same validation split | `python -m scripts.compare_asl_models --run categorical=experiments/asl_categorical_svm_01 --run shin=experiments/asl_shin_svm_01 --out exports/asl_comparison_01` |
+| Compute grouped permutation importance | `python -m scripts.analyze_asl_feature_importance --run experiments/asl_categorical_svm_01 --out exports/asl_importance_01` |
+| Run categorical feature ablations | `python -m scripts.ablate_asl_features --run experiments/asl_categorical_svm_01 --out experiments/asl_ablation_01` |
 | Read or modify feature calculations | `gesturelab/features/finger_features.py` |
 | Export precision/recall of manual finger assessments | `python -m scripts.evaluate_features --project data/ngt` |
 | Freeze a shared experiment split | `python -m scripts.prepare_split --project data/ngt --out experiments/ngt_01` |
@@ -117,6 +134,10 @@ the importer for its format:
 |---|---|---|
 | Roboflow COCO export | `data/external/asl_letters_v1/` with `train/`, `valid/` and `test/` | [ASL_TRAINING.md](docs/ASL_TRAINING.md) |
 | Kaggle ASL Alphabet | `data/external/archive-kaggle/` with the alphabet train/test folders | [KAGGLE_TRAINING.md](docs/KAGGLE_TRAINING.md) |
+| Another sourced A–Z dataset | Local image folder plus explicit CSV | [ASL_FEATURE_MATRIX.md](docs/ASL_FEATURE_MATRIX.md#second-dataset-csv-adapter) |
+
+To compare landmark-derived hand features with the per-letter Excel reference
+sheet on the COCO training split, see [ASL landmark feature review](docs/ASL_LANDMARK_FEATURE_REVIEW.md).
 
 For the extracted Kaggle dataset, this command imports all 78,000 letter photos,
 calculates landmarks, trains both Random Forest variants and creates a comparison:

@@ -137,7 +137,8 @@ def _store_image(project, data, filename, image, pixel_hash):
 def _attach_analysis(sample, analysis):
     if analysis is not None:
         keys = ('status', 'n_hands', 'mediapipe_version', 'feature_version', 'image_landmarks',
-                'world_landmarks', 'features', 'handedness', 'handedness_score', 'error')
+                'world_landmarks', 'features', 'handedness', 'handedness_score',
+                'detector_thresholds', 'error')
         sample.update({key: analysis[key] for key in keys if key in analysis})
 
 
@@ -209,21 +210,35 @@ def model_path():
     return path
 
 
+def _validate_detector_thresholds(min_hand_detection_confidence, min_hand_presence_confidence):
+    for name, value in (("min_hand_detection_confidence", min_hand_detection_confidence),
+                        ("min_hand_presence_confidence", min_hand_presence_confidence)):
+        if not isinstance(value, (int, float)) or not 0 <= value <= 1:
+            raise ValueError(f"{name} must be between 0 and 1.")
+
+
 class Detector:
-    def __init__(self):
+    def __init__(self, min_hand_detection_confidence=.5, min_hand_presence_confidence=.5):
+        _validate_detector_thresholds(min_hand_detection_confidence, min_hand_presence_confidence)
         import mediapipe as mp
         self.mp = mp
+        self.thresholds = {
+            "min_hand_detection_confidence": min_hand_detection_confidence,
+            "min_hand_presence_confidence": min_hand_presence_confidence,
+        }
         self.options = mp.tasks.vision.HandLandmarkerOptions(
             base_options=mp.tasks.BaseOptions(model_asset_path=str(model_path())),
             running_mode=mp.tasks.vision.RunningMode.IMAGE, num_hands=2,
-            min_hand_detection_confidence=.5, min_hand_presence_confidence=.5)
+            min_hand_detection_confidence=min_hand_detection_confidence,
+            min_hand_presence_confidence=min_hand_presence_confidence)
         self.model = mp.tasks.vision.HandLandmarker.create_from_options(self.options)
 
     def analyze(self, image):
         rgb = np.asarray(image.convert("RGB"), dtype=np.uint8).copy()
         result = self.model.detect(self.mp.Image(image_format=self.mp.ImageFormat.SRGB,data=rgb))
         n = len(result.hand_landmarks)
-        base = {"n_hands": n, "mediapipe_version": self.mp.__version__, "feature_version": FEATURE_VERSION}
+        base = {"n_hands": n, "mediapipe_version": self.mp.__version__,
+                "feature_version": FEATURE_VERSION, "detector_thresholds": self.thresholds}
         if n != 1:
             return {**base, "status": "no_hand" if n == 0 else "multiple_hands"}
         raw = [[p.x,p.y,p.z] for p in result.hand_landmarks[0]]
@@ -260,18 +275,22 @@ def _analyze_pending(project, manifest, pending, detector, progress, checkpoint_
             atomic_json(project / 'manifest.json', manifest, compact=checkpoint_every > 1)
 
 
-def analyze_project(project, progress=None, checkpoint_every=1, cache_features=True):
-    """Analyze pending inputs; checkpoint batches and retain completed work on interruption."""
+def analyze_project(project, progress=None, checkpoint_every=1, cache_features=True,
+                    min_hand_detection_confidence=.5, min_hand_presence_confidence=.5,
+                    reprocess=False):
+    """Analyze pending inputs, or every input when reprocess is requested."""
     if not isinstance(checkpoint_every, int) or checkpoint_every < 1:
         raise ValueError('Checkpoint size must be a positive integer.')
+    _validate_detector_thresholds(min_hand_detection_confidence, min_hand_presence_confidence)
     with project_lock(project) as project:
         manifest = read_manifest(project)
         if manifest.get('import', {}).get('complete') is False:
             raise ValueError('Finish or resume the dataset import before analyzing images.')
-        pending = [s for s in manifest["samples"] if s["status"] == "pending"]
+        pending = [s for s in manifest["samples"]
+                   if reprocess or s["status"] == "pending"]
         if not pending:
             return 0
-        detector = Detector()
+        detector = Detector(min_hand_detection_confidence, min_hand_presence_confidence)
         try:
             _analyze_pending(project, manifest, pending, detector, progress, checkpoint_every, cache_features)
         finally:
@@ -295,7 +314,11 @@ def analysis_table(project):
 
 
 def fingerprint(project):
-    return hashlib.sha256(json.dumps(read_manifest(project),sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+    return fingerprint_manifest(read_manifest(project))
+
+
+def fingerprint_manifest(manifest):
+    return hashlib.sha256(json.dumps(manifest, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 def overlay(image, sample):

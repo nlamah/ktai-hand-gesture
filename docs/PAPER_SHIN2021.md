@@ -19,8 +19,10 @@ J and Z. A still image does not capture their complete motion.
 These steps download the data, create the Python environment, calculate
 MediaPipe landmarks and run a focused Shin-feature comparison. Run commands
 from the repository root (`ktai-hand-gesture`). The resulting study uses the
-Kaggle ASL Alphabet dataset; it is not the NGT dataset or the data used to
-produce the paper's published scores.
+Kaggle ASL Alphabet dataset from grassknoted/asl-alphabet, the same public
+dataset source cited by Shin for the ASL Alphabet experiment. It is not the NGT
+dataset. The exact processed subset, detector and split differ from the paper;
+this is not a reproduction of its published scores.
 
 ### 1. Get the code and create the environment
 
@@ -565,3 +567,47 @@ also contains per-letter scores/confusion matrices, fold scores, timings,
 aligned per-photo predictions and all six pairwise error comparisons. The
 `metrics.csv` file retains full precision. LightGBM supports the same inputs and
 passes the synthetic checks, but this measured combination benchmark used SVM.
+
+## Nested feature-weight tuning on the article's ASL dataset source
+
+`data/asl_kaggle` contains the grassknoted/asl-alphabet letter images cited in
+Shin's data availability statement:
+https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/#sec10-sensors-21-05856
+The article also evaluates Massey and Finger Spelling A; the experiment here
+uses its Kaggle ASL Alphabet source only. The 26 × 3,000 letter inventory is
+78,000 images (the article's printed 780,000 is inconsistent with these counts).
+
+```bash
+python -m scripts.tune_kaggle_feature_weights \
+  --out experiments/kaggle_nested_feature_weights_02
+```
+
+This compares Shin's 820 values under the project and paper parameter profiles,
+and Shin + 70 workbook categories + 26 candidate-letter similarity scores + 15
+continuous joint angles. The combined models keep the project SVM settings.
+Five outer grouped folds score models; three inner grouped folds choose weights
+from 0.25, 0.5, 1 and 2, using one coordinate pass across angle/category/Excel
+blocks. To bound computation, each inner training/validation partition is
+deterministically sampled to at most 150 photos per letter. Each outer model
+is still fitted and scored on all its usable photos. This is bounded tuning,
+not an exhaustive joint search. Inner mean
+macro-F1 selects weights with mean accuracy as tie breaker. Each scaler/imputer
+is trained only on its fitting partition. Intermediate folds are checkpointed.
+
+All 60,251 usable images participate. The 17,749 detection failures are also
+included in the all-images denominator, but cannot train a landmark classifier.
+Groups are the original six filename-number blocks, not verified people.
+The feature definitions are fixed from the separate Roboflow work; only their
+weights are tuned here. The supplied 26 duplicate test pictures are not treated
+as an independent test set. The historical 97.43% is a three-fold project result;
+compare methods within the new shared outer folds instead.
+
+Completed nested weight study: `experiments/kaggle_nested_feature_weights_01/report.md`.
+Pooled five-fold accuracy on usable images: project Shin 97.6366%, paper-profile
+Shin 97.6614%, combined unweighted 97.6283%, combined tuned 97.6714%.
+The tuned model gains 21 correct predictions over project Shin and six over the
+paper-profile baseline. Its macro-F1 (0.97434) remains below paper-profile Shin
+(0.97469). This is a very small mixed result, not evidence of a reliable general
+improvement. S recall increases from 98.09% to 98.36%; M increases, while R, N and
+O decrease. Full letter-level metrics and the selected weight for each fold are
+in the completed study.
