@@ -71,7 +71,7 @@ def main():
     command='--letters G H --axis y --degrees 0 -90 90 180 --out results/rotation_GH_01 --candidate models/asl_shin_angles_GH_rotation.joblib'
     lines += ['', '## Try live', '', '```bash','conda activate ktai-hand-gesture',
               'python -m research.live_camera --model models/asl_shin_angles_GH_rotation.joblib','```','',
-              'The initial model caption is G/H-draaitraining. Select it again with button/key 5; Kanteltraining alle (3) is the separate earlier all-letter model.', '',
+              'The initial model caption is G/H rotation. Select it again with button/key 5; All-letter tilt (3) is the separate earlier all-letter model.', '',
               '## Reproduce', '', '```bash']
     lines += [f'python -m research.studies.tilt_augmentation --stage {stage} {command}' for stage in ['train','cv','evaluate']]
     lines += ['python -m research.studies.report_GH_rotation','```','',

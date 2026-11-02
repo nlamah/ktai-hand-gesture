@@ -165,7 +165,7 @@ def report(results,existing,captures,folds):
         'This is an easier binary task: its scores are not evidence of improvement on all 26 letters.', '',
         '## Is G already difficult in the existing dataset?', '',
         '| Existing 26-class model | Letter | Correct | Recall | Precision | Errors |','|---|---|---:|---:|---:|---|']
-    for variant,label in [('shin','Reference'),('shin_angles','Vingerhoeken')]:
+    for variant,label in [('shin','Reference'),('shin_angles','Joint angles')]:
         for l in 'GH':
             m=existing[variant][l];errors=', '.join(f'{k}: {v}' for k,v in m['wrong_predictions'].items())
             lines.append(f"| {label} | {l} | {m['correct']}/{m['images']} | {100*m['recall']:.3f}% | {100*m['precision']:.3f}% | {errors} |")

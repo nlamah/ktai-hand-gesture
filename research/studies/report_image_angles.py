@@ -32,16 +32,16 @@ def main():
     bundle=load_bundle(MODEL);assert bundle['experiment_protocol']==config
     assert sha256(BASELINE.read_bytes()).hexdigest()==config['baseline_model_sha256']
     lines=['# Projected 2D angles alongside 3D joint angles','',
-        'One fixed experiment adds 14 internal joint angles measured in aspect-correct image pixels to the original 835-input Vingerhoeken model. '
+        'One fixed experiment adds 14 internal joint angles measured in aspect-correct image pixels to the original 835-input Joint angles model. '
         'The candidate has 849 inputs: 820 unchanged Shin features, 15 original 3D measurements and 14 projected angles. '
         'There is no augmentation and no new contact input. The same training-only median imputation/standardization is applied to the 29 angle inputs. '
         'The classifier remains balanced RBF SVM C=10, gamma=scale. Captures never enter training.', '',
         '## Frozen five-fold comparison','',
         '| Model | Accuracy | Macro-F1 | Correct |','|---|---:|---:|---:|']
-    for name,label in [('baseline','Vingerhoeken'),('image_angles','Beeld + diepte')]:
+    for name,label in [('baseline','Joint angles'),('image_angles','Image + depth')]:
         m=cv[name];lines.append(f"| {label} | {100*m['accuracy']:.5f}% | {m['macro_f1']:.8f} | {m['correct']}/{m['images']} |")
     lines+=['',f"Paired changes: {cv['fixed']} wrong predictions fixed; {cv['lost']} previously correct predictions lost.", '',
-            '| Fold | Vingerhoeken accuracy | Beeld + diepte accuracy | Vingerhoeken F1 | Beeld + diepte F1 |',
+            '| Fold | Joint angles accuracy | Image + depth accuracy | Joint angles F1 | Image + depth F1 |',
             '|---|---:|---:|---:|---:|']
     for f in cv['folds']:
         a,b=f['baseline'],f['image_angles'];lines.append(f"| {f['fold']} | {100*a['accuracy']:.3f}% | {100*b['accuracy']:.3f}% | {a['macro_f1']:.5f} | {b['macro_f1']:.5f} |")
@@ -63,15 +63,15 @@ def main():
         'The most recent GH-handrug round contains 11 deliberately selected errors from the G/H-rotation model, including other letters. '
         'Replaying these is diagnostic, not a representative or independent accuracy estimate. '
         'There are no new H-labeled examples in that round.', '',
-        '| Intended | Saved G/H prediction | Vingerhoeken | Beeld + diepte |','|---|---|---|---|']
+        '| Intended | Saved G/H prediction | Joint angles | Image + depth |','|---|---|---|---|']
     for r in latest['predictions']:lines.append(f"| {r['intended']} | {r['saved_prediction']} | {r['baseline']} | {r['image_angles']} |")
-    lines+=['',f"Correct on these 11 known selected examples: Vingerhoeken {latest['correct']['baseline']}/11; Beeld + diepte {latest['correct']['image_angles']}/11.",'',
-        f"Earlier guided C/D/O development round: Vingerhoeken {guided_metrics['baseline']['correct']}/27 (macro-F1 C/D/O {guided_metrics['baseline']['macro_f1_CDO']:.6f}); "
-        f"Beeld + diepte {guided_metrics['image_angles']['correct']}/27 (macro-F1 C/D/O {guided_metrics['image_angles']['macro_f1_CDO']:.6f}). "
+    lines+=['',f"Correct on these 11 known selected examples: Joint angles {latest['correct']['baseline']}/11; Image + depth {latest['correct']['image_angles']}/11.",'',
+        f"Earlier guided C/D/O development round: Joint angles {guided_metrics['baseline']['correct']}/27 (macro-F1 C/D/O {guided_metrics['baseline']['macro_f1_CDO']:.6f}); "
+        f"Image + depth {guided_metrics['image_angles']['correct']}/27 (macro-F1 C/D/O {guided_metrics['image_angles']['macro_f1_CDO']:.6f}). "
         'These are reused development images. There is no completed held-out webcam evaluation.', '',
         '## Live comparison', '', '```bash','conda activate ktai-hand-gesture',
         'python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-name "2D-3D-test"','```','',
-        'Select **Beeld + diepte [6]** in the native tool, or **Vingerhoeken [2]** to compare. '
+        'Select **Image + depth [6]** in the native tool, or **Joint angles [2]** to compare. '
         'Snapshot exports retain 849 feature names/values, separate 3D and projected-angle dictionaries, model hash and round identity.', '',
         '## Reproduce', '', '```bash','python -m research.studies.compare_image_angles --stage all',
         'python -m research.studies.report_image_angles','```','',

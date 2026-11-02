@@ -160,29 +160,29 @@ def main():
     write_csv(out/'oof_predictions.csv',[{'id':ids[i],'label':y[i],'group':groups[i],'fold':int(assignments[i]),
                 **{arm:str(predictions[arm][i]) for arm in ARMS}} for i in range(len(ids))])
     (out/'summary.json').write_text(json.dumps(result,indent=2))
-    lines=['# Kaggle ASL Alphabet: geneste tuning van featuregewichten','',
-           'Datasetbron uit Shin: [grassknoted/asl-alphabet](https://www.kaggle.com/grassknoted/asl-alphabet), '
-           'bevestigd in [het artikel](https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/). '
-           '78.000 letterbeelden, 60.251 bruikbare detecties; alle 26 letters. De datasetbron komt overeen, '
-           'maar detector en splitsing zijn geen exacte reproductie van het artikel.', '',
+    lines=['# Kaggle ASL Alphabet: nested feature-weight tuning','',
+           'Dataset source used by Shin: [grassknoted/asl-alphabet](https://www.kaggle.com/grassknoted/asl-alphabet), '
+           'confirmed in [the paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/). '
+           '78,000 letter images, 60,251 accepted detections; all 26 letters. The dataset source matches, '
+           'but the detector and split do not exactly reproduce the paper.', '',
            result['protocol'],'',result['limitations'],'',
-           '| Variant | Accuracy bruikbaar | Macro-F1 | Accuracy alle beelden |',
+           '| Variant | Accepted-only accuracy | Macro-F1 | All-image accuracy |',
            '|---|---:|---:|---:|']
     for arm,m in summaries.items():lines.append(f"| {arm} | {m['accuracy']:.3%} | {m['macro_f1']:.5f} | {m['accuracy_all_images']:.3%} |")
-    lines+=['','`shin_project`: C=10, balanced. `shin_paper_profile`: C=1000, geen class weighting. '
-            'Beide RBF, gamma=scale. De gecombineerde modellen gebruiken C=10 en balanced om alleen featuregewicht te vergelijken. '
-            'Excel-scores worden voor alle 26 kandidaatletters berekend, zonder het echte label als input.', '',
-            '## Gekozen gewichten per buitenfold', '', '| Fold | Hoeken | Categorieën | Excel-scores |','|---|---:|---:|---:|']
+    lines+=['','`shin_project`: C=10, balanced. `shin_paper_profile`: C=1000, no class weighting. '
+            'Both use RBF, gamma=scale. Combined models use C=10 and balanced weights to isolate feature weighting. '
+            'Excel scores are calculated for all 26 candidate letters without the true label as input.', '',
+            '## Selected weights per outer fold', '', '| Fold | Angles | Categories | Excel-scores |','|---|---:|---:|---:|']
     for row in fold_records:lines.append(f"| {row['fold']} | "+' | '.join(map(str,row['weights']))+' |')
-    lines+=['','## Recall per letter','', '| Letter | Beelden | Shin project | Shin artikelprofiel | Ongewogen | Getuned | Verschil getuned − Shin |',
+    lines+=['','## Recall per letter','', '| Letter | Images | Shin project | Shin paper profile | Unweighted | Tuned | Tuned − Shin difference |',
             '|---|---:|---:|---:|---:|---:|---:|']
     for label in LABELS:
         rr={r['variant']:r for r in letters if r['letter']==label}
         lines.append(f"| {label} | {rr['shin_project']['images']} | "+' | '.join(f"{rr[a]['recall']:.2%}" for a in ARMS)+
                      f" | {100*(rr['combined_tuned']['recall']-rr['shin_project']['recall']):+.2f} pp |")
-    lines+=['','Alle detailresultaten: `per_letter.csv`, `fold_metrics.csv`, `inner_search.csv`, `oof_predictions.csv`, `summary.json`. '
-            'De historische 97,43% gebruikte drie folds; vergelijk die niet rechtstreeks met deze nieuwe vijf folds. '
-            'De correcte vergelijking is tussen de modellen op de gedeelde huidige folds.','']
+    lines+=['','Detailed results: `per_letter.csv`, `fold_metrics.csv`, `inner_search.csv`, `oof_predictions.csv`, `summary.json`. '
+            'The historical 97.43% used three folds; do not compare it directly with these new five folds. '
+            'The appropriate comparison is between models on the current shared folds.','']
     (out/'report.md').write_text('\n'.join(lines));print(json.dumps(summaries,indent=2),flush=True)
 
 

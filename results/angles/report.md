@@ -1,27 +1,27 @@
-# Shin: geïsoleerde vergelijking van gewrichtshoeken en Excel-scores
+# Shin: isolated comparison of joint angles and Excel scores
 
-SVM en LightGBM zijn vergeleken op dezelfde 60.251 bruikbare beelden van Kaggle ASL Alphabet, met exact dezelfde vijf gegroepeerde folds als de voorgaande experimenten. De eerder opgeslagen Shin-baselinevoorspellingen zijn hergebruikt en op inputhashes gecontroleerd. Alle drie toevoegingsvarianten zijn opnieuw per fold getraind; de 70 losse one-hotcategorieën zijn afwezig.
+SVM and LightGBM were compared on the same 60,251 accepted Kaggle ASL Alphabet images, using exactly the same five grouped folds as previous experiments. Previously saved Shin baseline predictions were reused after checking input hashes. All three addition variants were retrained per fold; the 70 standalone one-hot categories are absent.
 
-## Totaalscores
+## Overall scores
 
-| Model | Invoer | Aantal features | Accuracy | Macro-F1 | Verschil accuracy t.o.v. Shin |
+| Model | Input | Feature count | Accuracy | Macro-F1 | Accuracy difference versus Shin |
 |---|---|---:|---:|---:|---:|
-| svm | Shin alleen | 820 | 97.637% | 0.97386 | +0.000 pp |
-| svm | Shin + hoeken | 835 | 97.748% | 0.97524 | +0.111 pp |
+| svm | Shin only | 820 | 97.637% | 0.97386 | +0.000 pp |
+| svm | Shin + angles | 835 | 97.748% | 0.97524 | +0.111 pp |
 | svm | Shin + Excel-scores | 846 | 97.648% | 0.97400 | +0.012 pp |
-| svm | Shin + hoeken + Excel-scores | 861 | 97.744% | 0.97515 | +0.108 pp |
-| lightgbm | Shin alleen | 820 | 97.097% | 0.96784 | +0.000 pp |
-| lightgbm | Shin + hoeken | 835 | 97.017% | 0.96692 | -0.080 pp |
+| svm | Shin + angles + Excel-scores | 861 | 97.744% | 0.97515 | +0.108 pp |
+| lightgbm | Shin only | 820 | 97.097% | 0.96784 | +0.000 pp |
+| lightgbm | Shin + angles | 835 | 97.017% | 0.96692 | -0.080 pp |
 | lightgbm | Shin + Excel-scores | 846 | 97.119% | 0.96815 | +0.022 pp |
-| lightgbm | Shin + hoeken + Excel-scores | 861 | 97.129% | 0.96824 | +0.032 pp |
+| lightgbm | Shin + angles + Excel-scores | 861 | 97.129% | 0.96824 | +0.032 pp |
 
-## Wat voegen alleen de hoeken toe?
+## What do the angles alone add?
 
-Bij SVM: 58827 → 58894 juiste beelden (+67). Accuracy 97.637% → 97.748%; macro-F1 0.97386 → 0.97524.
+For SVM: 58827 → 58894 correct images (+67). Accuracy 97.637% → 97.748%; macro-F1 0.97386 → 0.97524.
 
-Bij LightGBM: 58502 → 58454 juiste beelden (-48). Accuracy 97.097% → 97.017%.
+For LightGBM: 58502 → 58454 correct images (-48). Accuracy 97.097% → 97.017%.
 
-## Per fold: verschil accuracy van hoeken t.o.v. Shin
+## Per-fold accuracy difference: angles versus Shin
 
 | Fold | SVM | LightGBM |
 |---|---:|---:|
@@ -33,7 +33,7 @@ Bij LightGBM: 58502 → 58454 juiste beelden (-48). Accuracy 97.097% → 97.017%
 
 ## Recall per letter: svm
 
-| Letter | Beelden | Shin | + hoeken | + Excel | + beide | Hoeken − Shin |
+| Letter | Images | Shin | + angles | + Excel | + both | Angles − Shin |
 |---|---:|---:|---:|---:|---:|---:|
 | A | 2188 | 98.67% | 98.72% | 98.72% | 98.72% | +0.05 pp |
 | B | 2204 | 99.77% | 99.73% | 99.77% | 99.73% | -0.05 pp |
@@ -64,7 +64,7 @@ Bij LightGBM: 58502 → 58454 juiste beelden (-48). Accuracy 97.097% → 97.017%
 
 ## Recall per letter: lightgbm
 
-| Letter | Beelden | Shin | + hoeken | + Excel | + beide | Hoeken − Shin |
+| Letter | Images | Shin | + angles | + Excel | + both | Angles − Shin |
 |---|---:|---:|---:|---:|---:|---:|
 | A | 2188 | 98.03% | 97.94% | 98.08% | 98.03% | -0.09 pp |
 | B | 2204 | 99.18% | 98.91% | 99.59% | 99.59% | -0.27 pp |
@@ -93,20 +93,20 @@ Bij LightGBM: 58502 → 58454 juiste beelden (-48). Accuracy 97.097% → 97.017%
 | Y | 2580 | 99.42% | 99.30% | 99.38% | 99.22% | -0.12 pp |
 | Z | 2343 | 95.69% | 95.60% | 95.90% | 95.65% | -0.09 pp |
 
-## Protocol en interpretatie
+## Protocol and interpretation
 
-- De 15 continue metingen zijn 14 binnenhoeken van de gewrichten plus de getekende duim-MCP-afwijking, berekend uit wereldlandmarks. Imputatie en standaardisatie worden alleen op de trainingsfold geleerd; Shin blijft ongewijzigd.
-- Excel-scores zijn 26 overeenkomstfracties: één per mogelijke letter. Ze worden voor elk beeld berekend zonder het echte letterlabel als invoer. Zij behouden indirect categorische informatie; de variant met alleen hoeken gebruikt geen categoriedrempels of Excel-referenties.
-- SVM: RBF, C=10, gamma=scale, balanced. LightGBM: vaste projectinstellingen (100 rondes, 31 bladeren, learning rate 0,1). Geen nieuwe hyperparameter- of gewichtstuning.
-- De scores hierboven gelden voor de 60.251 bruikbare detecties. De overige 17.749 van de 78.000 letterbeelden kunnen niet door een landmarkclassifier worden verwerkt. All-images-scores staan in summary.json.
-- Filenameblokken zijn geen bekende personen. Dit blijft herhaald ontwikkelonderzoek op dezelfde folds; kleine verschillen zijn geen bewijs van algemene of onafhankelijke winst. Een nieuwe persoon-/webcamtest blijft nodig.
+- The 15 continuous measurements are 14 interior joint angles plus signed thumb MCP deviation, calculated from world landmarks. Imputation and standardization are learned on the training fold only; Shin remains unchanged.
+- Excel scores are 26 compatibility fractions, one per candidate letter, calculated without the true letter label as input. They indirectly retain categorical information; the angle-only addition uses no category thresholds or Excel references.
+- SVM: RBF, C=10, gamma=scale, balanced. LightGBM: fixed project settings (100 rounds, 31 leaves, learning rate 0.1). No new hyperparameter or weight tuning.
+- These scores apply to 60,251 accepted detections. The remaining 17,749 of 78,000 letter images cannot be processed by a landmark classifier. All-image scores are in summary.json.
+- Filename blocks are not known people. This remains repeated development research on the same folds; small differences do not establish general or independent gains. A new-person/webcam test is still needed.
 
-## Lokaal herhalen
+## Repeat locally
 
 ```bash
 conda activate ktai-hand-gesture
-python -m scripts.compare_kaggle_angles_scores --models svm lightgbm
-python -m scripts.report_kaggle_angles_scores
+python -m research.studies.compare_angles --models svm lightgbm
+python -m research.studies.report_angles
 ```
 
-Modellen en validatievoorspellingen worden per fold opgeslagen, zodat hervatten bestaande checkpoints gebruikt. De vorige resultaten worden niet overschreven. Details: metrics.csv, per_letter.csv, angle_effects_per_letter.csv en de modelspecifieke out-of-foldvoorspellingen.
+Models and validation predictions are saved per fold so resumed runs use existing checkpoints. Previous results are not overwritten. Details: metrics.csv, per_letter.csv, angle_effects_per_letter.csv and model-specific out-of-fold predictions.

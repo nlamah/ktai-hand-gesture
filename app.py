@@ -26,18 +26,18 @@ _COMPONENT_HTML = """
     <div class="camera-stage">
       <video id="camera-video" autoplay playsinline muted></video>
       <div id="camera-placeholder" class="placeholder">
-        Zet de camera aan om te beginnen.
+        Turn on the camera to begin.
       </div>
     </div>
-    <div id="camera-status" class="camera-status">Camera staat uit.</div>
+    <div id="camera-status" class="camera-status">Camera is off.</div>
   </section>
   <section class="features-card">
     <div class="feature-heading">
       <div>
-        <div class="eyebrow">Verwachte handvorm</div>
+        <div class="eyebrow">Expected hand shape</div>
         <h2 id="target-letter">Letter —</h2>
       </div>
-      <div id="match-count" class="match-count">Wacht op beeld</div>
+      <div id="match-count" class="match-count">Waiting for frame</div>
     </div>
     <div id="feature-list" class="feature-list"></div>
   </section>
@@ -149,7 +149,7 @@ export default function (component) {
     if (runtime.starting || runtime.stream || runtime.failed) return
     if (!navigator.mediaDevices?.getUserMedia) {
       runtime.failed = true
-      setStateValue("camera_error", "Deze browser ondersteunt geen webcamtoegang.")
+      setStateValue("camera_error", "This browser does not support webcam access.")
       return
     }
     runtime.starting = true
@@ -191,18 +191,18 @@ export default function (component) {
       setStateValue(
         "camera_error",
         error?.name === "NotAllowedError"
-          ? "Geen webcamtoestemming. Sta cameratoegang toe in de browserinstellingen."
-          : `Webcam starten is mislukt: ${error?.message || "onbekende fout"}`,
+          ? "Camera permission denied. Allow camera access in browser settings."
+          : `Failed to start webcam: ${error?.message || "unknown error"}`,
       )
     } finally {
       runtime.starting = false
     }
   }
 
-  cameraStatus.textContent = data?.message || (runtime.active ? "Webcam starten…" : "Camera staat uit.")
+  cameraStatus.textContent = data?.message || (runtime.active ? "Starting webcam…" : "Camera is off.")
   cameraStatus.dataset.tone = data?.tone || "neutral"
   targetLetter.textContent = data?.label ? `Letter ${data.label}` : "Letter —"
-  matchCount.textContent = data?.summary || "Wacht op beeld"
+  matchCount.textContent = data?.summary || "Waiting for frame"
   placeholder.hidden = Boolean(runtime.active && runtime.stream)
   featureList.replaceChildren()
 
@@ -215,7 +215,7 @@ export default function (component) {
     name.textContent = item.title
     const values = document.createElement("div")
     values.className = "feature-values"
-    values.textContent = `Verwacht: ${item.expected} · Gezien: ${item.actual}`
+    values.textContent = `Expected: ${item.expected} · Observed: ${item.actual}`
     row.append(name, values)
     featureList.append(row)
   }
@@ -275,70 +275,70 @@ parser.add_argument("--model", default=str(DEFAULT_MODEL))
 args, _ = parser.parse_known_args()
 
 st.set_page_config(
-    page_title="ASL live letterherkenning",
+    page_title="ASL live letter recognition",
     page_icon=":material/back_hand:",
     layout="wide",
 )
-st.title("ASL-features live controleren en letters herkennen")
+st.title("Check ASL features and recognize letters live")
 st.write(
-    "Zet de webcam aan om letters te laten herkennen. Typ optioneel de letter die je "
-    "gaat maken om ook de features met je Excel te vergelijken."
+    "Turn on the webcam to recognize letters. Optionally enter the letter you "
+    "intend to sign to compare the features with your Excel reference."
 )
 st.caption(
-    "Groen = feature komt overeen; rood = afwijkend of niet herkend; grijs = "
-    "niet gescoord. De modelvoorspelling gebruikt Shin-features en gewrichtshoeken; "
-    "de ingevulde letter beïnvloedt die voorspelling niet."
+    "Green = matching feature; red = mismatch or not detected; gray = "
+    "not scored. Model prediction uses Shin features and joint angles; "
+    "the entered letter does not affect that prediction."
 )
 
 st.caption(
-    "Spreiding: ruimte tussen vingers die naast elkaar liggen; uitwaaieren mag. "
-    "Tegen elkaar liggende, gekruiste of sterk gevouwen vingers tellen niet mee."
+    "Spread: space between adjacent fingers; fanning out is allowed. "
+    "Touching, crossed or strongly folded fingers do not count."
 )
 
 reference_path = Path(args.reference).expanduser()
-uploaded_reference = st.file_uploader("Excel-featuretabel (.xlsx)", type=["xlsx"])
+uploaded_reference = st.file_uploader("Excel feature table (.xlsx)", type=["xlsx"])
 if uploaded_reference is not None:
     reference_contents = uploaded_reference.getvalue()
 elif reference_path.is_file():
     reference_contents = reference_path.read_bytes()
-    st.caption(f"Gebruikte referenties: {reference_path}")
+    st.caption(f"Reference file: {reference_path}")
 else:
-    st.info("Upload je Excel-featuretabel om de live controle te starten.")
+    st.info("Upload your Excel feature table to start the live check.")
     st.stop()
 
 try:
     references = load_reference_workbook(reference_contents)
     parameters = _load_parameters(Path(args.thresholds).expanduser())
 except (OSError, ValueError, json.JSONDecodeError) as error:
-    st.error(f"Instellingen konden niet worden geladen: {error}")
+    st.error(f"Could not load settings: {error}")
     st.stop()
 
 st.caption(
-    f"Vingerbuiging: gebogen ≤ {parameters['finger_flexion']['bent_max_deg']:g}°; "
-    f"gestrekt ≥ {parameters['finger_flexion']['extended_min_deg']:g}°; "
-    "daartussen licht gebogen. Slashwaarden accepteren de genoemde categorieën."
+    f"Finger flexion: bent ≤ {parameters['finger_flexion']['bent_max_deg']:g}°; "
+    f"extended ≥ {parameters['finger_flexion']['extended_min_deg']:g}°; "
+    "partly bent in between. Slash values accept each listed category."
 )
 
-recognition_enabled = st.toggle("Letters herkennen met getraind model", value=True)
+recognition_enabled = st.toggle("Recognize letters using trained model", value=True)
 model_path = Path(args.model).expanduser()
 model_available = model_path.is_file()
 if recognition_enabled and not model_available:
-    st.info("Het live-model ontbreekt. Train het eenmalig met: python -m research.live_model")
-st.caption("De herkenning is experimenteel. Bij een geldige hand kiest het model altijd een letter; alternatieven zijn geen betrouwbaarheidspercentages.")
+    st.info("Live model missing. Train it once with: python -m research.live_model")
+st.caption("Recognition is experimental. For a valid hand the model always chooses a letter; alternatives are not confidence percentages.")
 
 input_col, camera_col = st.columns([1, 1], vertical_alignment="bottom")
 with input_col:
     typed_label = st.text_input(
-        "Letter die je gaat maken",
+        "Intended letter",
         max_chars=1,
-        placeholder="Bijvoorbeeld A",
+        placeholder="For example A",
         key="asl_live_target_letter",
     )
 label = typed_label.strip().upper()
 valid_label = len(label) == 1 and label in references
 with camera_col:
     camera_active = st.toggle(
-        "Webcam aan",
+        "Webcam on",
         value=False,
         disabled=not (valid_label or (recognition_enabled and model_available)),
         key="asl_live_camera_active",
@@ -347,7 +347,7 @@ with camera_col:
 camera_active = bool(camera_active and (valid_label or (recognition_enabled and model_available)))
 
 if not valid_label and not (recognition_enabled and model_available):
-    st.warning("Vul één letter A–Z in voor featurecontrole, of laad een model voor letterherkenning.")
+    st.warning("Enter one letter A-Z for feature checking, or load a model for recognition.")
 
 component_state = st.session_state.get(_COMPONENT_KEY, {})
 frame = component_state.get("frame") if isinstance(component_state, dict) else None
@@ -381,11 +381,11 @@ if camera_active and recognition_enabled and model_available and detection is no
     except (OSError, ValueError, RuntimeError, ImportError, EOFError, TypeError, KeyError) as error:
         prediction_error = str(error)
 if recognition_enabled:
-    st.metric("Herkende letter", prediction["letter"] if prediction else "—")
+    st.metric("Recognized letter", prediction["letter"] if prediction else "—")
     if prediction:
-        st.caption("Alternatieven volgens het model: " + ", ".join(prediction["alternatives"]))
+        st.caption("Model alternatives: " + ", ".join(prediction["alternatives"]))
     if prediction_error:
-        st.error(f"Letterherkenning gestopt: {prediction_error}")
+        st.error(f"Letter recognition stopped: {prediction_error}")
 comparison_label = label if valid_label else prediction["letter"] if prediction else ""
 features = (
     live_feature_rows(detection, comparison_label, references, parameters)
@@ -393,42 +393,42 @@ features = (
     else []
 )
 if prediction and not valid_label:
-    st.caption("De featuretabel hieronder vergelijkt met de voorspelde letter. Vul een verwachte letter in voor een onafhankelijke vergelijking.")
+    st.caption("The feature table below compares against the predicted letter. Enter an intended letter for an independent comparison.")
 
 if detector_error:
-    message = f"Featurecontrole gestopt: {detector_error}"
+    message = f"Feature check stopped: {detector_error}"
     tone = "error"
-    summary = "Controle gestopt"
+    summary = "Check stopped"
 elif not camera_active:
-    message = "Zet de webcam aan om letters te herkennen of features te controleren."
+    message = "Turn on the webcam to recognize letters or check features."
     tone = "neutral"
-    summary = "Camera staat uit"
+    summary = "Camera is off"
 elif detection is None:
-    message = "Wacht op de eerste webcambeelden…"
+    message = "Waiting for the first webcam frames…"
     tone = "neutral"
-    summary = "Wacht op beeld"
+    summary = "Waiting for frame"
 elif detection.get("status") != "ok":
     if detection.get("status") == "no_hand":
-        message = "Geen hand gevonden. Houd één hand in beeld."
+        message = "No hand found. Keep one hand in frame."
     else:
-        message = "Er moet precies één hand zichtbaar zijn."
+        message = "Exactly one hand must be visible."
     tone = "error"
-    summary = "Hand niet herkend"
+    summary = "Hand not detected"
 elif prediction_error:
-    message = f"Letterherkenning gestopt: {prediction_error}"
+    message = f"Letter recognition stopped: {prediction_error}"
     tone = "error"
-    summary = "Geen voorspelling"
+    summary = "No prediction"
 else:
     matches = sum(row["status"] == "match" for row in features)
     scored = sum(row["status"] != "not_scored" for row in features)
     all_match = matches == scored and scored > 0
     message = (
-        f"Alle gescoorde features van {comparison_label} komen overeen."
+        f"All scored features of {comparison_label} match."
         if all_match
-        else f"{matches} van {scored} gescoorde features van {comparison_label} komen overeen."
+        else f"{matches} of {scored} scored features of {comparison_label} match."
     )
     if prediction:
-        message = f"Model herkent {prediction['letter']}. " + message
+        message = f"Model recognizes {prediction['letter']}. " + message
     tone = "success" if all_match else "error"
     summary = f"{matches}/{scored} match"
 
@@ -451,6 +451,6 @@ if camera_error:
     st.error(camera_error)
 
 st.caption(
-    "De duim-MCP-vormen en de Excel-waardes zijn voorlopige referenties; "
-    "controleer afwijkingen ook visueel. Browsercameratoegang is nodig."
+    "Thumb MCP shapes and Excel values are provisional references; "
+    "also inspect mismatches visually. Browser camera access is required."
 )

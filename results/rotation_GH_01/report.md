@@ -66,7 +66,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera --model models/asl_shin_angles_GH_rotation.joblib
 ```
 
-The initial model caption is G/H-draaitraining. Select it again with button/key 5; Kanteltraining alle (3) is the separate earlier all-letter model.
+The initial model caption is G/H rotation. Select it again with button/key 5; All-letter tilt (3) is the separate earlier all-letter model.
 
 ## Reproduce
 

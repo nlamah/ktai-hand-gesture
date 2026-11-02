@@ -17,21 +17,21 @@ from research.studies.compare_gh_classifier import select_inputs
 
 ROOT=Path(__file__).resolve().parents[1]
 VARIANTS=('3d','2d','both','middle')
-NAMES={'3d':'Alle 3D-hoeken','2d':'Alle 2D-hoeken','both':'Alle 2D + 3D-hoeken','middle':'Alleen middelvingerbuiging'}
-WINDOW='G/H-diagnose - uitsluitend G en H | Q / Esc: sluiten'
+NAMES={'3d':'All 3D angles','2d':'All 2D angles','both':'All 2D + 3D angles','middle':'Middle finger flexion only'}
+WINDOW='G/H diagnostic - G and H only | Q / Esc: close'
 BUTTONS=tuple((v,(12+i*156,536,164+i*156,574)) for i,v in enumerate(VARIANTS))
 
 
 def load_model(variant):
-    if variant not in VARIANTS:raise ValueError('Kies 3d, 2d, both of middle.')
+    if variant not in VARIANTS:raise ValueError('Choose 3d, 2d, both or middle.')
     bundle=joblib.load(ROOT/'models/gh_diagnostic'/f'gh_{variant}.joblib')
     expected='gh-middle-diagnostic-v1' if variant=='middle' else 'gh-angle-diagnostic-v1'
     width={'3d':15,'2d':14,'both':29,'middle':2}[variant]
     model=bundle.get('estimator')
     if bundle.get('version')!=expected or bundle.get('sklearn_version')!=sklearn.__version__:
-        raise ValueError('Onjuiste G/H-modelversie of scikit-learn-versie.')
+        raise ValueError('Invalid G/H model version or scikit-learn version.')
     if getattr(model,'n_features_in_',None)!=width or list(getattr(model,'classes_',()))!=['G','H']:
-        raise ValueError('Onjuist G/H-featureschema.')
+        raise ValueError('Invalid G/H feature schema.')
     return bundle
 
 
@@ -49,13 +49,13 @@ def predict(bundle,detection,variant):
 
 def panel(preview,variant):
     result=np.zeros((596,640,3),np.uint8);result[:480]=preview
-    cv2.putText(result,'Alleen G/H-test: andere letters worden ook G of H.',(12,499),cv2.FONT_HERSHEY_SIMPLEX,.54,(0,220,255),1,cv2.LINE_AA)
+    cv2.putText(result,'G/H-only test: other letters are also classified as G or H.',(12,499),cv2.FONT_HERSHEY_SIMPLEX,.54,(0,220,255),1,cv2.LINE_AA)
     cv2.putText(result,NAMES[variant],(12,523),cv2.FONT_HERSHEY_SIMPLEX,.55,(255,255,255),1,cv2.LINE_AA)
     for i,(v,rect) in enumerate(BUTTONS,1):
         cv2.rectangle(result,rect[:2],rect[2:],(170,225,170) if v==variant else (220,220,220),-1)
-        label={'3d':'3D','2d':'2D','both':'2D + 3D','middle':'Middel'}[v]
+        label={'3d':'3D','2d':'2D','both':'2D + 3D','middle':'Middle'}[v]
         cv2.putText(result,f'{label} [{i}]',(rect[0]+10,561),cv2.FONT_HERSHEY_SIMPLEX,.52,(0,0,0),1,cv2.LINE_AA)
-    cv2.putText(result,'L: landmarks aan/uit | Q/Esc: sluiten',(12,590),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
+    cv2.putText(result,'L: toggle landmarks | Q/Esc: sluiten',(12,590),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
     return result
 
 
@@ -67,7 +67,7 @@ def run_camera(variant='middle',camera=0):
             for v,rect in BUTTONS:
                 if rect[0]<=x<=rect[2] and rect[1]<=y<=rect[3]:state['variant']=v
     try:
-        if not capture.isOpened():raise RuntimeError('Camera kan niet worden geopend. Sluit andere camera-apps.')
+        if not capture.isOpened():raise RuntimeError('Cannot open camera. Close other camera apps.')
         capture.set(cv2.CAP_PROP_FRAME_WIDTH,PREVIEW_WIDTH);capture.set(cv2.CAP_PROP_FRAME_HEIGHT,PREVIEW_HEIGHT)
         detector=Detector();cv2.namedWindow(WINDOW,cv2.WINDOW_AUTOSIZE);opened=True
         cv2.setMouseCallback(WINDOW,mouse)
@@ -77,7 +77,7 @@ def run_camera(variant='middle',camera=0):
                 if requested not in cache:cache[requested]=load_model(requested)
                 variant=requested;bundle=cache[requested]
             ok,frame=capture.read()
-            if not ok or frame is None:raise RuntimeError('Geen camerabeeld ontvangen.')
+            if not ok or frame is None:raise RuntimeError('No camera frame received.')
             scale=min(1.,640/max(frame.shape[:2]))
             raw=cv2.resize(frame,(round(frame.shape[1]*scale),round(frame.shape[0]*scale))) if scale<1 else frame
             image=Image.fromarray(cv2.cvtColor(raw,cv2.COLOR_BGR2RGB))
@@ -104,7 +104,7 @@ def main():
     args=parser.parse_args()
     try:run_camera(args.variant,args.camera)
     except KeyboardInterrupt:pass
-    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'G/H-test gestopt: {error}\n')
+    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'G/H test stopped: {error}\n')
 
 
 if __name__=='__main__':main()

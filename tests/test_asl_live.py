@@ -62,9 +62,9 @@ class ASLLiveFeatureTests(unittest.TestCase):
         self.assertEqual(decoded.mode, "RGB")
 
     def test_rejects_invalid_and_oversized_frames(self):
-        with self.assertRaisesRegex(ValueError, "ongeldig"):
+        with self.assertRaisesRegex(ValueError, "invalid"):
             decode_live_frame({"data": "not-base64"})
-        with self.assertRaisesRegex(ValueError, "groter"):
+        with self.assertRaisesRegex(ValueError, "size limit"):
             decode_live_frame({"data": "A" * 1_400_000})
 
     def test_live_feature_rows_report_matches_and_mismatches(self):
@@ -82,7 +82,7 @@ class ASLLiveFeatureTests(unittest.TestCase):
             next(row for row in rows if row["key"] == "flexion_index_pip")["color"],
             "red",
         )
-        self.assertIn("Duim", next(row for row in rows if row["key"] == "thumb_mcp_shape")["title"])
+        self.assertIn("Thumb", next(row for row in rows if row["key"] == "thumb_mcp_shape")["title"])
         self.assertEqual(
             next(row for row in rows if row["key"] == "thumb_tip_index_proximity")["color"],
             "green",

@@ -27,16 +27,16 @@ DEFAULT_BASELINE_MODEL = DEFAULT_MODEL.with_name('asl_shin.joblib')
 def detection_inputs(detection, variant="shin_angles"):
     """820, 835 or 849 float32 inputs matching the frozen experiment schema."""
     if detection.get('status') != 'ok':
-        raise ValueError('Er moet precies één geldige hand zichtbaar zijn.')
+        raise ValueError('Exactly one valid hand must be visible.')
     shin = list(combined_features(detection['image_landmarks']).values())
     if variant == 'shin':
         return np.asarray(shin,dtype=np.float32).reshape(1,820)
     if variant not in ('shin_angles','shin_angles_2d'):
-        raise ValueError('Onbekende modelinvoer.')
+        raise ValueError('Unknown model input.')
     angles = encode_angles(measure_hand_features(detection['world_landmarks'], detection.get('handedness')))
     row = np.r_[shin, angles].astype(np.float32).reshape(1, 835)
     if not np.isfinite(row[:, :820]).all() or np.isinf(row[:, 820:]).any():
-        raise ValueError('Ongeldige handgeometrie voor letterherkenning.')
+        raise ValueError('Invalid hand geometry for letter recognition.')
     if variant=='shin_angles_2d':
         row=np.c_[row,projected_angles(detection['image_landmarks'],detection.get('image_size'))[None,:]]
     return row
@@ -47,21 +47,21 @@ def load_bundle(path):
     try:
         bundle = joblib.load(path)
     except (EOFError, pickle.UnpicklingError, AttributeError, KeyError, TypeError, IndexError) as error:
-        raise ValueError("Het modelbestand is beschadigd of heeft een onjuist formaat.") from error
+        raise ValueError("The model file is damaged or has an invalid format.") from error
     if not isinstance(bundle, dict) or bundle.get('version') not in (BUNDLE_VERSION, BASELINE_BUNDLE_VERSION, IMAGE_ANGLE_BUNDLE_VERSION):
-        raise ValueError('Dit bestand is geen ondersteund live ASL-model.')
+        raise ValueError('This file is not a supported live ASL model.')
     baseline = bundle['version'] == BASELINE_BUNDLE_VERSION
     expected_angles = () if baseline else ANGLE_COLUMNS
     if bundle.get('shin_version') != SHIN_VERSION or tuple(bundle.get('angle_columns', ())) != expected_angles:
-        raise ValueError('De featureversie van het model komt niet overeen met de code.')
+        raise ValueError('The model feature version does not match the code.')
     image_angles = bundle['version']==IMAGE_ANGLE_BUNDLE_VERSION
     if image_angles and (tuple(bundle.get('pixel_angle_columns',()))!=PIXEL_ANGLE_COLUMNS or bundle.get('pixel_angle_version')!=PIXEL_VERSION):
-        raise ValueError('De 2D-featureversie van het model komt niet overeen met de code.')
+        raise ValueError('The model 2D feature version does not match the code.')
     model = bundle.get('estimator')
     if getattr(model, 'n_features_in_', None) != (820 if baseline else 849 if image_angles else 835) or list(getattr(model, "classes_", ())) != LABELS:
-        raise ValueError('Het model heeft een onjuiste featurebreedte of onvolledige letters A–Z.')
+        raise ValueError('The model has an invalid feature width or incomplete A-Z classes.')
     if bundle.get('sklearn_version') != sklearn.__version__:
-        raise ValueError('Installeer de scikit-learn-versie uit requirements.txt of train het model opnieuw.')
+        raise ValueError('Install the scikit-learn version in requirements.txt or retrain the model.')
     return bundle
 
 
@@ -102,16 +102,16 @@ def main():
     args.out = args.out or (DEFAULT_BASELINE_MODEL if args.variant=='shin' else DEFAULT_MODEL)
     width = 820 if args.variant=='shin' else 835
     if args.out.exists() and not args.force:
-        parser.error('Model bestaat al; gebruik --force om opnieuw te trainen.')
+        parser.error('Model already exists; use --force to retrain.')
     meta_bytes = (args.cache / 'inputs_metadata.json').read_bytes()
     metadata = json.loads(meta_bytes)
     with np.load(args.cache / 'inputs.npz') as arrays:
         X = (arrays['X'][:,:820] if width==820 else np.c_[arrays['X'][:, :820], arrays['angles']]).astype(np.float32)
     y = np.array([s['label'] for s in metadata['samples']])
     if X.shape != (60251, width) or len(y) != len(X) or sorted(set(y)) != LABELS:
-        raise ValueError('De final-fit vereist de 60.251 historische detecties van alle 26 letters.')
+        raise ValueError('The final fit requires the 60,251 historical detections from all 26 letters.')
     if len({s['id'] for s in metadata['samples']}) != len(y) or not np.isfinite(X).all():
-        raise ValueError('Ongeldige of dubbele trainingsinvoer.')
+        raise ValueError('Invalid or duplicate training input.')
     model = classifier('svm',args.variant,len(y))
     print(f'Training SVM: {len(y):,} images, {width} features; all accepted development data.', flush=True)
     model.fit(X, y)

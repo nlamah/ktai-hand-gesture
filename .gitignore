@@ -6,7 +6,6 @@ __pycache__/
 .DS_Store
 /data/
 /runs/
-/models/*.joblib
 *.aux
 *.bbl
 *.blg

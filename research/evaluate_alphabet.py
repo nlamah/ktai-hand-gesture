@@ -32,12 +32,12 @@ def main():
     predictions=[];seen=set();profiles=[];example_plan=None;repeat_count=None
     for directory in args.sessions:
         s=AlphabetSession(directory,hashes['angles'])
-        if s.current is not None:raise ValueError(f'Sessie is onvolledig: {directory}')
+        if s.current is not None:raise ValueError(f'Session is incomplete: {directory}')
         if example_plan is None:example_plan=s.plan['examples'];repeat_count=s.plan['repeats']
         if s.plan['examples']!=example_plan or s.plan['repeats']!=repeat_count:
-            raise ValueError('De sessies gebruiken verschillende voorbeelden of aantallen herhalingen.')
+            raise ValueError('Sessions use different examples or repetition counts.')
         key=s.plan['participant']['name'].strip().casefold()
-        if key in seen:raise ValueError('Dezelfde deelnemersnaam is meerdere keren opgegeven; gebruik een sessie per persoon.')
+        if key in seen:raise ValueError('The same participant name was supplied more than once; use one session per person.')
         seen.add(key);profiles.append({'session_id':s.plan['id'],**s.plan['participant']})
         for name,p in paths.items():assert s.plan['frozen_models'][str(p.resolve())]==hashes[name]
         for task in s.plan['tasks']:

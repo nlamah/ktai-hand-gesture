@@ -1,19 +1,19 @@
-# SVM, LightGBM en de bijdrage van extra features
+# SVM, LightGBM and the contribution of additional features
 
-Dezelfde 60.251 bruikbare Kaggle ASL Alphabet-beelden en vijf gegroepeerde buitenfolds als de eerdere experimenten. Shin gebruikt 820 waarden; gecombineerd gebruikt Shin plus 70 categorieën, 26 Excel-overeenkomstscores en 15 gewrichtshoeken. Extra features zijn hier ongewogen. De 17.749 ontbrekende detecties vallen buiten de classifierscores hieronder.
+The same 60,251 accepted Kaggle ASL Alphabet images and five grouped outer folds as previous experiments. Shin uses 820 values; the combined variant adds 70 category indicators, 26 Excel compatibility scores and 15 joint angles. Additions are unweighted here. The 17,749 failed detections are outside the classifier scores below.
 
-## Modelvergelijking
+## Model comparison
 
-| Model | Shin accuracy | Met extra features | Verschil | Shin macro-F1 | Met extra macro-F1 |
+| Model | Shin accuracy | Met extra features | Difference | Shin macro-F1 | Met extra macro-F1 |
 |---|---:|---:|---:|---:|---:|
 | svm | 97.637% | 97.628% | -0.008 pp | 0.97386 | 0.97372 |
 | lightgbm | 97.097% | 97.164% | +0.066 pp | 0.96784 | 0.96860 |
 
-SVM: RBF, C=10, gamma=scale, balanced. LightGBM: 100 boostingrondes, 31 bladeren, learning rate 0,1, minimaal 20 voorbeelden per blad, seed 42; overige projectinstellingen vast. LightGBM gebruikt vier rekenthreads bij de resterende fits; deterministic en force_col_wise staan aan. Er is geen nieuwe hyperparameterzoekactie gedaan. Imputatie en schaling van hoeken worden uitsluitend op training gefit.
+SVM: RBF, C=10, gamma=scale, balanced. LightGBM: 100 boosting rounds, 31 leaves, learning rate 0.1, minimum 20 examples per leaf, seed 42; other project settings fixed. LightGBM uses four threads for remaining fits, with deterministic and force_col_wise enabled. No new hyperparameter search was performed. Angle imputation and scaling are fitted on training data only.
 
 ## Permutation importance
 
-Vijf herhalingen per groep en fold, maximaal 100 validatiebeelden per letter per fold. Onderstaande waarden zijn gemiddelde macro-F1-dalingen in procentpunten. Positief betekent slechter na husselen; negatief betekent beter na husselen. Kolommen binnen een groep worden gezamenlijk verwisseld; dezelfde permutaties en steekproeven worden voor beide modellen gebruikt. Spreiding staat in de CSV.
+Five repeats per group and fold, capped at 100 validation images per letter per fold. Values below are mean macro-F1 decreases in percentage points. Positive means worse after shuffling; negative means better. Group columns are shuffled jointly; both models use the same permutations and samples. Dispersion is in the CSV.
 
 | Gehusselde groep | SVM: macro-F1-daling | LightGBM: macro-F1-daling |
 |---|---:|---:|
@@ -27,11 +27,11 @@ Vijf herhalingen per groep en fold, maximaal 100 validatiebeelden per letter per
 | crossing | +0.008 pp | +0.000 pp |
 | contact | +0.000 pp | +0.000 pp |
 
-`all_extra` husselt alle extra features samen. De andere groepen overlappen: hun importances zijn niet optelbaar. `thumb` bevat duimcategorieën en duimhoeken; `finger_flexion` bevat overige buigcategorieën en hoeken. Excel-scores zijn afgeleid van categorieën. Redundantie kan importance drukken; onmogelijke combinaties door husselen kunnen haar vergroten. Importance meet modelgebruik, geen zelfstandig bewijs van extra informatie.
+`all_extra` shuffles all added features together. Other groups overlap, so their importances cannot be added. `thumb` includes thumb categories and angles; `finger_flexion` includes other flexion categories and angles. Excel scores derive from categories. Redundancy can depress importance; impossible shuffled combinations can inflate it. Importance measures model reliance, not independent additional information.
 
-## Ablatie: opnieuw trainen zonder featuregroep
+## Ablation: retrain without a feature group
 
-Alle validatiebeelden worden gebruikt. Hieronder staat de samengevoegde accuracy na verwijderen. De delta is ten opzichte van het volledige gecombineerde model: positief betekent verbetering na weglaten.
+All validation images are used. The table gives pooled accuracy after removal. Delta is relative to the full combined model: positive means improvement after omission.
 
 | Weggelaten groep | SVM accuracy | SVM delta | LightGBM accuracy | LightGBM delta |
 |---|---:|---:|---:|---:|
@@ -39,11 +39,11 @@ Alle validatiebeelden worden gebruikt. Hieronder staat de samengevoegde accuracy
 | categories | 97.744% | +0.116 pp | 97.129% | -0.035 pp |
 | excel_scores | 97.632% | +0.003 pp | 97.069% | -0.095 pp |
 
-De drie groepen worden afzonderlijk weggelaten; alle overige input blijft aanwezig. Een groep kan dus weinig ablatiewinst opleveren omdat een andere groep dezelfde informatie levert. Macro-F1 per fold en recallveranderingen per letter staan in de detailbestanden.
+The three groups are omitted individually; all other inputs remain. Removing a group may show little effect when another group supplies the same information. Per-fold macro-F1 and per-letter recall changes are in the detailed files.
 
-## Per letter: recall
+## Per-letter recall
 
-| Letter | Beelden | SVM Shin | SVM extra | LightGBM Shin | LightGBM extra | LightGBM winst door extra |
+| Letter | Images | SVM Shin | SVM extra | LightGBM Shin | LightGBM extra | LightGBM winst door extra |
 |---|---:|---:|---:|---:|---:|---:|
 | A | 2188 | 98.67% | 98.67% | 98.03% | 97.90% | -0.14 pp |
 | B | 2204 | 99.77% | 99.73% | 99.18% | 99.64% | +0.45 pp |
@@ -72,15 +72,15 @@ De drie groepen worden afzonderlijk weggelaten; alle overige input blijft aanwez
 | Y | 2580 | 99.46% | 99.38% | 99.42% | 99.30% | -0.12 pp |
 | Z | 2343 | 97.44% | 97.57% | 95.69% | 95.43% | -0.26 pp |
 
-## Interpretatie en grenzen
+## Interpretation and limitations
 
-Combineer drie soorten bewijs: winst tegenover Shin, daling bij husselen, en daling na opnieuw trainen zonder de groep. Alleen hoge permutation importance is onvoldoende om te zeggen dat jouw features werkelijk iets toevoegen boven Shin. De evaluatie gebruikt zes filenameblokken, niet geverifieerde personen; het is ontwikkelonderzoek. De referenties en drempels zijn eerder op de aparte Roboflow-set gekozen. Er is geen onafhankelijke webcam- of persoonstest. De standaardafwijkingen over folds en herhalingen zijn geen onafhankelijke betrouwbaarheidsintervallen.
+Combine three kinds of evidence: gain over Shin, loss after shuffling, and loss after retraining without the group. High permutation importance alone does not establish added value over Shin. Evaluation uses six filename blocks, not verified people; it is development research. References and thresholds were selected earlier on the separate Roboflow set. There is no independent webcam or person test. Standard deviations over folds and repeats are not independent confidence intervals.
 
-Ruwe resultaten: `model_metrics.csv`, `per_letter.csv`, `permutation_summary_r5_cap100.csv`, `permutation_letters_r5_cap100.csv`, `ablation.csv`, `ablation_letters.csv`, `oof_predictions.csv`. De modelspecifieke bestanden blijven behouden. Lokaal herhalen: `docs/KAGGLE_LIGHTGBM_IMPORTANCE.md`.
+Raw results: `model_metrics.csv`, `per_letter.csv`, `permutation_summary_r5_cap100.csv`, `permutation_letters_r5_cap100.csv`, `ablation.csv`, `ablation_letters.csv`, `oof_predictions.csv`. Model-specific files are retained. For current reproduction commands, see `REPRODUCE.md`, sections 4–5.
 
-## Vervolgtkandidaat: SVM zonder losse categorieën
+## Follow-up candidate: SVM without standalone categories
 
-Shin + 15 continue hoeken + 26 Excel-scores (861 invoerwaarden) haalt 58.892/60.251 correct: **97,744%**. Dat zijn 65 extra juiste beelden tegenover Shin/project (+0,108 procentpunt), en 70 tegenover de volledige ongewogen combinatie. De 70 expliciete one-hotcategorieën worden weggelaten; categorische informatie blijft indirect aanwezig in de Excel-scores.
+Shin + 15 continuous angles + 26 Excel scores (861 inputs) achieves 58,892/60,251 correct: **97.744%**. That is 65 more correct images than Shin/project (+0.108 percentage points), and 70 more than the full unweighted combination. The 70 explicit one-hot categories are omitted; Excel scores indirectly retain categorical information.
 
 | Letter | Shin recall | Kandidaat recall | Extra correcte beelden |
 |---|---:|---:|---:|
@@ -92,4 +92,4 @@ Shin + 15 continue hoeken + 26 Excel-scores (861 invoerwaarden) haalt 58.892/60.
 | N | 88.12% | 87.89% | -3 |
 | U | 96.70% | 96.62% | -2 |
 
-Deze kandidaat is achteraf tussen de ablatievarianten gekozen en moet op nieuwe onafhankelijke beelden bevestigd worden. Dit is een accuracyresultaat; de opgeslagen ablaties bevatten macro-F1 per fold, geen gepoolde macro-F1. Alle letters staan in `candidate_without_categories_per_letter.csv`.
+This candidate was selected after inspecting ablation variants and requires confirmation on new independent images. This is an accuracy result; stored ablations contain per-fold macro-F1, not pooled macro-F1. All letters are in `candidate_without_categories_per_letter.csv`.

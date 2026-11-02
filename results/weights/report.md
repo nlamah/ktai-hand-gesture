@@ -1,35 +1,35 @@
-# Kaggle ASL Alphabet: geneste tuning van featuregewichten
+# Kaggle ASL Alphabet: nested feature-weight tuning
 
-Datasetbron uit Shin: [grassknoted/asl-alphabet](https://www.kaggle.com/grassknoted/asl-alphabet), bevestigd in [het artikel](https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/). 78.000 letterbeelden, 60.251 bruikbare detecties; alle 26 letters. De datasetbron komt overeen, maar detector en splitsing zijn geen exacte reproductie van het artikel.
+Dataset source used by Shin: [grassknoted/asl-alphabet](https://www.kaggle.com/grassknoted/asl-alphabet), confirmed in [the paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/). 78,000 letter images, 60,251 accepted detections; all 26 letters. The dataset source matches, but the detector and split do not exactly reproduce the paper.
 
 5 outer and 3 inner StratifiedGroupKFold; session filename blocks, seed 42; one coordinate pass over 0.25/0.5/1/2. Bound internal search to 150 images/class in each fitting and validation partition; outer training and evaluation use all usable images. Choose inner mean macro-F1 then accuracy. Outer validation never used to select weights. Angle imputation/scaling fitted on inner training partitions and refitted on outer training partition.
 
 Same public dataset source as Shin ASL Alphabet experiment, not the exact published split, detector or a replication of published scores. Filename blocks are not verified subjects. Fixed categorical thresholds/Excel proposals came from separate Roboflow development data; no Kaggle-fold threshold tuning. Only letter classes A-Z. The provided 26 test photos duplicated training pixels and were excluded; no independent final test. Coordinate search is bounded and not exhaustive. Current fixed SVM C/gamma not jointly tuned.
 
-## Belangrijkste uitkomsten
+## Main findings
 
-- De datasetbron is dezelfde Kaggle ASL Alphabet-bron die Shin noemt. Het gaat niet om de kleine Roboflow-set uit de vorige vergelijkingen.
-- De getunede combinatie is marginaal nauwkeuriger: 58.848 correcte beelden tegenover 58.827 voor Shin/project (+21) en 58.842 voor Shin/artikelprofiel (+6).
-- Ongewogen extra features leveren 58.822 correcte beelden op: vijf minder dan de projectbaseline. Gewichten helpen dus tegenover die ongewogen combinatie (+26).
-- De hoogste macro-F1 blijft bij de pure Shin-baseline met artikelprofiel (0,97469); getuned gecombineerd haalt 0,97434. Er is geen duidelijke winst op alle prestatiematen.
-- M-recall verbetert van 90,01% naar 91,01% (+16 beelden); S van 98,09% naar 98,36% (+7 beelden).
-- R daalt van 93,43% naar 93,08% (−9 beelden), N van 88,13% naar 87,58% (−7), O van 98,19% naar 97,88% (−7).
-- De geselecteerde categoriegewichten zijn 1; 0,25; 0,25; 0,25; 0,5. Meer gewicht blijkt hier dus niet automatisch beter.
+- The dataset source is the Kaggle ASL Alphabet dataset cited by Shin, rather than the small Roboflow set used in earlier comparisons.
+- The tuned combination is marginally more accurate: 58,848 correct images versus 58,827 for Shin/project (+21) and 58,842 for the Shin/paper profile (+6).
+- Unweighted additions yield 58,822 correct images, five fewer than the project baseline. Weighting helps relative to that unweighted combination (+26).
+- The highest macro-F1 remains with the pure Shin paper-profile baseline (0.97469); the tuned combination reaches 0.97434. There is no clear gain across all metrics.
+- M recall increases from 90.01% to 91.01% (+16 images); S from 98.09% to 98.36% (+7 images).
+- R decreases from 93.43% to 93.08% (−9 images), N from 88.13% to 87.58% (−7), and O from 98.19% to 97.88% (−7).
+- Selected category weights are 1; 0.25; 0.25; 0.25; 0.5. More weight is not automatically better.
 
-Dit verschil is klein en geen aangetoonde statistisch betrouwbare algemene verbetering. De groepering bestaat uit zes filenameblokken, niet uit bekende personen. De zoekstap is begrensd tot maximaal 150 beelden per letter per interne deelset, maar de buitenste training en evaluatie gebruiken alle 60.251 bruikbare beelden. De 17.749 detectiefouten verklaren waarom de score over alle 78.000 beelden lager ligt.
+This small difference is not an established statistically reliable general improvement. Groups are six filename blocks, not known people. Search is capped at 150 images per letter per inner subset, but outer training and evaluation use all 60,251 accepted images. The 17,749 failed detections explain the lower score over all 78,000 images.
 
-| Variant | Accuracy bruikbaar | Macro-F1 | Accuracy alle beelden |
+| Variant | Accepted-only accuracy | Macro-F1 | All-image accuracy |
 |---|---:|---:|---:|
 | shin_project | 97.637% | 0.97386 | 75.419% |
 | shin_paper_profile | 97.661% | 0.97469 | 75.438% |
 | combined_unweighted | 97.628% | 0.97372 | 75.413% |
 | combined_tuned | 97.671% | 0.97434 | 75.446% |
 
-`shin_project`: C=10, balanced. `shin_paper_profile`: C=1000, geen class weighting. Beide RBF, gamma=scale. De gecombineerde modellen gebruiken C=10 en balanced om alleen featuregewicht te vergelijken. Excel-scores worden voor alle 26 kandidaatletters berekend, zonder het echte label als input.
+`shin_project`: C=10, balanced. `shin_paper_profile`: C=1000, no class weighting. Both use RBF, gamma=scale. Combined models use C=10 and balanced weights to isolate feature weighting. Excel scores are calculated for all 26 candidate letters without the true label as input.
 
-## Gekozen gewichten per buitenfold
+## Selected weights per outer fold
 
-| Fold | Hoeken | Categorieën | Excel-scores |
+| Fold | Angles | Categories | Excel-scores |
 |---|---:|---:|---:|
 | 1 | 0.5 | 1.0 | 2.0 |
 | 2 | 1.0 | 0.25 | 0.25 |
@@ -39,7 +39,7 @@ Dit verschil is klein en geen aangetoonde statistisch betrouwbare algemene verbe
 
 ## Recall per letter
 
-| Letter | Beelden | Shin project | Shin artikelprofiel | Ongewogen | Getuned | Verschil getuned − Shin |
+| Letter | Images | Shin project | Shin paper profile | Unweighted | Tuned | Tuned − Shin difference |
 |---|---:|---:|---:|---:|---:|---:|
 | A | 2188 | 98.67% | 98.58% | 98.67% | 98.72% | +0.05 pp |
 | B | 2204 | 99.77% | 99.77% | 99.73% | 99.73% | -0.05 pp |
@@ -68,13 +68,13 @@ Dit verschil is klein en geen aangetoonde statistisch betrouwbare algemene verbe
 | Y | 2580 | 99.46% | 99.38% | 99.38% | 99.38% | -0.08 pp |
 | Z | 2343 | 97.44% | 97.52% | 97.57% | 97.61% | +0.17 pp |
 
-Alle detailresultaten: `per_letter.csv`, `fold_metrics.csv`, `inner_search.csv`, `oof_predictions.csv`, `summary.json`. De historische 97,43% gebruikte drie folds; vergelijk die niet rechtstreeks met deze nieuwe vijf folds. De correcte vergelijking is tussen de modellen op de gedeelde huidige folds.
+Detailed results: `per_letter.csv`, `fold_metrics.csv`, `inner_search.csv`, `oof_predictions.csv`, `summary.json`. The historical 97.43% used three folds; do not compare it directly with these new five folds. The appropriate comparison is between models on the current shared folds.
 
-## Reproduceren
+## Reproduction
 
 ```bash
-python -m scripts.tune_kaggle_feature_weights \
+python -m research.studies.tune_groups \
   --out experiments/kaggle_nested_feature_weights_02
 ```
 
-De inputcache bewaart hashes van manifest, Excel en drempels. Iedere buitenfold heeft een checkpoint met alle voorspellingen en de interne zoekresultaten. Gecontroleerd: 60.251 unieke out-of-foldvoorspellingen, vijf disjuncte buitenfolds, vijftien disjuncte binnenfolds, geen interne selectiebeelden uit de buitenvalidatie, en herberekende accuracy/macro-F1 gelijk aan de opgeslagen cijfers. Alle zeven gerichte preprocessing-, wegings- en invoertests slagen.
+The input cache stores manifest, Excel and threshold hashes. Each outer fold has a checkpoint with predictions and inner search results. Checks confirmed 60,251 unique out-of-fold predictions, five disjoint outer folds, fifteen disjoint inner folds, no outer-validation images in inner selection, and recomputed accuracy/macro-F1 matching saved values. All seven targeted preprocessing, weighting and input tests passed.

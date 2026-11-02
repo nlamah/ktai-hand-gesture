@@ -1,6 +1,6 @@
 # Reproducing the interim ASL study
 
-Run every command from the repository root. The sole retained dataset is **Kaggle ASL Alphabet**, `grassknoted/asl-alphabet`, with 78,000 A-Z training images. Dataset files are local and ignored by Git. The one user-authored Excel file is `assets/asl_feature_references.xlsx`; it is unchanged. The 49 historical slash relaxations are in `config/proposal_changes.json` and are applied in memory, not saved as a second workbook.
+Run every command from the repository root. The sole retained dataset is **Kaggle ASL Alphabet**, `grassknoted/asl-alphabet`, with 78,000 A-Z training images. Dataset files are local and ignored by Git. The active user-authored Excel file is `assets/asl_feature_references.xlsx`; its labels and categories have been translated to English without changing the allowed feature values. The 49 historical slash relaxations are in `config/proposal_changes.json` and are applied in memory, not saved as a second workbook.
 
 The report is `paper/report.pdf`; editable source is `paper/report.tex`. It follows the supplied ICML 2021 accepted template, with at most five main-text pages, then references. The separate `paper/appendix.pdf` contains the extended supplementary material. Author/student details remain to be filled in. This is a course report, not an ICML publication.
 
@@ -73,13 +73,13 @@ python -m streamlit run app.py
 
 Stop the server with Ctrl-C in its terminal. The native camera window now provides six model buttons, also available through keys 1-6:
 
-- **Referentie**: original Shin 820-input reference model (`models/asl_shin.joblib`).
-- **Vingerhoeken**: Shin plus 15 joint-angle measurements (`models/asl_shin_angles.joblib`).
-- **Kanteltraining alle [3]**: the all-letter tilt-augmented joint-angle model (`models/asl_shin_angles_tilt15.joblib`).
+- **Reference**: original Shin 820-input reference model (`models/asl_shin.joblib`).
+- **Joint angles**: Shin plus 15 joint-angle measurements (`models/asl_shin_angles.joblib`).
+- **All-letter tilt [3]**: the all-letter tilt-augmented joint-angle model (`models/asl_shin_angles_tilt15.joblib`).
 
-- **C-kantelproef [4]**: selective C-only tilt (`models/asl_shin_angles_C_tilt15.joblib`).
-- **G/H-draaitraining [5]**: selective G/H direction rotations (`models/asl_shin_angles_GH_rotation.joblib`).
-- **Beeld + diepte [6]**: the 849-input 3D-plus-projected-angle model (`models/asl_shin_angles_2d.joblib`).
+- **C-only tilt [4]**: selective C-only tilt (`models/asl_shin_angles_C_tilt15.joblib`).
+- **G/H rotation [5]**: selective G/H direction rotations (`models/asl_shin_angles_GH_rotation.joblib`).
+- **Image + depth [6]**: the 849-input 3D-plus-projected-angle model (`models/asl_shin_angles_2d.joblib`).
 
 Models are loaded lazily and cached in the same window; switching does not restart the camera. A snapshot uses the currently displayed model's bundle/hash and matching 820-, 835- or 849-value vector. A model cannot be switched within a guided session. The extended Streamlit app can also predict letters using the default joint-angle SVM. If its generated model artifact is absent (e.g. after cloning), train it once:
 
@@ -95,11 +95,11 @@ python -m research.live_model --variant shin_angles
 python -m research.studies.tilt_augmentation --stage train
 ```
 
-The current local workspace already contains all six trained artifacts (the later sections reproduce the C-only and G/H models). The reference uses the same project-profile SVM and original inputs as its frozen CV comparison. Its separate live schema uses 820 features and no angle scaler; four variants use 835; Beeld + diepte uses 849. The live reference was also compared on the existing 27 development captures: 17/27 correct, C/D/O macro-F1 .609524.
+The current local workspace already contains all six trained artifacts (the later sections reproduce the C-only and G/H models). The reference uses the same project-profile SVM and original inputs as its frozen CV comparison. Its separate live schema uses 820 features and no angle scaler; four variants use 835; Image + depth uses 849. The live reference was also compared on the existing 27 development captures: 17/27 correct, C/D/O macro-F1 .609524.
 
 The default joint-angle training command uses all 60,251 accepted development images, the same 835 input columns and SVM/preprocessing configuration as the isolated five-fold angle study, and saves `models/asl_shin_angles.joblib` plus a provenance JSON. It refuses to overwrite an existing artifact unless `--force` is given. This deployment fit is not another evaluation run; the 97.748% accuracy belongs to the earlier five-fold comparison, not to an independent test of this final fit.
 
-In the app leave **Letters herkennen met getraind model** enabled and switch on **Webcam aan**. No target letter is required. A typed letter only controls comparison against workbook references and does not enter the model. Without a target, features are shown against the model's predicted letter; that is a descriptive comparison, not independent evidence that the prediction is correct. No-hand/multiple-hand outcomes clear the displayed prediction. Alternatives are decision-function rankings, not probabilities. The preview is mirrored for convenience, while the frame used by the detector is not mirrored.
+In the app leave **Recognize letters using trained model** enabled and switch on **Webcam on**. No target letter is required. A typed letter only controls comparison against workbook references and does not enter the model. Without a target, features are shown against the model's predicted letter; that is a descriptive comparison, not independent evidence that the prediction is correct. No-hand/multiple-hand outcomes clear the displayed prediction. Alternatives are decision-function rankings, not probabilities. The preview is mirrored for convenience, while the frame used by the detector is not mirrored.
 
 Select another compatible locally trained model with `python -m streamlit run app.py -- --model /absolute/path/to/model.joblib`. Only trusted local joblib artifacts should be loaded. The app does not record a new webcam dataset or constitute a controlled rotation experiment.
 
@@ -117,26 +117,151 @@ Expected inventory: 78,000 images; 60,251 `ok`, 17,598 `no_hand`, 151 `multiple_
 
 Main pooled SVM results: Shin 97.63655375% / macro-F1 .973862351; Shin+15 angles 97.74775522% / .975243912. Angles fix 143 images and lose 76, net +67. These scores apply only to accepted detections. Read the report for comparability limits.
 
-## 3. Data source and landmark extraction
+## 3. From downloaded images to accepted landmarks (start from scratch)
 
-The retained `data/asl_kaggle/manifest.json`, `originals/`, and `images/` are one dataset: original bytes and the exact RGB PNG representations of those same images. Do not delete or edit these to save space; hashes and image IDs depend on them. `data/asl_kaggle/research/` contains the single derived feature cache and frozen sample/group metadata. Six groups are consecutive numbered filename blocks of 500, not verified people. Five frozen outer folds use seed 42. The supplied tiny test set overlaps training pixels and is excluded.
+This section is the complete data preparation route for a new collaborator. **Importing images and detecting landmarks are separate steps.** The importer does not detect hands. The analysis step runs MediaPipe on every imported image and determines which images are eligible for classifier training.
 
-For reconstruction on another machine, download and unzip the official source from https://www.kaggle.com/datasets/grassknoted/asl-alphabet . Keep the downloaded source outside the repository, so the active project has only one dataset copy. Import to a new project path, not over the preserved manifest:
+### 3.1 Clone and install
 
-```bash
-python -m research.dataset import --source /absolute/path/to/asl-alphabet --project /absolute/path/to/reconstructed-asl
-python -m research.dataset analyze --project /absolute/path/to/reconstructed-asl
-```
-
-The importer preserves bytes/pixel hashes and excludes overlapping supplied test images. Analysis uses MediaPipe Hand Landmarker IMAGE mode, `num_hands=2`, detection/presence .5, and accepts exactly one valid hand. It records these thresholds for new detections. The historical manifest did not record threshold metadata, so an identical historical detector configuration cannot be independently proven. Version/platform differences can change landmarks and accepted images. Do not claim a new detection pass exactly reproduces the historical dataset unless verified. The checked model asset is `models/hand_landmarker.task`.
-
-To rebuild features from the retained frozen landmarks into a new cache:
+If you do not have the repository yet:
 
 ```bash
-python -m research.prepare --out /tmp/ktai-cache-rebuilt
+git clone https://github.com/nlamah/ktai-hand-gesture.git
+cd ktai-hand-gesture
+conda create -n ktai-hand-gesture python=3.12
+conda activate ktai-hand-gesture
+python -m pip install -r requirements.txt
 ```
 
-This computes 820 Shin descriptors, 70 category indicators, 26 fixed compatibility scores and 15 angles; its numerical matrix should match the historical cache. Its reference provenance hashes identify the original workbook plus JSON patch instead of the old generated workbook bytes. Thus these metadata hashes intentionally differ from historical generated-XLSX hashes. Use one cache consistently across all newly trained runs.
+Run subsequent commands from this repository root, with this environment active. On macOS install `llvm-openmp` from conda-forge if LightGBM reports a missing `libomp` library (section 1). Dataset files and derived caches are ignored by Git: cloning alone does not supply the images or landmarks.
+
+### 3.2 Download the actual dataset from Kaggle
+
+1. Open [ASL Alphabet by grassknoted on Kaggle](https://www.kaggle.com/datasets/grassknoted/asl-alphabet).
+2. Sign in if Kaggle requests it, download the dataset archive, and extract the entire archive. Keep both the training and supplied test folders. Do not download a different ASL dataset.
+3. Place the extracted source outside the repository, for example `../asl-alphabet-download`. This is the download source, not the imported experiment project.
+4. Check the extracted structure. The source directory passed to the importer must contain `asl_alphabet_train` and `asl_alphabet_test`. Kaggle sometimes repeats these folder names; the importer accepts either structure:
+
+```text
+../asl-alphabet-download/
+  asl_alphabet_train/asl_alphabet_train/A/A1.jpg
+  asl_alphabet_train/asl_alphabet_train/B/B1.jpg
+  ...
+  asl_alphabet_test/asl_alphabet_test/A_test.jpg
+```
+
+The variant `asl_alphabet_train/A/A1.jpg` and `asl_alphabet_test/A_test.jpg` is also supported. Point `--source` to their common parent, not to the `A` folder. Only A–Z are imported: 3,000 training images per letter, 78,000 total. The `space`, `del` and `nothing` classes are excluded. Supplied test images with the same pixels as training images are excluded and recorded in the manifest; they are not an independent test set. J and Z here are static images, not motion recognition.
+
+### 3.3 Import the images (no landmark detection yet)
+
+Use a new project directory for the experiment. The following example consistently uses `../asl-default`; do not overwrite the historical `data/asl_kaggle` project.
+
+```bash
+python -m research.dataset import --source ../asl-alphabet-download --project ../asl-default
+```
+
+Replace the source path if you extracted elsewhere. Import creates `manifest.json`, `originals/` (original bytes) and `images/` (RGB PNG detector inputs). They represent the same images, not separate training datasets. The manifest records labels, hashes, original filenames and relative paths. Initially image status is `pending`. Import can take time and requires storage for both representations in addition to the downloaded source.
+
+If import was interrupted, resume with the **same source and output paths**, without moving or modifying the downloaded files:
+
+```bash
+python -m research.dataset import --source ../asl-alphabet-download --project ../asl-default --resume
+```
+
+Do not resume a completed project to start a different experiment; choose a new project path instead.
+
+### 3.4 Detect landmarks in every image
+
+```bash
+python -m research.dataset analyze --project ../asl-default
+```
+
+This is the step responsible for the substantial image rejection. It opens each imported RGB PNG and runs **MediaPipe Hand Landmarker in IMAGE mode**, allowing up to two detected hands (`num_hands=2`). Detection and presence confidence thresholds default to **0.5 each**. The checked model is `models/hand_landmarker.task`; if absent, it is downloaded automatically from Google's MediaPipe model storage and checked against the SHA256 in `research/data.py`. Internet access is required for that first download.
+
+For one detected hand, the manifest stores 21 image landmarks, 21 world landmarks, handedness, MediaPipe version and the requested detector thresholds. The geometric feature calculation is also validated. Each image receives one status:
+
+| Status | Meaning | Used to train the letter classifier? |
+|---|---|---|
+| `pending` | Not processed yet | No |
+| `ok` | Exactly one hand detected and geometric features valid | Yes, if included and assigned the development role |
+| `no_hand` | Detector returned no hand | No |
+| `multiple_hands` | Detector returned more than one hand | No |
+| `invalid_geometry` | One hand returned, but geometric features failed validation | No |
+
+Rejected images **are not deleted**. A detected landmark configuration is not necessarily anatomically correct; `ok` is an automatic acceptance criterion, not a human quality label. Detection confidence is different from letter-classification confidence.
+
+Analysis checkpoints the manifest every 1,000 images and saves completed work on normal Python interruption. It may remain quiet between checkpoints; the command prints the processed count when finished. Stop with Ctrl-C and rerun the same command to process remaining `pending` images. After an abrupt process termination, work since the last saved checkpoint may be repeated. Only one writer can update a project at a time.
+
+### 3.5 Count acceptances and inspect rejected images
+
+```bash
+python -m research.detection_report --project ../asl-default --out runs/detection_default
+```
+
+The command prints status counts and percentages for included development images and writes:
+
+- `runs/detection_default/by_letter.csv`: counts for each status and acceptance percentage for every letter.
+- `runs/detection_default/rejected_images.csv`: IDs, letters, statuses, original filenames, and absolute image paths. Open these paths to inspect rejected images. Pending images are listed in the counts but are not called rejected.
+
+Historical reference counts (not guaranteed for a new installation):
+
+| Status | Images | Percentage of 78,000 |
+|---|---:|---:|
+| `ok` | 60,251 | 77.245% |
+| `no_hand` | 17,598 | 22.562% |
+| `multiple_hands` | 151 | 0.194% |
+| Total rejected | 17,749 | 22.755% |
+
+Thus the published project classifier metrics apply to **accepted detections**, not all 78,000 input images. Report detection coverage separately from accuracy/macro-F1. The historical manifest did not record threshold metadata: although the current implementation defaults to 0.5/0.5, an identical historical detector configuration cannot be independently proven. MediaPipe versions and platforms can change detections; a fresh run need not produce the exact historical counts or landmarks.
+
+### 3.6 Experiment with rejection thresholds
+
+The relevant implementation is `Detector` and `analyze_project` in `research/data.py`; CLI options are in `research/dataset.py`. To test lower thresholds without changing the reference project, import the same source into a separate project and analyze it:
+
+```bash
+python -m research.dataset import --source ../asl-alphabet-download --project ../asl-threshold030
+python -m research.dataset analyze --project ../asl-threshold030 --detection-confidence 0.3 --presence-confidence 0.3
+python -m research.detection_report --project ../asl-threshold030 --out runs/detection_threshold030
+```
+
+Compare both CSV reports. To identify which individual images changed status, join `rejected_images.csv` inventories or the two manifest sample lists by `id`. IDs are based on image pixels and stay the same across these imports. Keep the model, software versions, source images and acceptance rule fixed when comparing thresholds. Vary one threshold at a time if you want to distinguish detection from landmark-presence effects; 0.3/0.3 above is only an example, not a recommended optimum.
+
+**Changing flags on an already completed project does not automatically redetect it.** By default only pending images are analyzed. To deliberately replace detection results for every image in an experimental project:
+
+```bash
+python -m research.dataset analyze --project ../asl-threshold030 --detection-confidence 0.3 --presence-confidence 0.3 --reprocess
+```
+
+`--reprocess` overwrites existing landmark/status results in that project; export your reports first or use a separate project per setting. For an interrupted first detection pass, resume with the same thresholds and without `--reprocess`. If an all-image `--reprocess` pass is interrupted, rerun with `--reprocess` to ensure every image gets the new settings; this repeats already completed work. Without that flag, old non-pending records would remain and settings could be mixed across samples. Do not run threshold experiments against the preserved historical project.
+
+A lower rejection rate alone is not proof of improvement: inspect newly accepted landmarks for wrong hands or implausible joints, count rejection per letter, and assess downstream classification on fixed evaluation images. Selecting a new accepted subset also changes the classification task; compare coverage and performance on the shared accepted subset, and report the added subset separately. Do not tune thresholds using final test labels. These experiments need no webcam: they operate on stored images.
+
+### 3.7 Convert accepted landmarks to model inputs
+
+After landmark detection finishes, build a new feature cache from the same project:
+
+```bash
+python -m research.prepare --project ../asl-default --out runs/cache_default
+```
+
+This reads landmarks already stored in the manifest: **it does not detect landmarks again**. It retains included development samples with `status=ok` and writes `inputs.npz`, `inputs_metadata.json` and `summary.json`. They contain 820 Shin descriptors, 70 category indicators, 26 compatibility scores and 15 separate angles, plus labels, IDs and five grouped folds (seed 42). The six groups are numbered filename blocks of 500, not verified people. Do not claim person-independent evaluation from these folds.
+
+The output directory must not already exist. For a threshold experiment, use its project and a separate cache, for example `--project ../asl-threshold030 --out runs/cache_threshold030`. All subsequent training commands must explicitly use the chosen cache:
+
+```bash
+python -m research.studies.compare_models --stage train --models svm lightgbm --run runs/cache_default --out runs/from_scratch_models
+python -m research.studies.compare_angles --models svm lightgbm --run runs/cache_default --baseline-run runs/from_scratch_models --out runs/from_scratch_angles
+```
+
+These are substantial training jobs. Section 4 describes their models. Omitting `--run` selects the historical default cache and therefore does **not** train on your new extraction. Historical result verification (`research.verify`) is tied to the frozen 60,251-image evidence; it is not a generic validator for a new detector experiment.
+
+To rebuild from the preserved historical landmarks instead, without redetection:
+
+```bash
+python -m research.prepare --project data/asl_kaggle --out runs/cache_from_frozen_landmarks
+```
+
+The active workbook now uses English labels with the same allowed values; historical slash relaxations remain applied in memory from JSON. The workbook and proposal JSON now use English text, so their byte hashes differ from historical Dutch inputs even though their allowed feature values are preserved. New caches record their actual inputs; use one cache consistently across a new comparison.
 
 ## 4. Retrain SVM and LightGBM on shared folds
 
@@ -292,7 +417,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera --model models/asl_shin_angles_GH_rotation.joblib
 ```
 
-The initial caption is **G/H-draaitraining**. Select it again at any time with button/key **5**; **Kanteltraining alle [3]** is the separate earlier all-letter ±15° model.
+The initial caption is **G/H rotation**. Select it again at any time with button/key **5**; **All-letter tilt [3]** is the separate earlier all-letter ±15° model.
 
 Training and validation (use fresh candidate/output paths to retrain without overwriting):
 
@@ -309,7 +434,7 @@ See `results/rotation_GH_01/report.md` for all-letter metrics and replay of prev
 
 Hand landmarks and connections are visible by default. **L** toggles the overlay; raw camera and detector-input files remain unchanged. The overlay follows the mirrored, letterboxed preview and is included in the saved preview.
 
-Every launch starts a uniquely identified round. **Nieuwe ronde / N** starts another during live viewing, without restarting the camera. Switching models stays in the same round. Use `--round-name "GH-handrug"` for a descriptive label. The round label and number are visible below the model buttons; each new `capture.json` contains `capture_round` (ID, name, number, start timestamp), `session_id`, overlay state and the active model path/hash. Capture folders remain under `captures/confusions/`; group them by round ID for analysis. Older captures retain their original session IDs and are not modified. Nothing is saved until a photo is explicitly confirmed. Guided protocols keep their original planned session identity and lock the model/new-round controls.
+Every launch starts a uniquely identified round. **New round / N** starts another during live viewing, without restarting the camera. Switching models stays in the same round. Use `--round-name "GH-back-of-hand"` for a descriptive label. The round label and number are visible below the model buttons; each new `capture.json` contains `capture_round` (ID, name, number, start timestamp), `session_id`, overlay state and the active model path/hash. Capture folders remain under `captures/confusions/`; group them by round ID for analysis. Older captures retain their original session IDs and are not modified. Nothing is saved until a photo is explicitly confirmed. Guided protocols keep their original planned session identity and lock the model/new-round controls.
 
 ## Projected image angles alongside 3D angles
 
@@ -321,9 +446,9 @@ python -m research.studies.report_image_angles
 python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-name "2D-3D-test"
 ```
 
-The all stage resumes the fixed protocol/model and finished folds. `--stage train` refuses to overwrite an existing candidate; `--stage cv` reuses fold checkpoints; `--stage evaluate` replays saved captures. The small new feature cache is `results/angles_2d_01/pixel_angles.npz`; the original dataset, cached inputs and earlier models remain unchanged. The native tool exposes the candidate through **Beeld + diepte [6]**. Snapshot exports contain all 849 feature names/values, 15 original `joint_angles_degrees` and 14 `projected_angles_degrees`, detector image dimensions, active model hash and round metadata.
+The all stage resumes the fixed protocol/model and finished folds. `--stage train` refuses to overwrite an existing candidate; `--stage cv` reuses fold checkpoints; `--stage evaluate` replays saved captures. The small new feature cache is `results/angles_2d_01/pixel_angles.npz`; the original dataset, cached inputs and earlier models remain unchanged. The native tool exposes the candidate through **Image + depth [6]**. Snapshot exports contain all 849 feature names/values, 15 original `joint_angles_degrees` and 14 `projected_angles_degrees`, detector image dimensions, active model hash and round metadata.
 
-Five-fold pooled accuracy changes 97.74776% to 97.69298%; macro-F1 .97524391 to .97465145. There are 70 corrected and 103 newly incorrect predictions. Four folds decline slightly; one improves. Of the latest 11 deliberately selected G/H-model errors, Vingerhoeken recognizes 2 and the candidate 3 (T is newly correct; G remains A). The older C/D/O development round changes 17/27 to 16/27 correct. These captures were not used to fit or tune the model and are reused development diagnostics, not independent test scores. Full fold and all-letter metrics are in `results/angles_2d_01/report.md`.
+Five-fold pooled accuracy changes 97.74776% to 97.69298%; macro-F1 .97524391 to .97465145. There are 70 corrected and 103 newly incorrect predictions. Four folds decline slightly; one improves. Of the latest 11 deliberately selected G/H-model errors, Joint angles recognizes 2 and the candidate 3 (T is newly correct; G remains A). The older C/D/O development round changes 17/27 to 16/27 correct. These captures were not used to fit or tune the model and are reused development diagnostics, not independent test scores. Full fold and all-letter metrics are in `results/angles_2d_01/report.md`.
 
 Five folds preserve the earlier comparison and provide large validation partitions. More folds cannot repair overlap between people/sessions: the current groups are filename blocks, not verified signer identities. Report the pooled out-of-fold scores and per-fold variation, without treating fold standard deviation as a confidence interval. A new signer/session held out from development is needed to assess live robustness.
 
@@ -336,7 +461,7 @@ python -m research.studies.gh_middle_diagnostic
 
 The first command trains three fixed binary RBF SVMs using only 15 3D measurements, 14 projected 2D angles, or all 29. It restricts the original five group folds to the same 4,801 G/H images (2,430 G; 2,371 H), with training-only imputation/scaling. Captures do not enter fitting. Bundles are saved under `models/gh_diagnostic/` and results under `results/gh_classifier_01/`. These diagnostic bundles always choose G or H; they are not compatible replacements for the 26-letter live models.
 
-Binary CV accuracy is 96.563% (3D), 95.793% (2D), and 96.584% (both). The latest saved G is still H for all three. G is nevertheless well recognized in the original 26-class validation: 2,416/2,430 correct (99.424% recall); Vingerhoeken mistakes four G images for H, nine for J and one for F. These are accepted-image, filename-block validation results, not new-signer webcam scores.
+Binary CV accuracy is 96.563% (3D), 95.793% (2D), and 96.584% (both). The latest saved G is still H for all three. G is nevertheless well recognized in the original 26-class validation: 2,416/2,430 correct (99.424% recall); Joint angles mistakes four G images for H, nine for J and one for F. These are accepted-image, filename-block validation results, not new-signer webcam scores.
 
 The second command is an explicitly post-hoc diagnostic using only the 3D/2D middle-PIP measurements. It recognizes the three stored G/H error examples correctly, but CV accuracy is lower (94.085%, macro-F1 .94084). Results are in `results/gh_middle_01/`; do not treat those reused examples as an independent test or install this binary rule as a general classifier.
 
@@ -358,7 +483,7 @@ conda activate ktai-hand-gesture
 python -m research.gh_view_capture
 ```
 
-Three participants, G/H, four views (palm, oblique palm, oblique back, back), five repetitions: **120 planned photos, 40 per person**. This supersedes the earlier 60/90-photo three-view proposal. Predictions are hidden; participant transitions require Enter. Use `--participants 2` for 80 photos. Photos are separate from training. P01 is development; P02/P03 are reserved evaluation. Full instructions, the four-view illustration and resume/status commands are in [docs/GH_OPNAMES.md](docs/GH_OPNAMES.md).
+Three participants, G/H, four views (palm, oblique palm, oblique back, back), five repetitions: **120 planned photos, 40 per person**. This supersedes the earlier 60/90-photo three-view proposal. Predictions are hidden; participant transitions require Enter. Use `--participants 2` for 80 photos. Photos are separate from training. P01 is development; P02/P03 are reserved evaluation. Full instructions, the four-view illustration and resume/status commands are in [docs/GH_CAPTURE.md](docs/GH_CAPTURE.md).
 
 ## Core-question report revision
 
@@ -379,4 +504,4 @@ conda activate ktai-hand-gesture
 python -m research.alphabet_capture
 ```
 
-The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALFABET_OPNAMES.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.
+The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALPHABET_CAPTURE.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.

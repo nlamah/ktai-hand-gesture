@@ -30,10 +30,10 @@ def main():
             if p is None:return
             session=AlphabetSession.create(args.output,p,sha,args.repeats)
         print(f'Sessie: {session.directory.resolve()}',flush=True)
-        print(f"Deelnemer: {session.plan['participant']['name']} | {len(session.completed)}/{len(session.plan['tasks'])}",flush=True)
+        print(f"Participant: {session.plan['participant']['name']} | {len(session.completed)}/{len(session.plan['tasks'])}",flush=True)
         if not args.status:run_camera(DEFAULT_MODEL,args.camera,protocol_session=session)
     except KeyboardInterrupt:pass
-    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'Alfabetopnamen gestopt: {error}\n')
+    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'Alphabet capture stopped: {error}\n')
 
 
 if __name__=='__main__':main()

@@ -1,16 +1,16 @@
-# Verwarring voor alle letters: SVM met en zonder gewrichtshoeken
+# All-letter confusion: SVM with and without joint angles
 
-Dezelfde vijf folds en 60.251 bruikbare Kaggle-beelden. Rijen zijn de echte letter; kolommen de voorspelling. Aantallen zijn out-of-fold: geen trainingsvoorspellingen.
+The same five folds and 60,251 accepted Kaggle images. Rows are true letters; columns are predictions. Counts are out-of-fold, not training predictions.
 
-![Verwarringsmatrices voor en na toevoegen van hoeken](confusion_before_after.png)
+![Confusion matrices before and after adding angles](confusion_before_after.png)
 
-![Verandering van de verwarring](confusion_changes.png)
+![Change in confusion](confusion_changes.png)
 
-## Overzicht per echte letter
+## Overview by true letter
 
-Per rij maximaal drie grootste verkeerde bestemmingen na toevoegen van hoeken. Notatie `R: 149 → 142` betekent dat de echte letter uit deze rij eerst 149 keer als R werd voorspeld en daarna 142 keer. De CSV en matrices bevatten alle bestemmingen.
+Each row shows up to three largest incorrect destinations after adding angles. `R: 149 → 142` means the true letter in this row was first predicted as R 149 times and then 142 times. CSV files and matrices contain all destinations.
 
-| Echte letter | Beelden | Correct Shin → hoeken | Meeste verwarring na hoeken (Shin → hoeken) |
+| True letter | Images | Correct Shin → angles | Largest confusions after angles (Shin → angles) |
 |---|---:|---:|---|
 | A | 2188 | 2159 → 2160 | X: 9 → 8; T: 7 → 7; O: 6 → 6 |
 | B | 2204 | 2199 → 2198 | W: 1 → 2; C: 0 → 1; F: 2 → 1 |
@@ -39,9 +39,9 @@ Per rij maximaal drie grootste verkeerde bestemmingen na toevoegen van hoeken. N
 | Y | 2580 | 2566 → 2564 | A: 4 → 7; O: 3 → 3; T: 3 → 3 |
 | Z | 2343 | 2283 → 2291 | X: 30 → 22; S: 20 → 20; M: 1 → 2 |
 
-## Grootste toename van specifieke fouten
+## Largest increases in specific errors
 
-| Echte letter → voorspelling | Shin | Met hoeken | Verschil |
+| True letter → prediction | Shin | With angles | Difference |
 |---|---:|---:|---:|
 | O → D | 12 | 19 | +7 |
 | D → O | 35 | 41 | +6 |
@@ -54,24 +54,24 @@ Per rij maximaal drie grootste verkeerde bestemmingen na toevoegen van hoeken. N
 | I → P | 0 | 2 | +2 |
 | I → S | 21 | 23 | +2 |
 
-## Betekenis voor featureweging
+## Implications for feature weighting
 
-Extra gewicht voor de drie wijsvingerhoeken is een zinvolle hypothese voor O/D, maar volgt niet automatisch uit de verwarringsmatrix. Meer gewicht kan bestaande landmarkfouten versterken en de SVM-grens voor andere letters verplaatsen. Een featuremultiplier 2 telt bovendien als factor 4 in het gekwadrateerde afstandsdeel van de RBF-kernel.
+Upweighting the three index finger angles is a reasonable hypothesis for O/D, but does not follow automatically from the confusion matrix. More weight can amplify landmark errors and move SVM boundaries for other letters. A feature multiplier of 2 contributes a factor of 4 to the squared-distance component of the RBF kernel.
 
-De grootste resterende paren zijn M/N en R/U. Voor M/N zijn duim- en gezamenlijke vingerstanden plausibele kandidaten; voor R/U zijn zijdelingse volgorde en kruising kandidaten. Dit zijn onderzoekshypotheses, geen causaliteitsconclusies uit de matrix. De eerdere crossing-feature had geen duidelijke extra bijdrage; bekijk daarom eerst de landmarks voordat je haar zwaarder maakt.
+The largest remaining pairs are M/N and R/U. Thumb and joint finger poses are plausible candidates for M/N; lateral order and crossing for R/U. These are hypotheses, not causal conclusions from the matrix. The earlier crossing feature showed no clear additional contribution; inspect landmarks before increasing its weight.
 
-Volgende gerichte test: alleen de wijsvinger-MCP/PIP/DIP als groep wegen met 0,5 / 1 / 2, gekozen in interne trainingsfolds. Beoordeel buitenfolds op totale macro-F1, O/D én M/N en R/U; kies niet alleen op verbetering van O. Inspecteer de acht nieuw foute O-beelden daarnaast visueel. Deze herhaald gebruikte ontwikkelfolds zijn geen onafhankelijke persoonstest.
+Next targeted test: weight index finger MCP/PIP/DIP as a group by 0.5 / 1 / 2, selected in inner training folds. Evaluate outer folds on overall macro-F1, O/D and M/N and R/U, rather than O alone. Visually inspect the eight newly incorrect O images. These repeatedly used development folds are not an independent person test.
 
-Bestanden: shin_counts.csv, shin_angles_counts.csv, changes_counts.csv en all_error_pairs.csv.
+Files: shin_counts.csv, shin_angles_counts.csv, changes_counts.csv en all_error_pairs.csv.
 
-## Wijsvinger: gerichte aanwijzing voor O/D
+## Index finger: targeted evidence for O/D
 
-Mediane gemeten hoeken in graden (dit zijn geen getunede grenzen):
+Median measured angles in degrees (not tuned thresholds):
 
-| Groep | Beelden | MCP | PIP | DIP |
+| Groep | Images | MCP | PIP | DIP |
 |---|---:|---:|---:|---:|
 | O | 2264 | 137.6 | 142.1 | 125.6 |
 | D | 2456 | 157.2 | 169.0 | 146.8 |
 | Nieuw fout: O naar D | 8 | 146.9 | 133.2 | 131.3 |
 
-De PIP-mediaan van de nieuw verkeerd herkende O-beelden ligt aan de O-kant. Dit maakt afzonderlijk meer gewicht voor PIP een toetsbare hypothese; niet noodzakelijk voor alle drie wijsvingerhoeken tegelijk. Medianen tonen niet de volledige overlap of de SVM-beslisgrens, dus verbetering staat niet vast.
+The PIP median of newly misclassified O images lies on the O side. This makes upweighting PIP alone a testable hypothesis, not necessarily all three index finger angles together. Medians do not show the full overlap or SVM decision boundary, so improvement is uncertain.

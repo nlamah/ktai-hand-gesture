@@ -139,26 +139,26 @@ def main():
             'limitations':'Index hypothesis was chosen after inspecting previous results on these same development folds; '
                           'nested weight selection does not turn them into a fresh independent test. Filename blocks are not known people.'}
     (out/'summary.json').write_text(json.dumps(result,indent=2));print(json.dumps(summaries,indent=2),flush=True)
-    lines=['# Gerichte weging wijsvingerhoeken: SVM + Shin + 15 hoeken','',result['protocol'],'',result['limitations'],'',
-           '| Variant | Accuracy | Macro-F1 | Correct | Hersteld / verloren t.o.v. ongewogen |',
+    lines=['# Targeted index finger angle weighting: SVM + Shin + 15 angles','',result['protocol'],'',result['limitations'],'',
+           '| Variant | Accuracy | Macro-F1 | Correct | Fixed / lost versus unweighted |',
            '|---|---:|---:|---:|---:|']
     for arm,m in summaries.items():lines.append(f"| {arm} | {m['accuracy']:.3%} | {m['macro_f1']:.5f} | {m['correct']} | {paired[arm]['recovered']} / {paired[arm]['lost']} |")
-    lines+=['','unweighted: alle hoekgewichten 1. pip_2: vooraf vastgelegde PIP-verhoging naar 2. '
-            'tuned_pip: alleen PIP intern gekozen. tuned_index: PIP, daarna MCP en DIP intern afgestemd.', '',
-            '## Gewichten per buitenfold','', '| Fold | Variant | MCP | PIP | DIP |','|---|---|---:|---:|---:|']
+    lines+=['','unweighted: all angle weights 1. pip_2: predefined PIP weight of 2. '
+            'tuned_pip: only PIP selected internally. tuned_index: PIP, then MCP and DIP tuned internally.', '',
+            '## Weights per outer fold','', '| Fold | Variant | MCP | PIP | DIP |','|---|---|---:|---:|---:|']
     for detail in fold_details:
         for arm,weights in detail['selected_weights'].items():lines.append(f"| {detail['fold']} | {arm} | "+' | '.join(map(str,weights))+' |')
-    lines+=['','## Gerichte verwarringen','', '| Echte letter → voorspelling | Ongewogen | PIP 2 | PIP getuned | Alle wijsvingerhoeken getuned |','|---|---:|---:|---:|---:|']
+    lines+=['','## Targeted confusions','', '| True letter → prediction | Unweighted | PIP 2 | Tuned PIP | All index finger angles tuned |','|---|---:|---:|---:|---:|']
     for true,predicted in [('O','D'),('D','O'),('M','N'),('N','M'),('R','U'),('U','R')]:
         counts=[next(r['count'] for r in confusions if r['variant']==a and r['true_letter']==true and r['predicted_letter']==predicted) for a in ARMS]
         lines.append(f'| {true} → {predicted} | '+' | '.join(map(str,counts))+' |')
-    lines+=['','## Recall per letter','', '| Letter | Beelden | Ongewogen | PIP 2 | PIP getuned | Alle wijsvingerhoeken getuned |','|---|---:|---:|---:|---:|---:|']
+    lines+=['','## Recall per letter','', '| Letter | Images | Unweighted | PIP 2 | Tuned PIP | All index finger angles tuned |','|---|---:|---:|---:|---:|---:|']
     for label in LABELS:
         rr={r['variant']:r for r in letters if r['letter']==label}
         lines.append(f"| {label} | {rr['unweighted']['images']} | "+' | '.join(f"{rr[a]['recall']:.2%}" for a in ARMS)+' |')
-    lines+=['','Gewichten worden na standaardisatie toegepast. Factor 2 betekent factor 4 in het betreffende gekwadrateerde afstandsdeel van de RBF-kernel. '
-            'Er is niet geselecteerd op alleen O/D en er is geen outer-fold keuze achteraf per letter toegepast. '
-            'Dit onderzoek betreft bruikbare detecties; de ontbrekende detecties veranderen niet.', '',
+    lines+=['','Weights are applied after standardization. A factor of 2 contributes a factor of 4 to the corresponding squared-distance component of the RBF kernel. '
+            'Selection did not use O/D alone, and no post-hoc per-letter outer-fold choice was applied. '
+            'This study concerns accepted detections; failed detections are unchanged.', '',
             '```bash','python -m research.studies.tune_index','```','']
     (out/'report.md').write_text('\n'.join(lines))
 

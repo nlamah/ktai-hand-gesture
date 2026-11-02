@@ -1,29 +1,29 @@
-# Herbeoordeling volgens Assignment 3
+# Reassessment against Assignment 3
 
-Beoordeeld: de herziene Engelse `report.pdf` en de afzonderlijke `appendix.pdf`. De hoofdvraag is nu: **In hoeverre verbeteren expliciete handvormkenmerken de ASL-letterherkenning ten opzichte van een Shin-gebaseerde referentie?** Webcam-, augmentatie- en latere G/H-proeven zijn ondersteunende diagnostiek, geen extra voorwaarden om die hoofdvraag te beantwoorden.
+Assessed: the revised English `report.pdf` and separate `appendix.pdf`. The main question is: **To what extent do explicit hand-shape features improve ASL letter recognition relative to a Shin-inspired reference?** Webcam, augmentation and later G/H experiments support the diagnosis; they are not additional requirements for answering this main question.
 
-Dit is een AI-gegenereerde, indicatieve beoordeling op basis van de door de gebruiker gedeelde rubric. Het is geen officiële docentbeoordeling of garantie; opleidingsniveau, docentinterpretatie en het meetellen van de appendix kunnen de uitkomst veranderen. Er zijn geen nieuwe empirische gegevens verzameld voor deze revisie. De verbetering tegenover de vorige beoordeling zit in afbakening, bewijsvoering en rapportage, niet in sterkere onafhankelijke validatie.
+This is an AI-generated indicative assessment using the rubric supplied by the user, not an official grade or guarantee. Course level, the assessor's interpretation and whether the appendix counts can change the outcome. No new empirical data were collected for this revision. Improvements concern scope, evidence and reporting, rather than stronger independent validation.
 
-## Indicatieve score
+## Indicative score
 
-| Rubriconderdeel | Maximaal | Inschatting | Reden en belangrijkste beperking |
+| Rubric component | Maximum | Estimate | Reason and main limitation |
 |---|---:|---:|---|
-| Abstract | 5 | 4 | Motivatie, vraag, methode, aantallen, accuracy/F1 en begrensde conclusie aanwezig. De samenvatting blijft vrij informatiedicht. |
-| Introduction | 10 | 8 | Expliciete hoofdvraag, drie toetsbare deelvragen, concrete motivatie en afgebakende empirische bijdrage. De bijdrage is geen nieuw algoritme. |
-| Related work | 10 | 7 | Zes primaire werken worden met de eigen aanpak verbonden: geometrische baseline, landmarks, dieptesensoren, boosting, feature reliance en selectiebias. Het is geen brede of recente ASL-literatuurstudie. |
-| Methods | 20 | 15 | Features, klassescores, algoritmen, doelstellingen, preprocessing en variaties zijn verklaard; technische formalisering staat in de appendix. De methodologische innovatie is beperkt en de oorspronkelijke detectorinstellingen zijn niet volledig te reconstrueren. |
-| Experiments and Analysis | 40 | 28 | Gelijke beelden/folds, twee algoritmen, toevoegings- en verwijderingsproeven, permutation importance, geneste gewichtstuning, alle letters en gepaarde foutanalyse. Geen onaangeroerde eindtest of bewezen persoonsgescheiden splits; veel verkennende keuzes op dezelfde evaluatie. |
-| Discussion | 10 | 8 | Beantwoordt de hoofdvraag, bespreekt klein effect, regressies, selectiebias, detectiedekking, webcambeperkingen, ethiek en AI-gebruik. Sommige verklaringen blijven hypotheses. |
-| Conclusions | 5 | 4 | Bondig antwoord met grootte en scope van het effect; gericht vervolgonderzoek. De generalisatie buiten de dataset blijft open. |
-| **Totaal** | **100** | **74** | **Grove cijferindicatie: ongeveer 7,4; een ruime bandbreedte rond 7–8 is realistischer dan een exact cijfer.** |
+| Abstract | 5 | 4 | Includes motivation, question, method, sample counts, accuracy/F1 and a bounded conclusion. Still information dense. |
+| Introduction | 10 | 8 | Explicit main question, three testable subquestions, concrete motivation and bounded empirical contribution. No new algorithm. |
+| Related work | 10 | 7 | Connects six primary works to geometry, landmarks, depth sensors, boosting, feature reliance and selection bias. Not a broad or recent ASL literature review. |
+| Methods | 20 | 15 | Explains features, compatibility scores, algorithms, objectives, preprocessing and variants; technical formalization is in the appendix. Limited methodological novelty and incomplete historical detector provenance. |
+| Experiments and Analysis | 40 | 28 | Shared images/folds, two algorithms, additions, ablations, permutation importance, nested weighting, all-letter and paired error analysis. No untouched final test or verified person-separated splits; repeated exploratory selection on the same evaluation. |
+| Discussion | 10 | 8 | Answers the question and covers small effects, regressions, selection bias, detection coverage, webcam limitations, ethics and AI use. Some explanations remain hypotheses. |
+| Conclusions | 5 | 4 | Concise answer with effect size, scope and focused future work. Generalization beyond the dataset remains unresolved. |
+| **Total** | **100** | **74** | **Approximate grade: 7.4; a broad 7–8 range is more realistic than an exact grade.** |
 
-## 1. Zijn ML-technieken juist toegepast?
+## 1. Were ML techniques applied correctly?
 
-De gedeelde rubric vraagt letterlijk:
+The supplied rubric asks:
 
 > Is the evaluation correctly performed from a data analytics/machine learning perspective (depending on the field)
 
-Onder hetzelfde onderdeel staan onder meer:
+It also asks:
 
 > Does the evaluation contain proper baselines?
 >
@@ -31,30 +31,30 @@ Onder hetzelfde onderdeel staan onder meer:
 >
 > Were there statistical analysis?
 
-**Oordeel: grotendeels voldaan, met expliciete grenzen.**
+**Assessment: largely satisfied, with explicit limits.**
 
-Sterke punten:
+Strengths:
 
-- Hoofdtabel vergelijkt de baseline en featurevarianten op dezelfde 60.251 geaccepteerde beelden en vijf vastgelegde folds, met accuracy én macro-F1 voor SVM en LightGBM.
-- Hoekimputatie en schaling worden op de trainingspartitie geleerd. De geneste gewichtstuning houdt binnenste selectie en buitenste evaluatie gescheiden binnen die zoekproef.
-- Toepassingsverschillen tussen toevoegen, verwijderen/hertrainen en permutation importance worden uitgelegd. Permutation importance wordt niet als causale of additieve featurebijdrage gepresenteerd.
-- De 67 extra correcte voorspellingen worden uitgesplitst in 143 herstelde en 76 verloren correcte voorspellingen. Alle letters en volledige confusion matrices blijven beschikbaar.
-- De statistische stabiliteitsanalyse heet nadrukkelijk geen onafhankelijke betrouwbaarheidsinterval of bevestigende significantietoets.
-- De vergelijking met Shin noemt de protocolverschillen en claimt geen exacte reproductie of superioriteit tegenover de gepubliceerde 87,60%.
+- The main table compares reference and feature variants on the same 60,251 accepted images and five frozen folds, reporting accuracy and macro-F1 for SVM and LightGBM.
+- Angle imputation and scaling are learned on training partitions. Nested weighting separates inner selection and outer evaluation within that search.
+- Addition, removal/retraining and permutation importance are distinguished. Importance is not presented as a causal or additive feature contribution.
+- The 67 net additional correct predictions are decomposed into 143 corrected errors and 76 lost correct predictions. All letters and complete confusion matrices remain available.
+- Statistical stability analysis is explicitly not an independent confidence interval or confirmatory significance test.
+- The Shin comparison describes protocol differences and claims neither exact reproduction nor superiority to the published 87.60% result.
 
-Beperkingen die punten blijven kosten:
+Limitations that still cost points:
 
-1. Bestandsnummerblokken zijn geen bewezen personen/sessies. Vergelijkbare beelden kunnen over groepen heen voorkomen.
-2. Dezelfde evaluatie is herhaaldelijk bekeken bij het kiezen van representaties en vervolgexperimenten. Geneste tuning binnen één proef corrigeert dit grotere selectieproces niet volledig.
-3. De scores zijn conditioneel op succesvolle detectie (77,25% dekking); het is geen end-to-end accuracy over alle bronbeelden.
-4. Er is geen onaangeroerde eindtest. Geselecteerde webcamfouten zijn diagnostisch materiaal, geen representatieve testset.
-5. De referentietabel/relaxaties zijn verkennend ontwikkeld, en een categorie-alleen-zonder-workbook-vergelijking ontbreekt. Het rapport trekt daar geen sterkere conclusie uit dan de uitgevoerde proeven toelaten.
+1. Filename blocks are not verified people/sessions; related images may span groups.
+2. The same evaluation repeatedly informed representation and follow-up choices. Nesting one weighting experiment does not remove selection bias across the whole development process.
+3. Scores are conditional on successful detection (77.25% coverage), not end-to-end accuracy over all source images.
+4. There is no untouched final test. Selected webcam errors are diagnostic material, not a representative test set.
+5. Workbook references/relaxations were developed exploratorily, and an isolated category-only, no-workbook comparison is missing. Conclusions are limited to the experiments performed.
 
-Voor de afgebakende vraag zijn dit beperkingen van het bewijs, geen reden dat alle bestaande experimenten opnieuw moeten worden uitgevoerd. Voor een sterke claim over nieuwe gebruikers is aanvullend prospectief bewijs nodig.
+For the bounded research question these constrain the evidence; they do not require repeating every existing experiment. Strong claims about new users need prospective evidence.
 
-## 2. Zijn de onderzoeksvragen inhoudelijk voldoende?
+## 2. Are the research questions substantive enough?
 
-Er staat in de aangeleverde rubric geen letterlijk criterium dat onderzoeksvragen “niet te eenvoudig” mogen zijn. De meest relevante formuleringen zijn:
+The supplied rubric has no literal requirement that questions must not be “too simple”. Its closest criteria are:
 
 > Is the method complex/innovative?
 >
@@ -62,27 +62,27 @@ Er staat in de aangeleverde rubric geen letterlijk criterium dat onderzoeksvrage
 >
 > Is the method well formalized/explained?
 
-**Oordeel: voldoende voor een afgebakende empirische ML-studie; geen sterke algoritmische innovatie.**
+**Assessment: sufficient for a bounded empirical ML study, with limited algorithmic novelty.**
 
-De hoofdvraag gaat niet meer over het bouwen van een app of het oplossen van elke webcamfout. RQ1 toetst het brede pakket en classifierafhankelijkheid, RQ2 isoleert continue metingen en RQ3 onderzoekt verdeling en stabiliteit van het effect. Daarmee zijn de representatiekeuze, de waargenomen winst en de beperkingen expliciet toetsbaar.
+The main question concerns more than building an app or fixing every webcam error. RQ1 tests the complete feature package and classifier dependence, RQ2 isolates continuous measurements, and RQ3 examines distribution and stability of the effect. Representation choices, observed gains and limitations are therefore testable.
 
-Het is inhoudelijk waardevol dat het volledige pakket niet consequent helpt, continue hoeken een kleine SVM-winst geven, LightGBM anders reageert en sommige letters verslechteren. Meer modellen of features zijn daarvoor niet automatisch beter onderzoek. De bijdrage moet worden beoordeeld als een gecontroleerde empirische vergelijking met foutanalyse, niet als een nieuw algoritme.
+The inconsistent effect of the full package, small SVM improvement from continuous angles, different LightGBM response and per-letter regressions are meaningful results. More models or features do not automatically improve the research. Assess the contribution as a controlled empirical comparison with error analysis, rather than a new algorithm.
 
-De huidige data beantwoorden geen causale vraag over palm-/handrugzicht, geen claim van klinisch correcte gewrichtsmetingen en geen claim dat de webcamproblemen opgelost zijn. Die claims zijn uit de kernconclusie gehouden.
+Current data do not establish a causal palm/back-view effect, clinically accurate joint measurements, or resolution of webcam problems. These claims are excluded from the central conclusion.
 
-## Wat is door deze revisie verbeterd?
+## Improvements made in the report revision
 
-- Abstract, onderzoeksvragen, resultatensecties en conclusie beantwoorden nu dezelfde hoofdvraag.
-- De numerieke kernvergelijking en alle-letter-effecten staan in de hoofdtekst, niet uitsluitend in de appendix.
-- RQ1 maakt onderscheid tussen het volledige pakket, het verwijderen van categorieën en ontbrekende isolatieproeven.
-- De hoofdtekst bevat een beknopte uitleg van modelinstellingen, train-only preprocessing, selectiebias en de statistische grenzen.
-- Latere experimenten blijven transparant bewaard in Appendix I–J, zonder het hoofdonderzoek onnodig onvoltooid te laten lijken.
-- AI-generatie en de beperkte betekenis van code-inspectie/unit tests zijn expliciet vermeld.
+- Abstract, questions, results and conclusion address the same main question.
+- The main numerical comparison and all-letter effects appear in the main text, not only the appendix.
+- RQ1 distinguishes the full package, category removal and missing isolation experiments.
+- The main text briefly explains model settings, training-only preprocessing, selection bias and statistical limits.
+- Later experiments remain transparent in Appendix I–J without making the main study appear unnecessarily unfinished.
+- AI generation and the limited evidential scope of code inspection/unit tests are explicit.
 
-## Wat zou het cijfer vooral verder verhogen?
+## What would most improve the assessment?
 
-1. Eén vooraf vastgelegde vergelijking op een nieuwe, ongeziene persoon/sessie. Dat versterkt het zwaarst gewogen onderdeel; 120 foto's zijn geen expliciete rubricverplichting.
-2. Een iets bredere, gerichte vergelijking met bestaande handvorm-/oriëntatierobuuste featuremethoden, met betrouwbare primaire bronnen. Dat kan ook de beperkte nieuwheid scherper positioneren.
-3. Onafhankelijke inhoudelijke controle van de workbookbeschrijvingen en een gerichte controle van de kerncode. Unit tests alleen bewijzen geen taalkundige of anatomische geldigheid.
+1. One predefined comparison on a new, unseen participant/session. This strengthens the highest-weighted component; 120 photos are not an explicit rubric requirement.
+2. A broader focused comparison with established hand-shape/orientation-robust representations, supported by reliable primary sources, to position novelty more clearly.
+3. Independent review of workbook descriptions and targeted review of core code. Unit tests alone do not establish linguistic or anatomical validity.
 
-Voor inlevering moeten auteursnaam/studentnummer nog worden ingevuld en moet de auteur de bronnen en interpretatie zelf controleren. Deze administratieve punten zijn niet als extra experimentele eisen behandeld.
+Before submission, fill in author/student details and personally check sources and interpretation. These administrative requirements are not additional experimental demands.

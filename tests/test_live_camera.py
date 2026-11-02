@@ -55,7 +55,7 @@ class LiveCameraTests(unittest.TestCase):
         capture.read.return_value = (False, None)
         with ExitStack() as stack:
             self.patches(stack, capture, detector)
-            with self.assertRaisesRegex(RuntimeError, 'Geen camerabeeld'):
+            with self.assertRaisesRegex(RuntimeError, 'No camera frame'):
                 live_camera.run_camera()
         capture.release.assert_called_once()
         detector.close.assert_called_once()
@@ -65,7 +65,7 @@ class LiveCameraTests(unittest.TestCase):
         capture.isOpened.return_value = False
         with ExitStack() as stack:
             self.patches(stack, capture, detector)
-            with self.assertRaisesRegex(RuntimeError, 'Camera kan niet'):
+            with self.assertRaisesRegex(RuntimeError, 'Cannot open camera'):
                 live_camera.run_camera()
         capture.release.assert_called_once()
         detector.close.assert_not_called()

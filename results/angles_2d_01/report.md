@@ -1,17 +1,17 @@
 # Projected 2D angles alongside 3D joint angles
 
-One fixed experiment adds 14 internal joint angles measured in aspect-correct image pixels to the original 835-input Vingerhoeken model. The candidate has 849 inputs: 820 unchanged Shin features, 15 original 3D measurements and 14 projected angles. There is no augmentation and no new contact input. The same training-only median imputation/standardization is applied to the 29 angle inputs. The classifier remains balanced RBF SVM C=10, gamma=scale. Captures never enter training.
+One fixed experiment adds 14 internal joint angles measured in aspect-correct image pixels to the original 835-input Joint angles model. The candidate has 849 inputs: 820 unchanged Shin features, 15 original 3D measurements and 14 projected angles. There is no augmentation and no new contact input. The same training-only median imputation/standardization is applied to the 29 angle inputs. The classifier remains balanced RBF SVM C=10, gamma=scale. Captures never enter training.
 
 ## Frozen five-fold comparison
 
 | Model | Accuracy | Macro-F1 | Correct |
 |---|---:|---:|---:|
-| Vingerhoeken | 97.74776% | 0.97524391 | 58894/60251 |
-| Beeld + diepte | 97.69298% | 0.97465145 | 58861/60251 |
+| Joint angles | 97.74776% | 0.97524391 | 58894/60251 |
+| Image + depth | 97.69298% | 0.97465145 | 58861/60251 |
 
 Paired changes: 70 wrong predictions fixed; 103 previously correct predictions lost.
 
-| Fold | Vingerhoeken accuracy | Beeld + diepte accuracy | Vingerhoeken F1 | Beeld + diepte F1 |
+| Fold | Joint angles accuracy | Image + depth accuracy | Joint angles F1 | Image + depth F1 |
 |---|---:|---:|---:|---:|
 | 1 | 98.208% | 98.134% | 0.98137 | 0.98084 |
 | 2 | 94.525% | 94.455% | 0.93792 | 0.93732 |
@@ -61,7 +61,7 @@ Fold macro_f1 mean ± sample SD: baseline 0.973567 ± 0.020651; candidate 0.9729
 
 The most recent GH-handrug round contains 11 deliberately selected errors from the G/H-rotation model, including other letters. Replaying these is diagnostic, not a representative or independent accuracy estimate. There are no new H-labeled examples in that round.
 
-| Intended | Saved G/H prediction | Vingerhoeken | Beeld + diepte |
+| Intended | Saved G/H prediction | Joint angles | Image + depth |
 |---|---|---|---|
 | G | H | A | A |
 | C | D | D | D |
@@ -75,9 +75,9 @@ The most recent GH-handrug round contains 11 deliberately selected errors from t
 | X | H | X | X |
 | Y | A | A | M |
 
-Correct on these 11 known selected examples: Vingerhoeken 2/11; Beeld + diepte 3/11.
+Correct on these 11 known selected examples: Joint angles 2/11; Image + depth 3/11.
 
-Earlier guided C/D/O development round: Vingerhoeken 17/27 (macro-F1 C/D/O 0.610035); Beeld + diepte 16/27 (macro-F1 C/D/O 0.570820). These are reused development images. There is no completed held-out webcam evaluation.
+Earlier guided C/D/O development round: Joint angles 17/27 (macro-F1 C/D/O 0.610035); Image + depth 16/27 (macro-F1 C/D/O 0.570820). These are reused development images. There is no completed held-out webcam evaluation.
 
 ## Live comparison
 
@@ -86,7 +86,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-name "2D-3D-test"
 ```
 
-Select **Beeld + diepte [6]** in the native tool, or **Vingerhoeken [2]** to compare. Snapshot exports retain 849 feature names/values, separate 3D and projected-angle dictionaries, model hash and round identity.
+Select **Image + depth [6]** in the native tool, or **Joint angles [2]** to compare. Snapshot exports retain 849 feature names/values, separate 3D and projected-angle dictionaries, model hash and round identity.
 
 ## Reproduce
 

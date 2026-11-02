@@ -12,13 +12,14 @@ from research.data import atomic_json
 from research.protocol import ProtocolSession
 
 VIEWS=('handpalm','schuin_palm','schuin_handrug','handrug')
+VIEW_LABELS=dict(zip(VIEWS,('Palm','Oblique palm','Oblique back','Back of hand')))
 SCHEMA='asl-gh-viewpoint-protocol-v1'
 
 
 def tasks(participants=3,hands=None):
-    if participants not in (2,3):raise ValueError('Kies twee of drie personen.')
+    if participants not in (2,3):raise ValueError('Choose two or three participants.')
     hands=hands or ['right']*participants
-    if len(hands)!=participants or set(hands)-{'left','right'}:raise ValueError('Geef per persoon links of rechts op.')
+    if len(hands)!=participants or set(hands)-{'left','right'}:raise ValueError('Specify left or right for each participant.')
     rows=[]
     for person in range(participants):
         for repeat in range(1,6):
@@ -37,11 +38,11 @@ class GHViewSession(ProtocolSession):
         self.directory=Path(directory)
         self.plan=json.loads((self.directory/'session.json').read_text())
         if self.plan.get('schema')!=SCHEMA or self.plan.get('tasks')!=tasks(self.plan['participants'],self.plan['hands']):
-            raise ValueError('Onbekend of gewijzigd G/H-kijkrichtingsprotocol.')
-        if self.plan['model_sha256']!=model_sha:raise ValueError('Het opnamemodel is gewijzigd.')
+            raise ValueError('Unknown or modified G/H viewpoint protocol.')
+        if self.plan['model_sha256']!=model_sha:raise ValueError('The capture model has changed.')
         for path,expected in self.plan['frozen_models'].items():
             if not Path(path).is_file() or sha256(Path(path).read_bytes()).hexdigest()!=expected:
-                raise ValueError(f'Een vastgelegd vergelijkingsmodel is gewijzigd of ontbreekt: {path}')
+                raise ValueError(f'A frozen comparison model has changed or is missing: {path}')
         self.participant_confirmed=None
         self.refresh()
 
@@ -63,8 +64,8 @@ class GHViewSession(ProtocolSession):
 
     def label(self):
         t=self.current
-        if t is None:return 'G/H-meetronde voltooid.'
-        return f"{len(self.completed)+1}/{len(self.plan['tasks'])}: {t['participant']} | {t['letter']} | {t['view']} | {t['repeat']}/5"
+        if t is None:return 'G/H capture session complete.'
+        return f"{len(self.completed)+1}/{len(self.plan['tasks'])}: {t['participant']} | {t['letter']} | {VIEW_LABELS[t['view']]} | {t['repeat']}/5"
 
     def metadata(self):
         return {**super().metadata(),'schema':SCHEMA,'viewpoints_qualitative':True}
@@ -72,17 +73,17 @@ class GHViewSession(ProtocolSession):
     def render_panel(self,preview,prompt=None,notice=None):
         t=self.current;panel=np.zeros((752,640,3),np.uint8);panel[:480]=preview
         cv2.rectangle(panel,(12,488),(628,532),(235,235,235),-1)
-        cv2.putText(panel,prompt or 'Maak geplande foto [spatie]',(24,516),cv2.FONT_HERSHEY_SIMPLEX,.65,(0,0,0),1,cv2.LINE_AA)
+        cv2.putText(panel,prompt or 'Take planned photo [Space]',(24,516),cv2.FONT_HERSHEY_SIMPLEX,.65,(0,0,0),1,cv2.LINE_AA)
         if t:
-            hand='rechterhand' if t['requested_hand']=='right' else 'linkerhand'
-            cv2.putText(panel,f"{t['participant']} | {t['letter']} | {t['view'].replace('_',' ').upper()} | {hand}",(12,562),cv2.FONT_HERSHEY_SIMPLEX,.56,(120,240,240),1,cv2.LINE_AA)
-            cv2.putText(panel,f"Foto {len(self.completed)+1}/{len(self.plan['tasks'])} - herhaling {t['repeat']}/5",(12,593),cv2.FONT_HERSHEY_SIMPLEX,.6,(255,255,255),1,cv2.LINE_AA)
-            instruction={'handpalm':'Laat de handpalm recht naar de camera wijzen.',
-                'schuin_palm':'Schuin: een deel van de HANDPALM blijft zichtbaar.',
-                'schuin_handrug':'Schuin: een deel van de HANDRUG blijft zichtbaar.',
-                'handrug':'Laat de rug van de hand naar de camera wijzen.'}[t['view']]
+            hand='right hand' if t['requested_hand']=='right' else 'left hand'
+            cv2.putText(panel,f"{t['participant']} | {t['letter']} | {VIEW_LABELS[t['view']].upper()} | {hand}",(12,562),cv2.FONT_HERSHEY_SIMPLEX,.56,(120,240,240),1,cv2.LINE_AA)
+            cv2.putText(panel,f"Foto {len(self.completed)+1}/{len(self.plan['tasks'])} - repetition {t['repeat']}/5",(12,593),cv2.FONT_HERSHEY_SIMPLEX,.6,(255,255,255),1,cv2.LINE_AA)
+            instruction={'handpalm':'Face the palm directly toward the camera.',
+                'schuin_palm':'Oblique view: part of the PALM remains visible.',
+                'schuin_handrug':'Oblique view: part of the BACK remains visible.',
+                'handrug':'Face the back of the hand toward the camera.'}[t['view']]
             cv2.putText(panel,instruction,(12,627),cv2.FONT_HERSHEY_SIMPLEX,.49,(255,255,255),1,cv2.LINE_AA)
-        cv2.putText(panel,'Houd de vingerstand en afstand gelijk. Ontspan tussen pogingen.',(12,653),cv2.FONT_HERSHEY_SIMPLEX,.48,(220,220,220),1,cv2.LINE_AA)
-        cv2.putText(panel,notice or 'Voorspelling verborgen. Bewaar ook mislukte detecties.',(12,687),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
-        cv2.putText(panel,'Spatie: foto | Enter: bevestigen | Q/Esc: pauzeren',(12,730),cv2.FONT_HERSHEY_SIMPLEX,.5,(220,220,220),1,cv2.LINE_AA)
+        cv2.putText(panel,'Keep finger pose and distance fixed. Relax between attempts.',(12,653),cv2.FONT_HERSHEY_SIMPLEX,.48,(220,220,220),1,cv2.LINE_AA)
+        cv2.putText(panel,notice or 'Prediction hidden. Save failed detections too.',(12,687),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
+        cv2.putText(panel,'Space: capture | Enter: confirm | Q/Esc: pause',(12,730),cv2.FONT_HERSHEY_SIMPLEX,.5,(220,220,220),1,cv2.LINE_AA)
         return panel

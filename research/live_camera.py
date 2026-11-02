@@ -16,7 +16,7 @@ from research.protocol import ProtocolSession
 from research.live_model import DEFAULT_MODEL, load_bundle, predict_letter
 from research.model_choices import MODEL_CHOICES, MODEL_BUTTONS, describe_model
 
-WINDOW = 'ASL letter - Spatie: foto | Q / Esc: sluiten'
+WINDOW = 'ASL letter - Space: capture | Q / Esc: close'
 BUTTON = (12, 488, 628, 532)
 PREVIEW_WIDTH, PREVIEW_HEIGHT = 640, 480
 ROUND_BUTTON = (12, 672, 208, 716)
@@ -64,17 +64,17 @@ def camera_panel(preview, prompt=None, notice=None, model_key=None, locked=False
     panel = np.zeros((PREVIEW_HEIGHT + 272, PREVIEW_WIDTH, 3), dtype=np.uint8)
     panel[:PREVIEW_HEIGHT] = preview
     cv2.rectangle(panel, BUTTON[:2], BUTTON[2:], (235, 235, 235), -1)
-    text = prompt or 'Bewaar verwarring [spatie]'
+    text = prompt or 'Save confusion [Space]'
     cv2.putText(panel, text, (24, 516), cv2.FONT_HERSHEY_SIMPLEX, .65, (0, 0, 0), 1, cv2.LINE_AA)
-    cv2.putText(panel, notice or 'Klik op de knop of druk op spatie. Q/Esc: sluiten.',
+    cv2.putText(panel, notice or 'Click the button or press Space. Q/Esc: close.',
                 (12, 559), cv2.FONT_HERSHEY_SIMPLEX, .48, (255, 255, 255), 1, cv2.LINE_AA)
     for i,(key,label,path,rect) in enumerate(MODEL_BUTTONS,1):
         color=(120,120,120) if locked else (170,225,170) if key==model_key else (220,220,220)
         cv2.rectangle(panel,rect[:2],rect[2:],color,-1)
         cv2.putText(panel,f'{label} [{i}]',(rect[0]+8,rect[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.47,(0,0,0),1,cv2.LINE_AA)
     cv2.rectangle(panel,ROUND_BUTTON[:2],ROUND_BUTTON[2:],(120,120,120) if locked else (220,220,220),-1)
-    cv2.putText(panel,'Nieuwe ronde [N]',(24,700),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
-    label=f"Ronde: {round_info['name'][:36]} / {round_info['number']}" if round_info else 'L: landmarks aan/uit'
+    cv2.putText(panel,'New round [N]',(24,700),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
+    label=f"Round: {round_info['name'][:36]} / {round_info['number']}" if round_info else 'L: toggle landmarks'
     cv2.putText(panel,label,(12,738),cv2.FONT_HERSHEY_SIMPLEX,.48,(255,255,255),1,cv2.LINE_AA)
     if round_info:
         cv2.putText(panel,'L: landmarks',(232,700),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
@@ -85,8 +85,8 @@ def confirm_expected(preview, initial=None, fixed=False, panel_renderer=None):
     """Freeze the chosen frame while the user labels it; Esc discards it."""
     expected = initial
     while True:
-        prompt = f'Bedoelde letter: {expected or "?"}  | Enter: bewaren'
-        note='Enter: bevestig geplande opname | Esc: opnieuw proberen' if fixed else 'A-Z: kies letter | Backspace: onbekend | Esc: annuleren'
+        prompt = f'Intended letter: {expected or "?"}  | Enter: save'
+        note='Enter: confirm planned capture | Esc: retry' if fixed else 'A-Z: choose letter | Backspace: unknown | Esc: cancel'
         view=panel_renderer(preview,prompt,note) if panel_renderer else camera_panel(preview,prompt,note,locked=True)
         cv2.imshow(WINDOW,view)
         key = cv2.waitKey(30) & 0xFF
@@ -129,10 +129,10 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
     if guided or protocol_session:
         protocol = protocol_session or (ProtocolSession(resume, model_sha) if resume else ProtocolSession.create(output, role, model_sha))
         output = protocol.directory
-        print(f'Meetronde: {protocol.directory}', flush=True)
-        print('Bewaar alle geplande pogingen, ook fouten. Voorspellingen zijn verborgen om selectie te beperken.', flush=True)
+        print(f'Capture session: {protocol.directory}', flush=True)
+        print('Save all planned attempts, including errors. Predictions are hidden to limit selection.', flush=True)
         if protocol.current is None:
-            print('Meetronde is al voltooid.', flush=True)
+            print('Capture session is already complete.', flush=True)
             return
     capture = cv2.VideoCapture(camera)
     detector = None
@@ -141,13 +141,13 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
     round_info = new_round(round_name)
     show_landmarks = not getattr(protocol,'hide_landmarks',False)
     capture_ready_at = 0.
-    print(f"Opnameronde: {round_info['name']} / {round_info['number']} ({round_info['id']})",flush=True)
+    print(f"Capture round: {round_info['name']} / {round_info['number']} ({round_info['id']})",flush=True)
     expected = None
     notice = None
     notice_until = 0.
     try:
         if not capture.isOpened():
-            raise RuntimeError('Camera kan niet worden geopend. Sluit andere camera-apps en controleer cameratoestemming. Probeer eventueel --camera 1.')
+            raise RuntimeError('Cannot open camera. Close other camera apps and check camera permission. Try --camera 1 if needed.')
         capture.set(cv2.CAP_PROP_FRAME_WIDTH, PREVIEW_WIDTH)
         capture.set(cv2.CAP_PROP_FRAME_HEIGHT, PREVIEW_HEIGHT)
         capture.set(cv2.CAP_PROP_BUFFERSIZE, 1)
@@ -155,12 +155,12 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_open = True
         cv2.setMouseCallback(WINDOW, snapshot_mouse, state)
-        print('Camera gestart. Kies onderaan een model of druk 1-6. N: nieuwe ronde. L: landmarks. Spatie: foto. Q/Esc: sluiten.', flush=True)
+        print('Camera started. Select a model below or press 1-6. N: new round. L: landmarks. Space: capture. Q/Esc: close.', flush=True)
         while True:
             if state.pop('round_request',False) and not protocol:
                 round_info=new_round(round_name,round_info['number']+1)
                 state['shown']=None;state['requested']=None
-                print(f"Opnameronde: {round_info['name']} / {round_info['number']} ({round_info['id']})",flush=True)
+                print(f"Capture round: {round_info['name']} / {round_info['number']} ({round_info['id']})",flush=True)
             requested_model=state.pop('model_request',None)
             if requested_model and not protocol:
                 key,label,path=next(c for c in MODEL_CHOICES if c[0]==requested_model)
@@ -170,16 +170,16 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                         model_cache[cache_key]=(load_bundle(path),sha256(path.read_bytes()).hexdigest())
                     bundle,model_sha=model_cache[cache_key]
                 except (OSError,ValueError,ImportError) as error:
-                    notice='Model laden mislukt; zie terminal.'
+                    notice='Model loading failed; see terminal.'
                     notice_until=time.monotonic()+4
-                    print(f'{label} kon niet worden geladen: {error}',flush=True)
+                    print(f'{label} could not be loaded: {error}',flush=True)
                 else:
                     model_path=path;model_key=key;model_label=label
                     state['shown']=None;state['requested']=None
-                    print(f'Gekozen model: {label}',flush=True)
+                    print(f'Selected model: {label}',flush=True)
             ok, frame = capture.read()
             if not ok or frame is None:
-                raise RuntimeError('Geen camerabeeld ontvangen. Controleer de camera en cameratoestemming.')
+                raise RuntimeError('No camera frame received. Check the camera and camera permission.')
             captured_at = datetime.now(timezone.utc).isoformat()
             # Keep capture and inference unmirrored and preserve their aspect ratio.
             scale = min(1., PREVIEW_WIDTH / max(frame.shape[:2]))
@@ -202,10 +202,10 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
             participant_pending=bool(protocol and hasattr(protocol,'participant_confirmed') and protocol.current['participant']!=protocol.participant_confirmed)
             if hasattr(protocol,'render_panel'):
                 cv2.imshow(WINDOW,protocol.render_panel(preview,
-                    prompt=f"{getattr(protocol,'participant_label',protocol.current['participant'])}: druk Enter om te beginnen" if participant_pending else None,
-                    notice='Controleer deelnemer en hand. Enter start de ronde.' if participant_pending else notice if time.monotonic()<notice_until else None))
+                    prompt=f"{getattr(protocol,'participant_label',protocol.current['participant'])}: press Enter to begin" if participant_pending else None,
+                    notice='Check participant and hand. Enter starts the round.' if participant_pending else notice if time.monotonic()<notice_until else None))
             else:
-                cv2.imshow(WINDOW, camera_panel(preview, prompt='Maak geplande foto [spatie]' if protocol else None, notice=protocol.label() if protocol else notice if time.monotonic() < notice_until else f'Model: {model_label} | Spatie: foto | Q/Esc: sluiten', model_key=model_key, locked=bool(protocol), round_info=packet['capture_round']))
+                cv2.imshow(WINDOW, camera_panel(preview, prompt='Take planned photo [Space]' if protocol else None, notice=protocol.label() if protocol else notice if time.monotonic() < notice_until else f'Model: {model_label} | Space: capture | Q/Esc: close', model_key=model_key, locked=bool(protocol), round_info=packet['capture_round']))
             key = cv2.waitKey(1) & 0xFF
             if key in (27, ord('q'), ord('Q')):
                 break
@@ -244,19 +244,19 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                     try:
                         path = save_capture(chosen, annotation, bundle, model_path, model_sha, frozen_preview, output)
                         expected = annotation
-                        notice = 'Foto opgeslagen. Laat de spatiebalk los.' if getattr(protocol,'capture_immediately',False) else f'Opgeslagen: {path.name}'
+                        notice = 'Photo saved. Release the space bar.' if getattr(protocol,'capture_immediately',False) else f'Saved: {path.name}'
                         capture_ready_at=time.monotonic()+getattr(protocol,'capture_cooldown',0.)
-                        print(f'Opname opgeslagen: {path}', flush=True)
+                        print(f'Capture saved: {path}', flush=True)
                         if protocol:
                             protocol.refresh()
                     except (OSError, ValueError) as error:
-                        notice = 'Opslaan mislukt; zie terminal.'
-                        print(f'Opslaan mislukt: {error}', flush=True)
+                        notice = 'Saving failed; see terminal.'
+                        print(f'Saving failed: {error}', flush=True)
                 else:
-                    notice = 'Opname geannuleerd.'
+                    notice = 'Capture cancelled.'
                 notice_until = time.monotonic() + 3.
                 if protocol and protocol.current is None:
-                    print(f'Meetronde voltooid: {len(protocol.completed)}/{len(protocol.plan["tasks"])} opnamen bewaard.', flush=True)
+                    print(f'Capture session complete: {len(protocol.completed)}/{len(protocol.plan["tasks"])} captures saved.', flush=True)
                     break
             try:
                 if cv2.getWindowProperty(WINDOW, cv2.WND_PROP_VISIBLE) < 1:
@@ -276,22 +276,22 @@ def main():
     parser.add_argument('--camera', type=int, default=0, help='Camera index; default 0.')
     parser.add_argument('--model', type=Path, default=DEFAULT_MODEL)
     parser.add_argument('--output', type=Path, default=None, help='Directory for manually saved confusions.')
-    parser.add_argument('--round-name',help='Optional label stored with each capture, e.g. GH-handrug.')
+    parser.add_argument('--round-name',help='Optional label stored with each capture, e.g. GH-back-of-hand.')
     parser.add_argument('--guided', action='store_true', help='Guided C/D/O tilt protocol, 27 planned captures.')
     parser.add_argument('--role', choices=('development','evaluation'), default=None)
     parser.add_argument('--resume', type=Path, help='Resume an existing guided session directory.')
     args = parser.parse_args()
     if (args.resume or args.role) and not args.guided:
-        parser.error('--resume en --role vereisen --guided')
+        parser.error('--resume and --role require --guided')
     output = args.output or (DEFAULT_CAPTURE_DIR.parent / 'guided' if args.guided else DEFAULT_CAPTURE_DIR)
     if not args.model.is_file():
-        parser.error('Live-model ontbreekt. Train het eerst met: python -m research.live_model')
+        parser.error('Live model missing. Train it first with: python -m research.live_model')
     try:
         run_camera(args.model, args.camera, output, args.guided, args.role or "development", args.resume, args.round_name)
     except KeyboardInterrupt:
         pass
     except (OSError, RuntimeError, ValueError, ImportError, cv2.error) as error:
-        parser.exit(1, f'Live-herkenning gestopt: {error}\n')
+        parser.exit(1, f'Live recognition stopped: {error}\n')
 
 
 if __name__ == '__main__':

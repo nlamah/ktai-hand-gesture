@@ -6,7 +6,16 @@ This minimal research repository compares a Shin-inspired SVM baseline with inte
 - [Supplementary appendix](paper/appendix.pdf)
 - [Editable LaTeX](paper/report.tex)
 - [All setup and reproduction steps](REPRODUCE.md)
+- [Start from scratch: Kaggle download, landmark detection, rejected images and threshold experiments](REPRODUCE.md#3-from-downloaded-images-to-accepted-landmarks-start-from-scratch)
 - [Frozen results and verification](results/)
+
+## Included artifacts and language
+
+The six deployed live-model `.joblib` files under `models/`, their provenance JSON files, the four G/H diagnostic models and the MediaPipe model asset are included in version control. No retraining is required when those files are present after cloning. The pinned Python/scikit-learn environment is still required to load them.
+
+Confusion matrices, OOF prediction tables and analysis reports under `results/` are versioned. Raw webcam captures under `captures/` remain local and ignored, as requested; they can contain participant information. Analysis reports may describe captures that are therefore unavailable in a fresh clone, and capture-replay commands require those local files. The Kaggle images under `data/` and new experiment runs under `runs/` are also ignored; see the download and extraction steps in `REPRODUCE.md`.
+
+Documentation, application text, feature labels and the active workbook use English. Legacy serialized category/viewpoint IDs, recorded session names, original filenames and Dutch import aliases are retained for compatibility with existing models and evidence. They do not require participants to use Dutch labels. Documentation files are `docs/ALPHABET_CAPTURE.md` and `docs/GH_CAPTURE.md`.
 
 ## Simple live camera (recommended)
 
@@ -19,14 +28,14 @@ A single fixed-size window displays the camera image and current letter. Select 
 
 | Button | Model |
 |---|---|
-| **Referentie [1]** | Shin reference: distances and directions (820 inputs) |
-| **Vingerhoeken [2]** | Reference plus joint angles (835 inputs) |
-| **Kanteltraining alle [3]** | Joint-angle model with all-letter ±15° tilt training |
-| **C-kantelproef [4]** | Joint-angle model with ±15° tilt training for C only |
-| **G/H-draaitraining [5]** | Joint-angle model with larger direction rotations for G/H only |
-| **Beeld + diepte [6]** | Reference plus 3D and projected 2D joint angles (849 inputs; no augmentation) |
+| **Reference [1]** | Shin reference: distances and directions (820 inputs) |
+| **Joint angles [2]** | Reference plus joint angles (835 inputs) |
+| **All-letter tilt [3]** | Joint-angle model with all-letter ±15° tilt training |
+| **C-only tilt [4]** | Joint-angle model with ±15° tilt training for C only |
+| **G/H rotation [5]** | Joint-angle model with larger direction rotations for G/H only |
+| **Image + depth [6]** | Reference plus 3D and projected 2D joint angles (849 inputs; no augmentation) |
 
-The default is Vingerhoeken. The augmented models are experimental comparisons, not generally better models. Model selection is locked during a guided round. Snapshot exports preserve the actual model hash and its 820/835/849-input schema.
+The default is Joint angles. The augmented models are experimental comparisons, not generally better models. Model selection is locked during a guided round. Snapshot exports preserve the actual model hash and its 820/835/849-input schema.
 
 The camera window keeps a fixed layout while models switch. No workbook, feature panels or browser reruns are involved. The snapshot button opens a frozen-frame letter annotation only when requested. Hand landmarks are shown by default; press **L** to toggle them. Overlays never change the detector input. A dash means no accepted hand detection. Press **Q** or **Esc** to close. Close other camera apps first. For a different camera, use `--camera 1`; on macOS allow camera access for your terminal/Python if requested.
 
@@ -34,12 +43,12 @@ The camera window keeps a fixed layout while models switch. No workbook, feature
 
 Click **Bewaar verwarring** below the camera or press **Space** when you see a mistake. The currently displayed frame freezes. Type the intended letter (A-Z), then press **Enter** to save it; **Esc** cancels. The last intended letter is prefilled for the next capture, and Backspace clears it if unknown. Q is a valid letter while annotating; it only quits in live mode.
 
-Each tool launch starts a new round with a unique ID. **Nieuwe ronde / N** starts another round without restarting the camera. Switching models stays within the current round, allowing comparisons. The round label/number appears below the buttons and is saved as `capture_round`, alongside `session_id` and the exact active model in each `capture.json`. Previous captures remain untouched; older ones already contain a `session_id` but no friendly round label.
+Each tool launch starts a new round with a unique ID. **New round / N** starts another round without restarting the camera. Switching models stays within the current round, allowing comparisons. The round label/number appears below the buttons and is saved as `capture_round`, alongside `session_id` and the exact active model in each `capture.json`. Previous captures remain untouched; older ones already contain a `session_id` but no friendly round label.
 
 Optionally name the round when starting:
 
 ```bash
-python -m research.live_camera --round-name "GH-handrug"
+python -m research.live_camera --round-name "GH-back-of-hand"
 ```
 
 Each snapshot creates a new folder under `captures/confusions/` containing:
@@ -104,7 +113,7 @@ conda activate ktai-hand-gesture
 python -m streamlit run app.py
 ```
 
-Enable **Webcam aan**; the app displays **Herkende letter** using the full-data SVM with 820 Shin descriptors and 15 joint-angle measurements. A typed target letter is optional and only controls the Excel-feature comparison. Predictions use each current frame; no letter persists when no hand is detected. Alternatives are SVM rankings, not calibrated probabilities.
+Enable **Webcam on**; the app displays **Recognized letter** using the full-data SVM with 820 Shin descriptors and 15 joint-angle measurements. A typed target letter is optional and only controls the Excel-feature comparison. Predictions use each current frame; no letter persists when no hand is detected. Alternatives are SVM rankings, not calibrated probabilities.
 
 The trained artifact is `models/asl_shin_angles.joblib` (generated locally, ignored by Git). If it is missing, train it once before starting the app:
 
@@ -123,7 +132,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-name "2D-3D-test"
 ```
 
-The new **Beeld + diepte [6]** model adds 14 aspect-correct projected joint angles to Vingerhoeken. The unchanged five-fold comparison scores 97.693% accuracy and .97465 macro-F1, slightly below Vingerhoeken (97.748%, .97524). It corrects T in the latest 11 selected webcam errors, while G remains wrong; this is an experimental comparison, not a demonstrated general improvement. See `results/angles_2d_01/report.md` for all-letter results, fold variation and development replays.
+The new **Image + depth [6]** model adds 14 aspect-correct projected joint angles to Joint angles. The unchanged five-fold comparison scores 97.693% accuracy and .97465 macro-F1, slightly below Joint angles (97.748%, .97524). It corrects T in the latest 11 selected webcam errors, while G remains wrong; this is an experimental comparison, not a demonstrated general improvement. See `results/angles_2d_01/report.md` for all-letter results, fold variation and development replays.
 
 ## Live G/H-only diagnosis
 
@@ -141,7 +150,7 @@ conda activate ktai-hand-gesture
 python -m research.gh_view_capture
 ```
 
-Three participants, G/H, four views (palm, oblique palm, oblique back, back), five repetitions: **120 planned photos, 40 per person**. This supersedes the earlier 60/90-photo three-view proposal. Predictions are hidden; participant transitions require Enter. Use `--participants 2` for 80 photos. Photos are separate from training. P01 is development; P02/P03 are reserved evaluation. Full instructions, the four-view illustration and resume/status commands are in [docs/GH_OPNAMES.md](docs/GH_OPNAMES.md).
+Three participants, G/H, four views (palm, oblique palm, oblique back, back), five repetitions: **120 planned photos, 40 per person**. This supersedes the earlier 60/90-photo three-view proposal. Predictions are hidden; participant transitions require Enter. Use `--participants 2` for 80 photos. Photos are separate from training. P01 is development; P02/P03 are reserved evaluation. Full instructions, the four-view illustration and resume/status commands are in [docs/GH_CAPTURE.md](docs/GH_CAPTURE.md).
 
 ## Named alphabet test with an example for every letter
 
@@ -150,4 +159,4 @@ conda activate ktai-hand-gesture
 python -m research.alphabet_capture
 ```
 
-The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALFABET_OPNAMES.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.
+The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALPHABET_CAPTURE.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.

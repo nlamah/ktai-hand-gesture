@@ -8,8 +8,8 @@ Three fixed SVMs use only 15 estimated 3D angles, 14 projected 2D angles, or all
 |---|---|---:|---:|---:|---|
 | Reference | G | 2416/2430 | 99.424% | 98.895% | H: 5, J: 9 |
 | Reference | H | 2327/2371 | 98.144% | 98.811% | J: 30, Q: 1, S: 1, G: 9, M: 1, P: 1, W: 1 |
-| Vingerhoeken | G | 2416/2430 | 99.424% | 98.935% | H: 4, J: 9, F: 1 |
-| Vingerhoeken | H | 2328/2371 | 98.186% | 98.644% | J: 29, S: 1, G: 10, M: 1, P: 1, W: 1 |
+| Joint angles | G | 2416/2430 | 99.424% | 98.935% | H: 4, J: 9, F: 1 |
+| Joint angles | H | 2328/2371 | 98.186% | 98.644% | J: 29, S: 1, G: 10, M: 1, P: 1, W: 1 |
 
 G is well recognized on the accepted dataset images. This does not imply reliable webcam recognition: only 2,430/3,000 G and 2,371/3,000 H source images were accepted by the landmark workflow. Filename blocks are not verified independent people, and online/webcam hand views may differ.
 

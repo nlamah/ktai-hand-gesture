@@ -35,9 +35,9 @@ def save_capture(packet, expected, bundle, model_path, model_sha256, preview, ou
     """Save the frozen displayed frame and its original inference, never redetect."""
     expected = expected.strip().upper() if expected else None
     if expected is not None and (len(expected) != 1 or expected not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
-        raise ValueError('De bedoelde letter moet één letter A–Z zijn.')
+        raise ValueError('The intended letter must be one letter A-Z.')
     if packet.get('protocol') and expected != packet['protocol']['task']['letter']:
-        raise ValueError('Annotatie wijkt af van de geplande protocolletter.')
+        raise ValueError('Annotation differs from the planned protocol letter.')
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     capture_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ') + '_' + uuid4().hex[:8]

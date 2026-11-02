@@ -17,37 +17,37 @@ PARAMETER_DEFAULTS = {
 }
 
 _FLEXION_CATEGORIES = [
-    {"id": "extended", "label": "gestrekt"},
-    {"id": "partly_bent", "label": "licht gebogen"},
-    {"id": "bent", "label": "gebogen"},
-    {"id": UNKNOWN, "label": "onbekend"},
+    {"id": "extended", "label": "Extended"},
+    {"id": "partly_bent", "label": "Partly bent"},
+    {"id": "bent", "label": "Bent"},
+    {"id": UNKNOWN, "label": "Unknown"},
 ]
 _SPREAD_CATEGORIES = [
-    {"id": "not_spread", "label": "niet gespreid"},
-    {"id": "spread", "label": "gespreid"},
-    {"id": UNKNOWN, "label": "onbekend"},
+    {"id": "not_spread", "label": "Not spread"},
+    {"id": "spread", "label": "Spread"},
+    {"id": UNKNOWN, "label": "Unknown"},
 ]
 _THUMB_MCP_POSITION_CATEGORIES = [
-    {"id": "toward_palm", "label": "gebogen naar handpalm"},
-    {"id": "neutral", "label": "neutraal"},
-    {"id": "away_from_palm", "label": "gebogen van hand weg"},
-    {"id": UNKNOWN, "label": "onbekend"},
+    {"id": "toward_palm", "label": "Bent toward palm"},
+    {"id": "neutral", "label": "Neutral"},
+    {"id": "away_from_palm", "label": "Bent away from palm"},
+    {"id": UNKNOWN, "label": "Unknown"},
 ]
 _FINGER_DEFINITIONS = (
-    ("thumb", "Duim", (1, 2, 3, 4), (("mcp", "MCP-gewricht", (1, 2, 3)),
-                                     ("ip", "IP-gewricht", (2, 3, 4)))),
-    ("index", "Wijsvinger", (5, 6, 7, 8), (("mcp", "MCP-gewricht", (0, 5, 6)),
-                                           ("pip", "PIP-gewricht", (5, 6, 7)),
-                                           ("dip", "DIP-gewricht", (6, 7, 8)))),
-    ("middle", "Middelvinger", (9, 10, 11, 12), (("mcp", "MCP-gewricht", (0, 9, 10)),
-                                                  ("pip", "PIP-gewricht", (9, 10, 11)),
-                                                  ("dip", "DIP-gewricht", (10, 11, 12)))),
-    ("ring", "Ringvinger", (13, 14, 15, 16), (("mcp", "MCP-gewricht", (0, 13, 14)),
-                                               ("pip", "PIP-gewricht", (13, 14, 15)),
-                                               ("dip", "DIP-gewricht", (14, 15, 16)))),
-    ("pinky", "Pink", (17, 18, 19, 20), (("mcp", "MCP-gewricht", (0, 17, 18)),
-                                         ("pip", "PIP-gewricht", (17, 18, 19)),
-                                         ("dip", "DIP-gewricht", (18, 19, 20)))),
+    ("thumb", "Thumb", (1, 2, 3, 4), (("mcp", "MCP joint", (1, 2, 3)),
+                                     ("ip", "IP joint", (2, 3, 4)))),
+    ("index", "Index finger", (5, 6, 7, 8), (("mcp", "MCP joint", (0, 5, 6)),
+                                           ("pip", "PIP joint", (5, 6, 7)),
+                                           ("dip", "DIP joint", (6, 7, 8)))),
+    ("middle", "Middle finger", (9, 10, 11, 12), (("mcp", "MCP joint", (0, 9, 10)),
+                                                  ("pip", "PIP joint", (9, 10, 11)),
+                                                  ("dip", "DIP joint", (10, 11, 12)))),
+    ("ring", "Ring finger", (13, 14, 15, 16), (("mcp", "MCP joint", (0, 13, 14)),
+                                               ("pip", "PIP joint", (13, 14, 15)),
+                                               ("dip", "DIP joint", (14, 15, 16)))),
+    ("pinky", "Little finger", (17, 18, 19, 20), (("mcp", "MCP joint", (0, 17, 18)),
+                                         ("pip", "PIP joint", (17, 18, 19)),
+                                         ("dip", "DIP joint", (18, 19, 20)))),
 )
 _FINGER_POINTS = {name: points for name, _, points, _ in _FINGER_DEFINITIONS}
 _FINGER_LABELS = {name: label.lower() for name, label, _, _ in _FINGER_DEFINITIONS}
@@ -61,7 +61,7 @@ def _feature(key, title, group, landmarks, method, parameter, limitations, categ
         "landmarks": list(landmarks),
         "measurement": method,
         "parameters": parameter,
-        "validity": "Vereist 21 eindige MediaPipe-landmarks en een niet-nul palmschaal.",
+        "validity": "Requires 21 finite MediaPipe landmarks and a nonzero palm scale.",
         "limitations": limitations,
         "categories": categories,
     }
@@ -76,7 +76,7 @@ FEATURE_SCHEMA = (
                 else f"flexion_{finger}_{joint_key}"
             ),
             (
-                f"{finger_label}: MCP-positie"
+                f"{finger_label}: MCP position"
                 if finger == "thumb" and joint_key == "mcp"
                 else f"{finger_label}: {joint_label}"
             ),
@@ -91,9 +91,9 @@ FEATURE_SCHEMA = (
                 else joint_points
             ),
             (
-                "Getekende buighoek van MCP naar handpalm of van de hand af, relatief aan het lokale palmvlak."
+                "Signed MCP bend toward or away from the palm, relative to the local palm plane."
                 if finger == "thumb" and joint_key == "mcp"
-                else "Binnenhoek bij het betreffende gewricht; voor vinger-MCP wordt pols→MCP als benadering van de middenhandsrichting gebruikt."
+                else "Interior joint angle; wrist-to-MCP approximates the metacarpal direction for finger MCP joints."
             ),
             (
                 "thumb_mcp_position"
@@ -101,9 +101,9 @@ FEATURE_SCHEMA = (
                 else "flexion"
             ),
             (
-                "De richting is afhankelijk van de handedness-classificatie en de geschatte 3D-landmarks; zonder bekende linker- of rechterhand is de uitkomst onbekend."
+                "Direction depends on handedness classification and estimated 3D landmarks; an unknown hand side gives an unknown result."
                 if finger == "thumb" and joint_key == "mcp"
-                else "Elke gewrichtshoek wordt apart geclassificeerd; hoeken van een hele vinger worden niet gemiddeld. Vinger-MCP-hoeken zijn door de pols als referentie een geometrische benadering."
+                else "Each joint angle is classified separately; angles are not averaged across a finger. Finger MCP angles use the wrist as a geometric approximation."
             ),
             (
                 _THUMB_MCP_POSITION_CATEGORIES
@@ -117,12 +117,12 @@ FEATURE_SCHEMA = (
     + tuple(
         _feature(
             f"spread_{left}_{right}",
-            f"Spreiding: {_FINGER_LABELS[left]}–{_FINGER_LABELS[right]}",
+            f"Spread: {_FINGER_LABELS[left]}–{_FINGER_LABELS[right]}",
             "finger_spread",
             (*_FINGER_POINTS[left], *_FINGER_POINTS[right]),
-            "Euclidische afstand tussen aangrenzende vingertoppen, gedeeld door de pols-tot-middelknokkelafstand.",
+            "Euclidean distance between adjacent fingertips divided by wrist-to-middle-MCP distance.",
             "spread",
-            "De verhouding is schaalinvariant, maar wordt beïnvloed door diepte en de geschatte 3D-landmarks.",
+            "The ratio is scale invariant but depends on depth and estimated 3D landmarks.",
             _SPREAD_CATEGORIES,
         )
         for left, right in (("thumb", "index"), ("index", "middle"),
@@ -131,33 +131,33 @@ FEATURE_SCHEMA = (
     + (
         _feature(
             "crossing_index_middle",
-            "Kruising: wijs- en middelvinger",
+            "Crossing: index finger and middle finger",
             "finger_crossing",
             (5, 8, 9, 12, 0, 17),
-            "Controleert of de laterale volgorde van de twee vingertoppen omslaat t.o.v. de MCP-landmarks, met een minimale marge.",
+            "Checks whether fingertip lateral order reverses relative to MCP landmarks, with a minimum margin.",
             "crossing",
-            "Geometrische aanwijzing, geen zichtbaarheidstest; projectie en occlusie kunnen misleiden.",
+            "Geometric indication, not a visibility test; projection and occlusion can be misleading.",
             [
-                {"id": "not_crossed", "label": "niet gekruist"},
-                {"id": "suspected_crossed", "label": "vermoedelijk gekruist"},
-                {"id": UNKNOWN, "label": "onbekend"},
+                {"id": "not_crossed", "label": "Not crossed"},
+                {"id": "suspected_crossed", "label": "Suspected crossing"},
+                {"id": UNKNOWN, "label": "Unknown"},
             ],
         ),
     )
     + tuple(
         _feature(
             f"thumb_tip_{finger}_proximity",
-            f"Duimtop nabij {_FINGER_LABELS[finger]}top",
+            f"Thumb tip near {_FINGER_LABELS[finger]} tip",
             "thumb_position",
             (4, _FINGER_POINTS[finger][-1], 0, 9),
-            "Afstand tussen duimtop en vingertop, gedeeld door de pols-tot-middelknokkelafstand.",
+            "Thumb-to-fingertip distance divided by wrist-to-middle-MCP distance.",
             "thumb_position",
-            "De afstandsmeting kan contact niet bewijzen; perspectief en landmarkschatting beïnvloeden de verhouding. Gebruik contact als verwachte referentiewaarde alleen wanneer de vingertoppen zichtbaar raken.",
+            "Distance does not establish contact; perspective and landmark estimation affect the ratio. Use contact as an expected reference only when fingertips visibly touch.",
             [
                 {"id": "contact", "label": "contact"},
-                {"id": "near", "label": "nabij"},
-                {"id": "far", "label": "ver weg"},
-                {"id": UNKNOWN, "label": "onbekend"},
+                {"id": "near", "label": "Near"},
+                {"id": "far", "label": "Far"},
+                {"id": UNKNOWN, "label": "Unknown"},
             ],
         )
         for finger in ("index", "middle", "ring", "pinky")
@@ -172,8 +172,8 @@ def schema_document():
         "parameters": PARAMETER_DEFAULTS,
         "features": list(FEATURE_SCHEMA),
         "limitations": [
-            "MediaPipe-world-coördinaten zijn geschatte 3D-landmarks, geen directe metingen.",
-            "J- en Z-gebaren bevatten beweging; de matrix beschrijft alleen één stilstaand posebeeld.",
-            "Een landmarkuitvoer bewijst niet dat het punt of lichaamsdeel zichtbaar is.",
+            "MediaPipe world coordinates are estimated 3D landmarks, not direct measurements.",
+            "J and Z involve movement; this matrix describes a single static pose.",
+            "A returned landmark does not establish visibility of the point or body part.",
         ],
     }

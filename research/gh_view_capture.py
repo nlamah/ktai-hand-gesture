@@ -21,17 +21,17 @@ def main():
     parser.add_argument('--status',action='store_true',help='Show status without opening camera (requires --resume).')
     args=parser.parse_args()
     if args.status and not args.resume:parser.error('--status requires --resume')
-    if args.hands and len(args.hands)!=args.participants:parser.error('Geef precies een hand per persoon.')
+    if args.hands and len(args.hands)!=args.participants:parser.error('Specify exactly one hand per participant.')
     try:
         model_sha=sha256(args.model.read_bytes()).hexdigest()
         session=GHViewSession(args.resume,model_sha) if args.resume else GHViewSession.create(args.output,model_sha,args.participants,args.hands)
         print(f'Sessie: {session.directory.resolve()}',flush=True)
         print(f'Voortgang: {len(session.completed)}/{len(session.plan["tasks"])}',flush=True)
-        print('P01: ontwikkeling. Overige personen: aparte controle; pas modellen niet aan op hun resultaten.',flush=True)
+        print('P01: development. Other participants: reserved evaluation; do not adapt models to their results.',flush=True)
         if args.status:return
         run_camera(args.model,args.camera,session.directory,protocol_session=session)
     except KeyboardInterrupt:pass
-    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'G/H-opnamen gestopt: {error}\n')
+    except (OSError,ValueError,RuntimeError,ImportError,cv2.error) as error:parser.exit(1,f'G/H capture stopped: {error}\n')
 
 
 if __name__=='__main__':main()

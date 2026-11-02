@@ -48,7 +48,7 @@ class ProtocolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             s=ProtocolSession.create(root,'evaluation','model1')
             self.write_capture(s,s.current,'one');self.write_capture(s,s.current,'two')
-            with self.assertRaisesRegex(ValueError,'Dubbele'):s.refresh()
+            with self.assertRaisesRegex(ValueError,'Duplicate'):s.refresh()
 
     def test_complete_session_has_no_next_task(self):
         with tempfile.TemporaryDirectory() as root:
