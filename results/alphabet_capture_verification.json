@@ -1,0 +1,18 @@
+{
+  "unit_tests_passed": 87,
+  "letters": 26,
+  "default_repetitions": 5,
+  "default_images_per_participant": 130,
+  "fixed_reference_examples": 26,
+  "name_unicode_and_development_role_metadata_tested": true,
+  "single_space_direct_save_tested": true,
+  "reference_not_in_model_input_tested": true,
+  "failed_detections_retained_tested": true,
+  "guidance_flag_per_attempt_tested": true,
+  "matched_offline_evaluation_no_hand_case_tested": true,
+  "preview_panel_visually_inspected": true,
+  "physical_webcam_session_tested": false,
+  "right_hand_example_display": true,
+  "new_session_preview_mirrored": false,
+  "legacy_session_display_preserved": true
+}

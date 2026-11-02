@@ -1,0 +1,18 @@
+{
+  "unit_tests_passed": 78,
+  "model_choices": [
+    "Referentie",
+    "Vingerhoeken",
+    "Kanteltraining alle",
+    "C-kantelproef",
+    "G/H-draaitraining",
+    "Beeld + diepte"
+  ],
+  "landmarks_projection_and_raw_frame_preservation_tested": true,
+  "round_boundary_and_GH_snapshot_model_alignment_tested": true,
+  "round_metadata_serialization_tested": true,
+  "rendered_panel_visually_inspected": true,
+  "physical_webcam_session_tested": false,
+  "projected_angle_schema_serialization_tested": true,
+  "sixth_model_and_new_round_hit_regions_tested": true
+}

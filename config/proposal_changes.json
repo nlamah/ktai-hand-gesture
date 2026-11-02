@@ -1,0 +1,345 @@
+[
+  {
+    "letter": "A",
+    "column": 8,
+    "header": "middel DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "A",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "B",
+    "column": 2,
+    "header": "Duim IP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "B",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "B",
+    "column": 7,
+    "header": "middel PIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "C",
+    "column": 10,
+    "header": "Ring PIP",
+    "before": "licht gebogen",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "C",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "licht gebogen",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "D",
+    "column": 10,
+    "header": "Ring PIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "D",
+    "column": 13,
+    "header": "Pink PIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "D",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "E",
+    "column": 2,
+    "header": "Duim IP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "E",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "F",
+    "column": 4,
+    "header": "Wijs PIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "F",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "licht gebogen",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "H",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "H",
+    "column": 13,
+    "header": "Pink PIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "I",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "I",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "J",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "J",
+    "column": 13,
+    "header": "Pink PIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "J",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "K",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "K",
+    "column": 7,
+    "header": "middel PIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "K",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "M",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "P",
+    "column": 2,
+    "header": "Duim IP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "P",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "Q",
+    "column": 8,
+    "header": "middel DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Q",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Q",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "R",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "R",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "R",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "T",
+    "column": 2,
+    "header": "Duim IP",
+    "before": "licht gebogen",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "T",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "U",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "U",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "V",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "V",
+    "column": 11,
+    "header": "Ring DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "V",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "W",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "W",
+    "column": 7,
+    "header": "middel PIP",
+    "before": "gestrekt",
+    "after": "licht gebogen/gestrekt"
+  },
+  {
+    "letter": "W",
+    "column": 14,
+    "header": "Pink Dip",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "X",
+    "column": 4,
+    "header": "Wijs PIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "X",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Y",
+    "column": 5,
+    "header": "wijs DIP",
+    "before": "gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Z",
+    "column": 8,
+    "header": "middel DIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Z",
+    "column": 10,
+    "header": "Ring PIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  },
+  {
+    "letter": "Z",
+    "column": 13,
+    "header": "Pink PIP",
+    "before": "licht gebogen",
+    "after": "gebogen/licht gebogen"
+  }
+]

@@ -1,0 +1,39 @@
+\section{Later Webcam and Representation Diagnostics}
+These experiments followed the primary feature comparison. They are retained for transparency and hypothesis generation; they do not expand the main report's research question into a claim that webcam or viewpoint problems have been solved. Stored development errors were reused to motivate successive changes, so their outcomes are not independent final-test evidence.
+
+\subsection{Larger G/H Rotations and Projected Angles}
+A selective G/H augmentation rotates only the 630 image-axis direction values around the camera-$y$ axis by $-90^\circ$, $90^\circ$ and $180^\circ$, retaining each original. There are 4,801 G/H originals and 74,654 fitting rows overall. Each selected source contributes four rows of weight 0.25; other classes occur once with weight one. Preprocessing, balanced class weights and resolved gamma are determined on the original fitting partition. This is a numerical landmark-feature rotation, not a realistic palm/back-of-hand rendering or occlusion simulation.
+
+A separate unaugmented candidate adds 14 internal angles measured from projected image landmarks, after converting normalized $x,y$ into pixels with the detector image width and height. It has 849 inputs: the original 820, 15 estimated 3D measurements and 14 projected angles. The same function is used for training and live inference. Median imputation and standard scaling of all 29 angle inputs are fitted only on each fitting partition. Camera captures are not used for fitting either candidate.
+
+\begin{table}[h]\centering\caption{Supporting 26-class experiments using the same frozen five folds. These extend the research sequence beyond the main feature comparison.}
+\begin{tabular}{lrrr}\toprule
+Model & Correct / 60,251 & Accuracy (\%) & Macro-F1\\\midrule
+Shin + 3D measurements & 58,894 & 97.74776 & .97524391\\
+Selective G/H rotation & 58,888 & 97.73780 & .97516874\\
+Shin + 3D + projected angles & 58,861 & 97.69298 & .97465145\\\bottomrule\end{tabular}\end{table}
+
+Selective G/H rotation fixes nine formerly wrong predictions and loses 15 correct ones. The projected-angle model fixes 70 and loses 103. Its five-fold accuracy declines in four folds and improves in one. Neither is an overall improvement on the 835-input reference. On the 27 earlier C/D/O development captures, the projected-angle model returns 16 correct versus 17 for the angle baseline.
+
+The selected GH-handrug development round contains 11 errors from the G/H-rotation model: G$\to$H, C$\to$D, F$\to$B, K$\to$H, N$\to$M, O$\to$D, P$\to$H, S$\to$E, T$\to$L, X$\to$H and Y$\to$A. Replaying the original 835-input model on these same landmarks recovers K and X; adding projected angles also recovers T. The newest G remains misclassified. This is a selected-error replay, not a representative live-accuracy comparison.
+
+\subsection{G/H-Only Diagnostic Classifiers}
+The primary 26-class angle SVM recognizes 2,416/2,430 accepted G images correctly (99.424\% recall). Its 14 true-G errors are nine J, four H and one F. For H, 2,328/2,371 are correct (98.186\%); ten are G and 29 J, with four other errors. Thus strong accepted-image dataset recognition coexists with the recorded webcam failures.
+
+Three fixed binary SVMs were fitted using only 3D angles, only projected angles or both. The same frozen folds were restricted to their 4,801 G/H images. Every variant used training-only median imputation and standard scaling, with RBF $C=10$, balanced classes and gamma=scale. They are easier two-label tasks with different inputs, not replacements for the 26-class recognizer.
+
+\begin{table}[h]\centering\caption{Binary G/H diagnostics. The fourth row is an explicitly post-hoc, targeted ablation after inspecting the first three.}
+\begin{tabular}{lrrr}\toprule
+Inputs & Number & Accuracy (\%) & Macro-F1\\\midrule
+3D measurements & 15 & 96.563 & .96563\\
+Projected 2D angles & 14 & 95.793 & .95791\\
+Both representations & 29 & 96.584 & .96584\\
+Middle PIP only, 3D + 2D & 2 & 94.085 & .94084\\\bottomrule\end{tabular}\end{table}
+
+All three fuller binary variants still classify the newest selected G as H. Its middle-PIP estimate is $95.3^\circ$, near the training-G median $86.7^\circ$ and below the H median $166.2^\circ$. Other measurements disagree with typical G: the index PIP is $134.9^\circ$ against a G median $172.6^\circ$, while middle DIP is $161.0^\circ$ against medians $113.2^\circ$ for G and $170.4^\circ$ for H. Its signed thumb deviation is $-1.5^\circ$ against medians around $36$--$37^\circ$ for both. The classifier sees a combination, not just a count of straight fingers.
+
+The two-input middle-PIP ablation recovers the two selected G examples and one H example, but has lower grouped dataset performance. It was proposed after inspecting these known failures and is exploratory. A later selected H with visible palm is called G by all six 26-class variants, although its estimated index/middle PIP angles are $165.5^\circ$/$159.8^\circ$. The binary diagnostics call it H. This counterexample shows that palm versus back-of-hand viewpoint alone cannot explain every recorded error.
+
+A four-view protocol for three participants (G/H, palm, oblique palm, oblique back-of-hand, back-of-hand; five repetitions) has been implemented, but no completed cohort evaluation is claimed here. The qualitative views are not calibrated physical angles. New balanced and signer-separated observations would be needed for a prospective viewpoint comparison.
+
+Evidence and reproduction commands are in \texttt{results/rotation\_GH\_01/}, \texttt{results/angles\_2d\_01/}, \texttt{results/gh\_classifier\_01/}, \texttt{results/gh\_middle\_01/} and \texttt{REPRODUCE.md}. Saved image/model hashes, raw measurements and predictions support computational replay, not anatomical or linguistic ground truth.

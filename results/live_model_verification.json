@@ -1,0 +1,49 @@
+{
+  "live_cached_input_parity_images": 26,
+  "letters_covered": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z"
+  ],
+  "input_equality": "exact float32 equality to CV cache",
+  "trained_images": 60251,
+  "median_prediction_ms": 4.668582929298282,
+  "note": "Schema and prediction smoke checks on stored training examples; not an accuracy estimate or real-camera test.",
+  "jpeg_frame_detector_model_smoke": {
+    "sample": "aaf8281a555a9767598c227e",
+    "detection_status": "ok",
+    "prediction": {
+      "letter": "A",
+      "alternatives": [
+        "T",
+        "M"
+      ]
+    },
+    "note": "Saved image encoded as browser-like JPEG, not a real webcam recording."
+  },
+  "unit_tests_passed": 45,
+  "headless_camera_target_independence_and_no_hand_reset": true
+}

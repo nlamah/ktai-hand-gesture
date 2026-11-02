@@ -1,0 +1,172 @@
+{
+  "model": "reference_shin_only",
+  "images": 27,
+  "correct": 17,
+  "accuracy": 0.6296296296296297,
+  "macro_f1_CDO": 0.6095238095238096,
+  "rows": [
+    {
+      "id": "20261031T160901262769Z_eeb7fa54",
+      "letter": "C",
+      "predicted": "O",
+      "task": "C_neutraal_1"
+    },
+    {
+      "id": "20261031T160914747085Z_59a8e46f",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_neutraal_1"
+    },
+    {
+      "id": "20261031T160920769888Z_a55b8692",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_neutraal_1"
+    },
+    {
+      "id": "20261031T160929866803Z_58b74958",
+      "letter": "C",
+      "predicted": "O",
+      "task": "C_pols_omhoog_1"
+    },
+    {
+      "id": "20261031T160936713687Z_e60de31e",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_pols_omhoog_1"
+    },
+    {
+      "id": "20261031T160943835534Z_68627b78",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_pols_omhoog_1"
+    },
+    {
+      "id": "20261031T160958843639Z_347c6cb8",
+      "letter": "C",
+      "predicted": "C",
+      "task": "C_pols_omlaag_1"
+    },
+    {
+      "id": "20261031T161006524099Z_cfea166c",
+      "letter": "D",
+      "predicted": "C",
+      "task": "D_pols_omlaag_1"
+    },
+    {
+      "id": "20261031T161013347467Z_22446176",
+      "letter": "O",
+      "predicted": "C",
+      "task": "O_pols_omlaag_1"
+    },
+    {
+      "id": "20261031T161021870814Z_a77f6f23",
+      "letter": "C",
+      "predicted": "O",
+      "task": "C_neutraal_2"
+    },
+    {
+      "id": "20261031T161026102949Z_e146d1ef",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_neutraal_2"
+    },
+    {
+      "id": "20261031T161028567939Z_6febe351",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_neutraal_2"
+    },
+    {
+      "id": "20261031T161033982905Z_1b2f796a",
+      "letter": "C",
+      "predicted": "O",
+      "task": "C_pols_omhoog_2"
+    },
+    {
+      "id": "20261031T161037854028Z_6ec6f03a",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_pols_omhoog_2"
+    },
+    {
+      "id": "20261031T161042746348Z_f61026c7",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_pols_omhoog_2"
+    },
+    {
+      "id": "20261031T161054848895Z_c8a2ac7c",
+      "letter": "C",
+      "predicted": "C",
+      "task": "C_pols_omlaag_2"
+    },
+    {
+      "id": "20261031T161058496982Z_91be01eb",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_pols_omlaag_2"
+    },
+    {
+      "id": "20261031T161103302121Z_6722e60b",
+      "letter": "O",
+      "predicted": "D",
+      "task": "O_pols_omlaag_2"
+    },
+    {
+      "id": "20261031T161107467294Z_099d6e1b",
+      "letter": "C",
+      "predicted": "D",
+      "task": "C_neutraal_3"
+    },
+    {
+      "id": "20261031T161114788571Z_bc380306",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_neutraal_3"
+    },
+    {
+      "id": "20261031T161119842068Z_8f854f0b",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_neutraal_3"
+    },
+    {
+      "id": "20261031T161123966514Z_b3c74d7d",
+      "letter": "C",
+      "predicted": "O",
+      "task": "C_pols_omhoog_3"
+    },
+    {
+      "id": "20261031T161128828121Z_b84e3e85",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_pols_omhoog_3"
+    },
+    {
+      "id": "20261031T161132099327Z_38cdc56e",
+      "letter": "O",
+      "predicted": "O",
+      "task": "O_pols_omhoog_3"
+    },
+    {
+      "id": "20261031T161136254736Z_11c5bac2",
+      "letter": "C",
+      "predicted": "C",
+      "task": "C_pols_omlaag_3"
+    },
+    {
+      "id": "20261031T161140226770Z_f38705fa",
+      "letter": "D",
+      "predicted": "D",
+      "task": "D_pols_omlaag_3"
+    },
+    {
+      "id": "20261031T161144142412Z_bb7e613f",
+      "letter": "O",
+      "predicted": "D",
+      "task": "O_pols_omlaag_3"
+    }
+  ],
+  "note": "Descriptive development score of a final full-data fit, not independent evaluation."
+}

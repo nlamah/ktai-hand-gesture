@@ -1,0 +1,7 @@
+{
+  "style_url": "https://media.icml.cc/Conferences/ICML2021/Styles/icml2021_style.zip",
+  "style_sha256": "180e262987865b96231f68e43c0f9d4b6649e1597080176f02fe3ddaa03b5baa",
+  "compiler_release": "tectonic@0.17.0",
+  "compiler_url": "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-aarch64-apple-darwin.tar.gz",
+  "compiler_sha256": "a3f1cac7c5678f01661a92212f58480ae3b0634115d880dbc59e2953ded45667"
+}

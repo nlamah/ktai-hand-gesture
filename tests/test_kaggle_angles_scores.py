@@ -1,7 +1,7 @@
 """Ensure the isolated comparison cannot accidentally include category columns."""
 import unittest
 import numpy as np
-from scripts.compare_kaggle_angles_scores import variant_inputs,classifier
+from research.studies.compare_angles import variant_inputs,classifier
 
 
 class KaggleAnglesScoresTests(unittest.TestCase):

@@ -3,8 +3,8 @@ import unittest
 
 import numpy as np
 
-from gesturelab.features.asl_schema import FEATURE_SCHEMA, FEATURE_SCHEMA_VERSION, LETTERS
-from gesturelab.features.categorical_hand import (
+from research.schema import FEATURE_SCHEMA, FEATURE_SCHEMA_VERSION, LETTERS
+from research.geometry import (
     extract_categorical_features, measure_hand_features, validate_parameters,
 )
 

@@ -7,9 +7,9 @@ from openpyxl import Workbook
 import numpy as np
 from PIL import Image
 
-from gesturelab.features.asl_excel_review import load_reference_workbook
-from gesturelab.features.asl_live import decode_live_frame, live_feature_rows
-from gesturelab.features.asl_schema import PARAMETER_DEFAULTS
+from research.workbook import load_reference_workbook
+from research.live import decode_live_frame, live_feature_rows
+from research.schema import PARAMETER_DEFAULTS
 
 
 _HEADERS = (

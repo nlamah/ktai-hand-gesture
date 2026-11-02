@@ -1,0 +1,16 @@
+{
+  "main_text_pages": 5,
+  "reference_pages": 1,
+  "separate_appendix_pages": 11,
+  "all_pages_rendered_and_visually_inspected": true,
+  "unresolved_reference_markers": false,
+  "matched_primary_oof_images": 60251,
+  "joint_angles_fixed": 143,
+  "joint_angles_lost": 76,
+  "report_sha256": "d93810eed72ccb47e6661afe5b020283402a4d636a7e4e4a0cd77312f7308572",
+  "appendix_sha256": "3453e06d3985a3cda954efe992be43c712269ec004c4b640d3b7e156ea61a2d1",
+  "revision_scope": "Explicit hand-shape feature comparison; webcam and augmentation studies are supporting diagnostics.",
+  "rubric_review": "paper/RUBRIC_REVIEW.md",
+  "provisional_rubric_points": 74,
+  "no_new_training_or_data_collection_for_report_revision": true
+}

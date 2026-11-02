@@ -1,7 +1,7 @@
 """Check block weighting and fold-local continuous preprocessing."""
 import unittest
 import numpy as np
-from scripts.tune_kaggle_feature_weights import weighted_input,scale_angles,WEIGHTS,bounded_indices
+from research.studies.tune_groups import weighted_input,scale_angles,WEIGHTS,bounded_indices
 
 
 class KaggleFeatureWeightsTests(unittest.TestCase):

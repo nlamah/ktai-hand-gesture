@@ -1,8 +1,8 @@
 """Targeted weights must affect only the intended standardized index angles."""
 import unittest
 import numpy as np
-from scripts.tune_index_angles import weighted_input,JOINTS,WEIGHTS
-from scripts.cross_validate_shin_workbook import ANGLE_COLUMNS
+from research.studies.tune_index import weighted_input,JOINTS,WEIGHTS
+from research.inputs import ANGLE_COLUMNS
 
 
 class IndexAngleWeightsTests(unittest.TestCase):

@@ -1,0 +1,16 @@
+{
+  "kind": "post-hoc targeted feature ablation",
+  "features": [
+    "middle_pip_angle_deg",
+    "image2d_middle_pip_angle_deg"
+  ],
+  "input_hashes": {
+    "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "reference": "a84bea3370df5ca712b3a68f863fceaa71d297643a836a2645c1ca8dfd935f45",
+    "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
+  },
+  "folds_sha256": "c3212bfe77c124e5cb84a6acaf4034c074c7918b77ab1e51849be224b36df0d5",
+  "rationale": "After the three preregistered representations failed on the newest G, isolate the middle-finger flexion signal and omit the other joints. No hyperparameter tuning.",
+  "policy": "Exploratory development diagnostic, not independently confirmed. No captures used for fitting.",
+  "model": "RBF SVM C=10 gamma=scale balanced; median imputation and standard scaling on fitting data only"
+}

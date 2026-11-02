@@ -1,0 +1,113 @@
+{
+  "baseline": {
+    "images": 60251,
+    "correct": 58894,
+    "accuracy": 0.9774775522397968,
+    "macro_f1": 0.9752439124601125
+  },
+  "image_angles": {
+    "images": 60251,
+    "correct": 58861,
+    "accuracy": 0.9769298434880749,
+    "macro_f1": 0.9746514507980676
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "baseline": {
+        "images": 16238,
+        "correct": 15947,
+        "accuracy": 0.9820790737775588,
+        "macro_f1": 0.9813714674954341
+      },
+      "image_angles": {
+        "images": 16238,
+        "correct": 15935,
+        "accuracy": 0.981340066510654,
+        "macro_f1": 0.9808427618817743
+      }
+    },
+    {
+      "fold": 2,
+      "baseline": {
+        "images": 10009,
+        "correct": 9461,
+        "accuracy": 0.9452492756519133,
+        "macro_f1": 0.9379241899475245
+      },
+      "image_angles": {
+        "images": 10009,
+        "correct": 9454,
+        "accuracy": 0.9445499050854231,
+        "macro_f1": 0.937319015912959
+      }
+    },
+    {
+      "fold": 3,
+      "baseline": {
+        "images": 11399,
+        "correct": 11310,
+        "accuracy": 0.9921922975699623,
+        "macro_f1": 0.9916412597546109
+      },
+      "image_angles": {
+        "images": 11399,
+        "correct": 11296,
+        "accuracy": 0.9909641196596193,
+        "macro_f1": 0.9900637936435094
+      }
+    },
+    {
+      "fold": 4,
+      "baseline": {
+        "images": 10504,
+        "correct": 10297,
+        "accuracy": 0.9802932216298553,
+        "macro_f1": 0.978100441329781
+      },
+      "image_angles": {
+        "images": 10504,
+        "correct": 10294,
+        "accuracy": 0.98000761614623,
+        "macro_f1": 0.9774182976983372
+      }
+    },
+    {
+      "fold": 5,
+      "baseline": {
+        "images": 12101,
+        "correct": 11879,
+        "accuracy": 0.9816544087265515,
+        "macro_f1": 0.9787990935067103
+      },
+      "image_angles": {
+        "images": 12101,
+        "correct": 11882,
+        "accuracy": 0.9819023221221387,
+        "macro_f1": 0.9792968944080849
+      }
+    }
+  ],
+  "fixed": 70,
+  "lost": 103,
+  "fold_accuracy_mean_std": {
+    "baseline": {
+      "mean": 0.9762936554711683,
+      "sample_std": 0.01799114788479633
+    },
+    "image_angles": {
+      "mean": 0.9757528059048131,
+      "sample_std": 0.01797319202776068
+    }
+  },
+  "fold_macro_f1_mean_std": {
+    "baseline": {
+      "mean": 0.9735672904068122,
+      "sample_std": 0.02065142476521374
+    },
+    "image_angles": {
+      "mean": 0.9729881527089329,
+      "sample_std": 0.020524291247253423
+    }
+  }
+}

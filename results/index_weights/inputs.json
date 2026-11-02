@@ -1,0 +1,20 @@
+{
+  "input_hashes": {
+    "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "reference": "a84bea3370df5ca712b3a68f863fceaa71d297643a836a2645c1ca8dfd935f45",
+    "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
+  },
+  "folds_sha256": "339cc46a8faafe4b34d9902555c20c24a2fd1554c786dd88b7788e44c68d61a8",
+  "baseline_sha256": "be2abe826a79332ed5cbc6f250397dc85a4aa8da0dd7ab2e23739e1a553585b4",
+  "weights": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "joints": [
+    "index_mcp_angle_deg",
+    "index_pip_angle_deg",
+    "index_dip_angle_deg"
+  ],
+  "inner_per_class": 150
+}

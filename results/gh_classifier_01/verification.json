@@ -1,0 +1,17 @@
+{
+  "images_per_variant": 4801,
+  "same_original_group_folds": true,
+  "each_source_validated_once_per_variant": true,
+  "train_only_preprocessing": true,
+  "captures_excluded_from_fit": true,
+  "model_hashes": {
+    "3d": "9d567fcc746f043ff9726234600f4862a9469b8f09a11f758abe9614c61a943e",
+    "2d": "d87ce1ca476128a2a9aa3a0703d22ee9d21d21b9218dd14bbbd3093a47764e68",
+    "both": "484b59711840d087853201ed38c1272336fd77f359739e24a6dbd90f2042a05b"
+  },
+  "capture_image_hashes_verified": true,
+  "capture_count": 3,
+  "independent_saved_csv_metric_reconciliation_passed": true,
+  "training_gallery_image_count": 24,
+  "G_training_file_index_count": 2430
+}

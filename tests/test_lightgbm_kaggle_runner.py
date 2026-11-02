@@ -2,8 +2,8 @@
 import unittest
 from pathlib import Path
 import numpy as np
-from scripts.compare_kaggle_lightgbm import feature_groups,model_for
-from gesturelab.features.asl_excel_review import load_reference_workbook
+from research.studies.compare_models import feature_groups,model_for
+from research.workbook import load_reference_workbook
 
 
 class LightGBMKaggleRunnerTests(unittest.TestCase):

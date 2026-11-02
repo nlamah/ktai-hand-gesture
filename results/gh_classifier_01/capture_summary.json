@@ -1,0 +1,37 @@
+{
+  "captures": [
+    {
+      "id": "20261031T152108010733Z_9233886f",
+      "session_id": "20261031T151922Z_2c86162a",
+      "intended": "G",
+      "saved_prediction": "C",
+      "3d": "H",
+      "2d": "G",
+      "both": "H"
+    },
+    {
+      "id": "20261031T152116143793Z_11756e66",
+      "session_id": "20261031T151922Z_2c86162a",
+      "intended": "H",
+      "saved_prediction": "C",
+      "3d": "H",
+      "2d": "H",
+      "both": "H"
+    },
+    {
+      "id": "20261031T181839806179Z_9ef071cc",
+      "session_id": "20261031T181714Z_df8bf30f",
+      "intended": "G",
+      "saved_prediction": "H",
+      "3d": "H",
+      "2d": "H",
+      "both": "H"
+    }
+  ],
+  "correct": {
+    "3d": 1,
+    "2d": 2,
+    "both": 1
+  },
+  "note": "Known selected G/H development captures only, not a representative held-out webcam test."
+}

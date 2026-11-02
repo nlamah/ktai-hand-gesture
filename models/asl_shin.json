@@ -1,0 +1,18 @@
+{
+  "version": "shin-live-v1",
+  "input_variant": "shin",
+  "shin_version": "shin2021-image-table2-cosine-row-zscore-v1",
+  "angle_columns": [],
+  "sklearn_version": "1.8.0",
+  "training_images": 60251,
+  "created_at_utc": "2026-10-31T17:04:32.702647+00:00",
+  "source_hashes": {
+    "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "reference": "a84bea3370df5ca712b3a68f863fceaa71d297643a836a2645c1ca8dfd935f45",
+    "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
+  },
+  "metadata_sha256": "1e8d7c66cf2ffadca8b780a24d315b804def7f97ac8ecd7076be2a8601d38e6b",
+  "input_cache_sha256": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
+  "model": "SVM RBF C=10 gamma=scale balanced; original Shin features only",
+  "scope": "Final deployment fit on all accepted development images. This fit has no independent test score; see the frozen five-fold study."
+}
