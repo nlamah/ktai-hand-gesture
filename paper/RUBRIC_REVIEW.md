@@ -1,5 +1,7 @@
 # Reassessment against Assignment 3
 
+Revision note (6 November 2026): the assessment below predates the same-coordinate control and is retained as a historical, indicative review, not a new score. The current paper centers interpretable hand descriptions, reports the full package's lack of SVM benefit, and distinguishes the world-joint net +67 from the same-coordinate net +4 result (Appendix K). The control does not isolate category-only value. A new G/H image-rotation experiment is future work; the existing G/H candidate rotates feature vectors. The numerical grade estimate below has not been reassessed for this revision.
+
 Assessed: the revised English `report.pdf` and separate `appendix.pdf`. The main question is: **To what extent do explicit hand-shape features improve ASL letter recognition relative to a Shin-inspired reference?** Webcam, augmentation and later G/H experiments support the diagnosis; they are not additional requirements for answering this main question.
 
 This is an AI-generated indicative assessment using the rubric supplied by the user, not an official grade or guarantee. Course level, the assessor's interpretation and whether the appendix counts can change the outcome. No new empirical data were collected for this revision. Improvements concern scope, evidence and reporting, rather than stronger independent validation.

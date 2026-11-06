@@ -17,7 +17,7 @@
 \icmltitlerunning{Explicit hand-shape features for ASL recognition}
 \begin{document}
 \twocolumn[
-\icmltitle{Explicit Hand-Shape Features for ASL Letter Recognition\\From Categorical Descriptions to Continuous Joint Angles}
+\icmltitle{Interpretable Hand-Shape Features for ASL Letter Recognition\\Do Explicit Descriptions Add Value Beyond Geometric Descriptors?}
 \begin{icmlauthorlist}
 \icmlauthor{Author details to be added}{ou}
 \end{icmlauthorlist}
@@ -28,7 +28,7 @@
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-Can descriptions that help a person distinguish hand shapes also improve a letter recognizer? Informal webcam confusion among C/D/O and U/V/R motivated this study of explicit hand-shape features added to a Shin-based reference. I compared categorical finger descriptions, workbook-based agreement scores and continuous joint measurements using SVM and LightGBM. All main comparisons used the same 60,251 accepted landmark detections from Kaggle ASL Alphabet and five grouped validation folds. For SVM, adding the full feature package did not improve accuracy (97.628\% versus 97.637\%). Adding only the joint measurements to the reference reached 97.748\%, with macro-F1 increasing from 0.97386 to 0.97524: 67 additional correct predictions. Benefits differed by letter, and some letters regressed. Ablation, grouped permutation and bounded weighting experiments supported a qualified conclusion: the representation matters more than simply supplying more features. The observed angle benefit is small and specific to this evaluation; it does not establish better recognition of unseen people or reliable webcam use.
+Can descriptions such as bent, extended, spread or touching improve a letter recognizer that already receives hand geometry? Webcam confusions motivated a comparison of categorical hand features, workbook agreement scores and continuous joint measurements added to a Shin-based reference. SVM and LightGBM used the same 60,251 accepted Kaggle ASL Alphabet images and five grouped validation folds. The full feature package did not improve SVM accuracy (97.628\% versus 97.637\%). Adding joint measurements from estimated world landmarks reached 97.748\% and 0.97524 macro-F1: 143 errors corrected, 76 correct predictions lost, net +67. A control deriving joint measurements from the same coordinates as Shin reached only 97.643\%, net +4; replacing directions with those measurements reduced accuracy to 94.511\%. Explicit descriptions therefore do not reliably improve this geometric reference, and the small world-coordinate gain cannot be attributed to the bending-angle formula alone. These exploratory results concern representation, not new sensing information or demonstrated reliability on unseen people and webcam conditions.
 \end{abstract}
 
 \section{Brief Introduction}
@@ -36,13 +36,13 @@ American Sign Language (ASL) fingerspelling recognition can be approached by loc
 
 The recognizer followed the geometric approach of \citet{shin2021}. Instead of learning directly from image pixels, it describes distances and directions between hand points. This prompted an intuitive question: could explicit descriptions such as ``the middle finger is bent'', ``these fingers cross'' or ``the thumb touches the index finger'' make the distinction easier?
 
-I developed a workbook of expected hand features and a tool to inspect the measured hand. I then compared broad bending categories with numerical joint measurements. Figure~\ref{fig:core-process} summarizes that investigation. The contribution is an empirical comparison of these representations, supported by feature-removal tests, model comparisons and letter-level error analysis; it is not a new classification algorithm.
+I developed a workbook of expected hand features and a tool to inspect the measured hand. Continuous joint measurements serve as a comparison with the broader categorical descriptions. A later control uses the same coordinates as Shin to distinguish representation from coordinate source. Figure~\ref{fig:core-process} summarizes the investigation. The contribution is a matched empirical comparison, including negative results; no new classification algorithm or independent sensor information is claimed.
 
-The main research question is: \emph{To what extent do explicit hand-shape features improve ASL letter recognition over a Shin-based reference?} Three questions make it testable:
+The main research question is: \emph{Do interpretable hand-shape descriptions add value to a Shin-based ASL letter recognizer?} Three questions make it testable:
 \begin{enumerate}
-\item Does the categorical/workbook feature package improve the reference, and does the classifier choice affect the outcome?
-\item Are continuous joint measurements more useful additions than the broader feature package?
-\item Which letters benefit or regress, and how consistent is the observed improvement?
+\item Does the full package of categories, workbook scores and joint measurements improve the reference, and does classifier choice matter?
+\item Do continuous measurements help, and does their coordinate representation matter?
+\item Which letters benefit or regress, and how consistent are the observed differences?
 \end{enumerate}
 The following sections connect these questions to prior work, explain the comparisons, report their outcomes and discuss their limits. Later webcam and augmentation experiments are supporting diagnostics, not additional requirements for answering the main question. Technical details and complete results are in the separate appendix.
 
@@ -63,20 +63,20 @@ Interpretability also needs care. \citet{fisher2019} show that variable importan
 
 \section{Methods}
 \subsection{From Observations to Representations}
-The reference contains 820 Shin-style measurements: 190 normalized distances and 630 directions relative to the image axes. Those directions are not finger-joint bending angles. For the additions, I used three representations:
+The reference contains 820 Shin-style measurements: 190 normalized distances and 630 directions relative to the image axes. These are not explicit joint-bending angles, but the directions of adjacent segments already determine their interior angle. The hypothesis is that a different representation helps learning, not that Shin lacks hand-shape information. I used three additions:
 \begin{itemize}
 \item \textbf{Categories:} 70 one-hot inputs describe bending, spread, suspected crossing, thumb shape and contact, including unknown states.
 \item \textbf{Workbook scores:} 26 inputs measure agreement with the expected features of each candidate letter. Slash-separated workbook values are allowed alternatives. Every candidate score is computed without reading the image's true label.
 \item \textbf{Joint measurements:} 14 internal angles and a signed thumb-MCP deviation, giving 15 continuous inputs. MCP measurements are landmark-based proxies rather than clinical joint measurements.
 \end{itemize}
-A straight internal angle approaches $180^\circ$; bending reduces it. Categories compress a range of measurements into a label, while continuous values retain finer variation. All additions are derived from landmarks. Their possible advantage is a useful representation for learning, not a new sensor. Main experiments add inputs to the reference; ``joint angles'' does not mean replacing Shin with an angle-only classifier.
+A straight internal angle approaches $180^\circ$; bending reduces it. Categories compress measurements into labels, while continuous values retain finer variation. The original additions use estimated world landmarks, whereas Shin uses normalized image landmarks. A control recomputes the 15 measurements from Shin's exact coordinates: adding them gives 835 inputs; replacing the 630 directions gives 205 (190 distances + 15 measurements). No images are redetected. Most comparisons retain all reference inputs; the replacement control is explicitly separate.
 
 \subsection{Models and Checks}
 The main learner is an RBF SVM with $C=10$, \texttt{gamma=scale} and balanced classes. It balances separation against classification errors. LightGBM uses 100 trees, 31 leaves, learning rate 0.1 and minimum child size 20. We retain these project profiles across representation comparisons. Median imputation and standardization of angle inputs are learned only from the fitting partition. Baseline measurements and categorical/workbook inputs pass through unchanged. The appendix gives the objectives, formulas and exact schemas.
 
 To investigate contribution, I removed feature groups and retrained, and separately shuffled groups in held-out inputs of a fitted full-package model. Shuffling used five repeats and up to 100 images per letter per fold. Correlated features can compensate for one another, so these reliance measures are neither causal effects nor additive percentages of importance.
 
-Weighting experiments adjusted the influence of feature blocks. Bounded searches used five outer folds and three inner group folds; inner searches were capped at 150 images per letter, with final fits using all outer-training images. This limits tuning cost. It does not remove selection effects from the broader, exploratory research sequence.
+Bounded weighting checks used five outer and three inner group folds, with inner samples capped at 150 images per letter. They do not remove selection effects from the wider exploratory sequence. Settings and detailed checks are in the appendix.
 
 \section{Experimental Results}
 \subsection{Dataset and Evaluation}
@@ -88,7 +88,7 @@ Every main comparison uses the same accepted images and frozen five group folds.
 Table~\ref{tab:core-results} gives the matched results. For SVM, all 111 additions together reach 97.628\% accuracy, slightly below the 97.637\% reference. LightGBM improves from 97.097\% to 97.164\% with that package, but remains below the tested SVM configurations. Thus the package's effect depends on the learner, and it does not consistently improve the reference.
 
 \begin{table*}[t]
-\centering\caption{Pooled five-fold results on the same 60,251 accepted images. Every row retains the 820 reference inputs. ``All additions'' adds 70 category indicators, 26 workbook scores and 15 joint measurements. These are matched exploratory results, not independent final-test scores.}
+\centering\caption{Pooled five-fold results on 60,251 accepted images. Every row retains the 820 reference inputs. ``All additions'' adds 70 categories, 26 workbook scores and 15 world-joint measurements. The final row instead derives joints from Shin's coordinates. These are exploratory results, not independent final-test scores.}
 \label{tab:core-results}
 \begin{tabular}{lrrrrr}\toprule
  & & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
@@ -99,17 +99,19 @@ Representation & Inputs & Accuracy (\%) & Macro-F1 & Accuracy (\%) & Macro-F1\\\
 
 Feature removal clarifies the SVM result. Removing the 70 categories from the full package improves accuracy to 97.744\%, the angles-plus-workbook row. Removing angles instead leaves categories and workbook scores and reaches 97.593\%. These comparisons support the continuous representation in this setting. They do not isolate categories alone without workbook scores, or prove that categorical descriptions are inherently unhelpful.
 
-\subsection{RQ2: Are Continuous Measurements More Useful?}
-Adding the 15 joint measurements alone to the reference produces the strongest simple SVM representation in Table~\ref{tab:core-results}: 97.748\% accuracy and 0.97524 macro-F1, versus 97.637\% and 0.97386. ``Alone'' here concerns the additions, not the full model input. The workbook scores add no further benefit to that configuration. For LightGBM, the angle addition instead reduces accuracy to 97.017\%. The result is therefore specific to the tested learner and preprocessing.
+\subsection{RQ2: Do Joint Measurements Add Value?}
+Adding the 15 world-joint measurements to the reference reaches 97.748\% SVM accuracy and 0.97524 macro-F1, versus 97.637\% and 0.97386. Workbook scores add no further benefit. For LightGBM, the world-joint addition reduces accuracy to 97.017\%. This is a small, learner-specific result.
+
+The coordinate control qualifies its interpretation. Adding same-coordinate joint measurements reaches 97.643\% and 0.97403 macro-F1 for SVM: 89 errors corrected and 85 correct predictions lost, net +4, not +67. LightGBM loses 34 correct predictions. Replacing directions with distances plus same-coordinate joints lowers accuracy to 94.511\% (SVM) and 93.942\% (LightGBM). The full control is in Appendix~K. It gives no convincing overall benefit from making bending explicit in Shin's coordinates; the earlier world-coordinate gain cannot be attributed to the angle formula alone.
 
 Grouped permutation gives complementary evidence. In the full-package SVM, shuffling joint measurements reduces macro-F1 by an average 0.570 percentage points, versus 0.049 for categories and 0.008 for workbook scores. This indicates greater reliance on the angles in that fitted model; it is not the amount by which adding them improves the reference. The removal and matched-addition results are needed for that claim. Broad feature weighting did not yield a convincing additional overall benefit under the bounded search.
 
-\subsection{RQ3: Who Benefits, and How Stable Is the Gain?}
-The angle addition fixes 143 formerly incorrect images and loses 76 formerly correct ones: a net gain of 67 out of 60,251, or 0.1112 percentage points. The improvement occurs in all five outer folds and all six filename blocks, but is small. A block-resampling sensitivity analysis gives a central range of 0.0374--0.1947 percentage points. With only six non-person blocks, overlapping fits and exploratory model selection, this is not a valid independent-test confidence interval or a confirmatory significance result (Appendix~D).
+\subsection{RQ3: Who Benefits, and How Stable Are Differences?}
+The world-joint addition fixes 143 formerly incorrect images and loses 76 formerly correct ones: net +67 out of 60,251, or 0.1112 percentage points. It improves all five outer folds and six filename blocks, but the gain is small. A block-resampling sensitivity range of 0.0374--0.1947 percentage points is descriptive, not an independent-test confidence interval or significance result (Appendix~D). The same-coordinate addition instead improves three folds and worsens two (Appendix~K).
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\linewidth]{figures/core_letter_effects.pdf}
-\caption{Change in correct true-letter images after adding continuous measurements to the SVM reference, using the same images and folds. Green bars show gains and orange bars losses. Their sum is +67; the gain is not uniform across letters. Full precision, recall, F1 and confusion matrices are in Appendices~A--B.}
+\caption{Change in correct true-letter images after adding world-joint measurements to the SVM reference. Green bars show gains and orange bars losses, summing to +67. This is the earlier world-coordinate comparison, not the same-coordinate control (+4). Full letter metrics and confusion matrices are in Appendices~A--B.}
 \label{fig:letter-effects}
 \end{figure*}
 
@@ -119,22 +121,23 @@ Figure~\ref{fig:letter-effects} and Table~\ref{tab:core-letters} show why the po
 \centering\caption{Selected letter effects; F1 is a percentage and $\Delta n$ is the change in correctly recovered true-letter images. The appendix includes every letter.}
 \label{tab:core-letters}
 \begin{tabular}{lrrrr}\toprule
-Letter & Images & Base F1 & Angles F1 & $\Delta n$\\\midrule
+Letter & Images & Base F1 & World F1 & $\Delta n$\\\midrule
 \tableinput core_letter_rows.tex
 \bottomrule\end{tabular}
 \end{table}
 
-A targeted index-joint weighting study explored one suspected D/O mechanism. Nested weighting reduced O$\rightarrow$D from 19 to 15 errors, but increased N$\rightarrow$M from 141 to 146 and lowered overall accuracy to 97.739\%. Nested PIP-only weighting reached 97.753\%, effectively the same overall level as 97.748\%. The selected weights differed between folds. These checks do not support a universal instruction to give the index finger greater influence.
+Targeted index-joint weighting did not yield a convincing overall benefit; selected weights varied across folds (Appendix~D).
 
 \subsection{Supporting Webcam Diagnostics}
 A later guided development round retained all 27 planned C/D/O attempts with predictions hidden. The reference and angle models each recognized 17/27. Small tilt augmentation recognized 18/27; C-only tilt did not improve the predictions. Later 2D-angle and G/H-specific investigations likewise did not establish a general solution. Those results are retained in Appendix~I--J, outside the primary feature comparison.
 
 These observations illustrate a limit, not a new webcam accuracy claim. For example, one selected G had middle-PIP flexion consistent with training G but was still H; another H with visible palm was G. Palm/back viewpoint, other measurements and learned decision boundaries may all contribute. Selected errors cannot establish the frequency or main cause of failure, and projected image angles do not prove that an estimated 3D angle is wrong.
 
+\clearpage
 \section{Discussion}
-The answer to the main question is qualified: explicit hand-shape features do not automatically improve the recognizer. The full package gives no SVM advantage; continuous measurements give a small positive dataset result when added to the reference. This is a useful negative-and-positive comparison, rather than evidence that more features are always better.
+The interpretable feature package does not consistently improve the geometric reference. Its SVM result is slightly worse; the positive world-joint result is small and does not reproduce as a meaningful gain with same-coordinate joints. The evidence supports a bounded comparison of representations, not a general performance improvement.
 
-A plausible interpretation is that joint measurements reorganize geometry into a useful form for the SVM, whereas broad categories discard detail and some additions are redundant. The experiments support the observed performance differences, not that mechanism as a proven cause. The LightGBM results also show that an informative representation for one learner need not help another. These findings concern feature design, not a new algorithm or validated anatomy.
+Joint angles and categories largely re-express landmark geometry; categorical flexion also derives from thresholded angles. The control therefore addresses redundancy directly. Coordinate estimates, scaling and model geometry may contribute to the different outcomes; their individual effects are not isolated. Removing direction features also discards axis-relative orientation, which may distinguish letters. Poor replacement performance does not prove that joint calculations are wrong or that categories are intrinsically unhelpful.
 
 Several limitations bound the answer. The workbook and its relaxations were developed exploratorily, not nested inside all later evaluations. Multiple representations were inspected on the same folds, despite nested tuning within particular searches. The strongest observed result should therefore not be treated as an unbiased estimate of a selected final system. Fixed classifier profiles also limit conclusions about algorithm superiority. Filename-block grouping cannot establish signer-independent performance, and detection filtering excludes difficult images before classification.
 
@@ -143,9 +146,9 @@ The source article reports 87.60\% ASL Alphabet accuracy, not a matching F1 scor
 The report and much of the software were AI-generated. AI-assisted code inspection, unit tests and reconciliation with stored predictions were used in an attempt to verify the implementation. These checks do not constitute independent human code review, linguistic review of the workbook or validation of estimated anatomy. The author should verify the interpretation and references before submission. Participants should consent to webcam collection; saved images remain local by default. Single-frame letter recognition should not be presented as full sign-language understanding or a replacement for qualified interpretation.
 
 \section{Conclusions}
-Within the shared five-fold accepted-image evaluation, adding continuous joint measurements to the Shin-based SVM raises accuracy from 97.637\% to 97.748\% and macro-F1 from 0.97386 to 0.97524. The gain is small, depends on representation and learner, and includes letter-level regressions. Broad categorical/workbook additions and increased weighting offer no consistent alternative advantage under the tested settings.
+Interpretable hand descriptions give no consistent advantage over the Shin-based reference in this evaluation. The full package does not improve SVM accuracy. World-joint additions yield a small net gain of 67 images; same-coordinate additions yield only four, and replacing directions loses 1,883. The world result is specific to its representation and learner, with letter-level regressions and no independent final-test confirmation.
 
-The main contribution is showing which explicit representations help in this evaluation, using matched comparisons, ablations and error analysis, while separating dataset gains from webcam reliability. Future work should predefine one comparison and evaluate it on a new, balanced signer/session-separated collection. Additional viewpoint data would test generalization; it is not required to reinterpret the current modest feature-comparison result as a solved webcam problem.
+The contribution is testing whether meaningful descriptions add predictive value when geometry is already available, and documenting their limits through matched comparisons and error analysis. Further G/H rotation experiments should separate feature-space rotation from rotating images and rerunning detection, and use a predefined, signer/session-separated evaluation. Current dataset scores do not establish webcam robustness.
 
 \clearpage
 \bibliography{references}

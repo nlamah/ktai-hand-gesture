@@ -1,9 +1,9 @@
-"""Friendly labels for all deployed live comparison models."""
+"""Friendly labels for live models; world joints are distinct from image-coordinate controls."""
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 MODEL_CHOICES=(
     ('reference','Reference',ROOT/'models/asl_shin.joblib'),
-    ('angles','Joint angles',ROOT/'models/asl_shin_angles.joblib'),
+    ('angles','World joints',ROOT/'models/asl_shin_angles.joblib'),
     ('tilt','All-letter tilt',ROOT/'models/asl_shin_angles_tilt15.joblib'),
     ('C_tilt','C-only tilt',ROOT/'models/asl_shin_angles_C_tilt15.joblib'),
     ('GH_rotation','G/H rotation',ROOT/'models/asl_shin_angles_GH_rotation.joblib'),

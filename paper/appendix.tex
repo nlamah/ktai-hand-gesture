@@ -14,14 +14,14 @@
 \makeatletter
 \renewcommand{\Notice@String}{Interim course project report. Not a conference publication.}
 \makeatother
-\icmltitlerunning{Joint-angle features for static ASL fingerspelling}
+\icmltitlerunning{Interpretable hand-shape features for ASL recognition}
 \begin{document}
 \appendix
 \onecolumn
 \setcounter{figure}{2}
 \setcounter{table}{2}
 \section{Complete Letter-Level Results}\label{app:letters}
-Table~\ref{tab:letters} includes every letter, not only selected gains or regressions. Metrics are percentages; $\Delta n$ is the change in correct true-letter images. ``Base'' is the project-profile SVM with 820 Shin inputs; ``Angles'' adds the 15 continuous measurements. Support varies because detection filtering is not uniform across letters. Precision measures the correctness of predictions of a letter, while recall measures recovery of its true images.
+Table~\ref{tab:letters} includes every letter, not only selected gains or regressions. Metrics are percentages; $\Delta n$ is the change in correct true-letter images. ``Base'' is the project-profile SVM with 820 Shin inputs; ``Angles'' adds the 15 world-joint measurements. These are the earlier +67 results, not the same-coordinate +4 control in Appendix~K. Support varies because detection filtering is not uniform across letters. Precision measures the correctness of predictions of a letter, while recall measures recovery of its true images.
 \begin{table}[h]\centering\caption{All-letter pooled OOF comparison.}\label{tab:letters}
 \begin{tabular}{lrrrrrrrr}\toprule
  & & \multicolumn{2}{c}{Precision (\%)} & \multicolumn{2}{c}{Recall (\%)} & \multicolumn{2}{c}{F1 (\%)} & \\
@@ -81,7 +81,7 @@ Related work & Baseline geometry, landmark estimation, alternative sensing/class
 Methods & Representations, angle equation, model objectives, weighting and preprocessing.\\
 Experiments/analysis & Matched baseline, dataset filtering, ablations, two algorithms, nested weighting, per-letter errors and descriptive paired analysis. No untouched final test or confirmatory significance claim.\\
 Discussion & Meaning, strengths, limitations, ethics and AI-generation disclosure.\\
-Conclusions & Modest observed angle benefit and prospective person/viewpoint-separated evaluation.\\\bottomrule\end{tabular}
+Conclusions & No consistent benefit from interpretable additions; distinguish the small world-coordinate gain from the near-zero same-coordinate result.\\\bottomrule\end{tabular}
 
 The main report now answers the explicit-feature comparison question through RQ1--RQ3. Later webcam experiments are supporting diagnostics, not unfinished conditions for that answer. A prospective signer-separated evaluation and independent review of the workbook remain valuable follow-ups. The detailed rubric assessment is retained separately in \texttt{paper/RUBRIC\_REVIEW.md}.
 
@@ -109,5 +109,7 @@ The main input/model/image hashes and saved predictions were audited. In the 28 
 Reproduction commands, evidence paths and the live model-label mapping are documented in \texttt{REPRODUCE.md}.
 \clearpage
 \input{followup_details.tex}
+\clearpage
+\input{representation_control.tex}
 \end{document}
 

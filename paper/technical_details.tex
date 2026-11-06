@@ -2,7 +2,7 @@
 \subsection{Landmarks and Baseline}
 Images are processed with MediaPipe Hand Landmarker. The intended extraction settings are IMAGE mode, up to two hands, and detection/presence thresholds of 0.5; only exactly one accepted hand is used. Historical records contain the MediaPipe version and landmarks, but not the threshold values. Thus default-setting provenance cannot be independently confirmed for the historical cache. We preserve these landmarks for all comparisons rather than rerun detection differently per model.
 
-The Shin implementation follows the paper's pair list: 190 pairwise distance features and 630 axis-direction features, for 820 features overall. Distance features are normalized per image; direction features are cosine-based encodings of inter-landmark vectors relative to axes. The local implementation preserves the paper's listed pair exclusions. Features use image landmarks for the baseline and estimated world landmarks for the added hand geometry.
+The Shin implementation follows the paper's pair list: 190 pairwise distance features and 630 axis-direction features, for 820 features overall. Distance features are normalized per image; direction features are cosine-based encodings of inter-landmark vectors relative to axes. The local implementation preserves the paper's listed pair exclusions. The original additions use estimated world landmarks, whereas the baseline uses image landmarks. Appendix~K adds a matched image-coordinate control. Shin directions already contain information from which interior joint angles can be derived; explicit measurements test representation rather than new sensing information.
 
 \begin{figure}[t]
 \centering\includegraphics[width=\linewidth]{figures/pipeline.pdf}
@@ -15,7 +15,7 @@ For consecutive landmarks $a,b,c$, an interior bending angle is
 \begin{equation}
 \theta(a,b,c)=\arccos\frac{(a-b)^\top(c-b)}{\|a-b\|\,\|c-b\|}\frac{180}{\pi}.
 \end{equation}
-A straight joint approaches $180^\circ$. We use thumb MCP/IP and MCP/PIP/DIP for the other four fingers: 14 interior angles. A signed thumb-MCP deviation adds a fifteenth measurement. MCP measurements are landmark-based proxies, not calibrated clinical joint measurements. The retained phrase ``angles'' below always means all 15 additions, not a fourteenth-angle-only experiment.
+A straight joint approaches $180^\circ$. We use thumb MCP/IP and MCP/PIP/DIP for the other four fingers: 14 interior angles. A signed thumb-MCP deviation adds a fifteenth measurement. MCP measurements are landmark-based proxies, not calibrated clinical joint measurements. ``Angles'' in the original comparison means all 15 world-derived additions. Appendix~K labels the same-coordinate measurements separately.
 
 Categorical features encode bent, partly bent and extended joints; a binary B-shaped/non-B-shaped thumb MCP; and spread, suspected crossing and thumb contact relations. An unknown state is retained. Thresholds are fixed across folds. Non-thumb flexion uses $\leq130^\circ$ for bent and $\geq150^\circ$ for extended, with intermediate values partly bent. Finger spread requires separation in approximately the same plane; splaying is allowed. Crossing and contact are geometric proxies and remain sensitive to occlusion and depth estimates.
 

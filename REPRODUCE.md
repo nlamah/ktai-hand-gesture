@@ -74,7 +74,7 @@ python -m streamlit run app.py
 Stop the server with Ctrl-C in its terminal. The native camera window now provides six model buttons, also available through keys 1-6:
 
 - **Reference**: original Shin 820-input reference model (`models/asl_shin.joblib`).
-- **Joint angles**: Shin plus 15 joint-angle measurements (`models/asl_shin_angles.joblib`).
+- **World joints**: Shin plus 15 joint-angle measurements (`models/asl_shin_angles.joblib`).
 - **All-letter tilt [3]**: the all-letter tilt-augmented joint-angle model (`models/asl_shin_angles_tilt15.joblib`).
 
 - **C-only tilt [4]**: selective C-only tilt (`models/asl_shin_angles_C_tilt15.joblib`).
@@ -303,9 +303,10 @@ The targeted study reuses the unweighted angle OOF baseline, checks sample IDs a
 
 ```bash
 python -m research.paper_assets
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.paper_core_assets
 ```
 
-This regenerates the pipeline diagram, actual dataset O-error examples, all-letter tables, model-effect plot and complete confusion matrices from the frozen results. It requires the retained dataset for the qualitative examples. It also recomputes paired statistics and the descriptive block-resampling sensitivity range. Figure source is code, not generated illustrative data. The code is intentionally tied to the frozen report evidence paths.
+The first command regenerates the pipeline diagram, actual dataset O-error examples, all-letter tables, model-effect plot and complete confusion matrices from frozen results. It requires the retained dataset for qualitative examples and recomputes paired statistics and the descriptive block-resampling sensitivity range. The second command generates the current main table and Appendix K control table, checking that coordinate-control baselines match the historical scores and that corrected/lost counts reconcile with accuracy. It also updates the main pipeline and letter-effects figures. These assets distinguish the earlier world-joint net +67 result from the same-coordinate net +4 result; no model is retrained. Figure source is code, not generated illustrative data.
 
 With a standard TeX installation:
 
@@ -448,7 +449,7 @@ python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-
 
 The all stage resumes the fixed protocol/model and finished folds. `--stage train` refuses to overwrite an existing candidate; `--stage cv` reuses fold checkpoints; `--stage evaluate` replays saved captures. The small new feature cache is `results/angles_2d_01/pixel_angles.npz`; the original dataset, cached inputs and earlier models remain unchanged. The native tool exposes the candidate through **Image + depth [6]**. Snapshot exports contain all 849 feature names/values, 15 original `joint_angles_degrees` and 14 `projected_angles_degrees`, detector image dimensions, active model hash and round metadata.
 
-Five-fold pooled accuracy changes 97.74776% to 97.69298%; macro-F1 .97524391 to .97465145. There are 70 corrected and 103 newly incorrect predictions. Four folds decline slightly; one improves. Of the latest 11 deliberately selected G/H-model errors, Joint angles recognizes 2 and the candidate 3 (T is newly correct; G remains A). The older C/D/O development round changes 17/27 to 16/27 correct. These captures were not used to fit or tune the model and are reused development diagnostics, not independent test scores. Full fold and all-letter metrics are in `results/angles_2d_01/report.md`.
+Five-fold pooled accuracy changes 97.74776% to 97.69298%; macro-F1 .97524391 to .97465145. There are 70 corrected and 103 newly incorrect predictions. Four folds decline slightly; one improves. Of the latest 11 deliberately selected G/H-model errors, World joints recognizes 2 and the candidate 3 (T is newly correct; G remains A). The older C/D/O development round changes 17/27 to 16/27 correct. These captures were not used to fit or tune the model and are reused development diagnostics, not independent test scores. Full fold and all-letter metrics are in `results/angles_2d_01/report.md`.
 
 Five folds preserve the earlier comparison and provide large validation partitions. More folds cannot repair overlap between people/sessions: the current groups are filename blocks, not verified signer identities. Report the pooled out-of-fold scores and per-fold variation, without treating fold standard deviation as a confidence interval. A new signer/session held out from development is needed to assess live robustness.
 
@@ -461,7 +462,7 @@ python -m research.studies.gh_middle_diagnostic
 
 The first command trains three fixed binary RBF SVMs using only 15 3D measurements, 14 projected 2D angles, or all 29. It restricts the original five group folds to the same 4,801 G/H images (2,430 G; 2,371 H), with training-only imputation/scaling. Captures do not enter fitting. Bundles are saved under `models/gh_diagnostic/` and results under `results/gh_classifier_01/`. These diagnostic bundles always choose G or H; they are not compatible replacements for the 26-letter live models.
 
-Binary CV accuracy is 96.563% (3D), 95.793% (2D), and 96.584% (both). The latest saved G is still H for all three. G is nevertheless well recognized in the original 26-class validation: 2,416/2,430 correct (99.424% recall); Joint angles mistakes four G images for H, nine for J and one for F. These are accepted-image, filename-block validation results, not new-signer webcam scores.
+Binary CV accuracy is 96.563% (3D), 95.793% (2D), and 96.584% (both). The latest saved G is still H for all three. G is nevertheless well recognized in the original 26-class validation: 2,416/2,430 correct (99.424% recall); World joints mistakes four G images for H, nine for J and one for F. These are accepted-image, filename-block validation results, not new-signer webcam scores.
 
 The second command is an explicitly post-hoc diagnostic using only the 3D/2D middle-PIP measurements. It recognizes the three stored G/H error examples correctly, but CV accuracy is lower (94.085%, macro-F1 .94084). Results are in `results/gh_middle_01/`; do not treat those reused examples as an independent test or install this binary rule as a general classifier.
 
@@ -505,3 +506,40 @@ python -m research.alphabet_capture
 ```
 
 The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALPHABET_CAPTURE.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.
+
+## Same-coordinate direction-versus-joint-angle experiment
+
+This experiment separates the type of angle from the coordinate source. All new features use the exact normalized image x/y/z landmarks used by the Shin reference; they do not use world landmarks or aspect-correct pixels. No images or landmarks are redetected. It uses the historical 60,251 accepted images and five frozen folds.
+
+```bash
+conda activate ktai-hand-gesture
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.compare_direction_joint
+```
+
+For both SVM and LightGBM, compare:
+
+| Variant | Features | Input count |
+|---|---|---:|
+| `shin` | 190 distances + 630 axis-relative directions | 820 |
+| `distance_joint` | Same 190 distances + 15 explicit joint measurements | 205 |
+| `shin_joint` | All 820 Shin values + the same 15 joint measurements | 835 |
+
+The 15 measurements retain the earlier definitions: 14 interior joint angles plus signed thumb MCP deviation. Finger MCP angles use wrist-based geometric proxies. In this normalized coordinate system they are descriptors, not calibrated anatomical angles. `shin_world` is the previously evaluated Shin-plus-world-angle arm, reused as context rather than a same-coordinate comparison.
+
+This is a control within the interpretable-feature investigation. Shin already encodes the adjacent segment directions from which joint bending can be derived. The study tests whether making that relation explicit helps a fixed learner; it does not claim new sensing information. Categorical flexion is also derived from angle thresholds. The world-joint SVM gains 67 net correct images; same-coordinate addition gains only four, and replacement loses 1,883. The original full package does not improve SVM. The paper retains these negative results rather than treating joint measurements as a generally improved recognizer.
+
+Source: `research/joint_angles.py`; experiment runner: `research/studies/compare_direction_joint.py`. Baseline and world-angle OOF predictions are reused only after checking source hashes, image IDs, labels and folds. Each added angle block is median-imputed and standardized using its training partition only. Fixed classifier parameters match the project profile; there is no fresh hyperparameter tuning. In particular, RBF `gamma=scale` adapts to each representation. Conclusions therefore concern these fixed recipes, not optimally tuned upper bounds for each representation.
+
+Results, per-letter precision/recall/F1, confusion matrices, paired corrected/lost counts, figures and an English interpretation are saved under `results/direction_joint_01/`. Models and resumable prediction checkpoints are under `runs/direction_joint_01/` (ignored by Git). Running the same command resumes completed folds; different inputs require fresh `--out` and `--work` directories. Both algorithm selections must remain the same when resuming. This experiment does not replace any live model. Test angle geometry with `python -m unittest tests.test_joint_angles -v`.
+
+After both classifiers finish, independently verify every reported metric, all per-letter scores and confusion counts, training-only angle scaling for all 20 new models, and a replay sample from every held-out fold:
+
+```bash
+python -m research.studies.verify_direction_joint
+```
+
+This writes `results/direction_joint_01/verification.json`, including runtime versions and code/result hashes. It requires the local fold models in `runs/direction_joint_01/`.
+
+## Continuing with G/H rotations
+
+See `docs/GH_ROTATION.md` for the distinction between the existing feature-space G/H candidate and a prospective RGB-image rotation experiment. The latter requires new landmark detection, fixed source-image groups and a separate training-only augmentation path. Neither the same-coordinate study nor the paper revision runs that new experiment or changes the default live model.
