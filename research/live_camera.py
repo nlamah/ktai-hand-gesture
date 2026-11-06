@@ -19,7 +19,8 @@ from research.model_choices import MODEL_CHOICES, MODEL_BUTTONS, describe_model
 WINDOW = 'ASL letter - Space: capture | Q / Esc: close'
 BUTTON = (12, 488, 628, 532)
 PREVIEW_WIDTH, PREVIEW_HEIGHT = 640, 480
-ROUND_BUTTON = (12, 672, 208, 716)
+MODEL_ROW_COUNT = (len(MODEL_CHOICES) + 2) // 3
+ROUND_BUTTON = (12, 576 + MODEL_ROW_COUNT * 48, 208, 620 + MODEL_ROW_COUNT * 48)
 HAND_CONNECTIONS = ((0,1),(1,2),(2,3),(3,4),(0,5),(5,6),(6,7),(7,8),
                     (5,9),(9,10),(10,11),(11,12),(9,13),(13,14),(14,15),
                     (15,16),(13,17),(0,17),(17,18),(18,19),(19,20))
@@ -61,7 +62,7 @@ def render_preview(frame, letter, detection=None, mirror=True):
 
 def camera_panel(preview, prompt=None, notice=None, model_key=None, locked=False, round_info=None):
     """Fixed-size footer with a clickable snapshot button, also in freeze mode."""
-    panel = np.zeros((PREVIEW_HEIGHT + 272, PREVIEW_WIDTH, 3), dtype=np.uint8)
+    panel = np.zeros((ROUND_BUTTON[3] + 36, PREVIEW_WIDTH, 3), dtype=np.uint8)
     panel[:PREVIEW_HEIGHT] = preview
     cv2.rectangle(panel, BUTTON[:2], BUTTON[2:], (235, 235, 235), -1)
     text = prompt or 'Save confusion [Space]'
@@ -73,11 +74,11 @@ def camera_panel(preview, prompt=None, notice=None, model_key=None, locked=False
         cv2.rectangle(panel,rect[:2],rect[2:],color,-1)
         cv2.putText(panel,f'{label} [{i}]',(rect[0]+8,rect[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.47,(0,0,0),1,cv2.LINE_AA)
     cv2.rectangle(panel,ROUND_BUTTON[:2],ROUND_BUTTON[2:],(120,120,120) if locked else (220,220,220),-1)
-    cv2.putText(panel,'New round [N]',(24,700),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
+    cv2.putText(panel,'New round [N]',(24,ROUND_BUTTON[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
     label=f"Round: {round_info['name'][:36]} / {round_info['number']}" if round_info else 'L: toggle landmarks'
-    cv2.putText(panel,label,(12,738),cv2.FONT_HERSHEY_SIMPLEX,.48,(255,255,255),1,cv2.LINE_AA)
+    cv2.putText(panel,label,(12,ROUND_BUTTON[3]+22),cv2.FONT_HERSHEY_SIMPLEX,.48,(255,255,255),1,cv2.LINE_AA)
     if round_info:
-        cv2.putText(panel,'L: landmarks',(232,700),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
+        cv2.putText(panel,'L: landmarks',(232,ROUND_BUTTON[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
     return panel
 
 
@@ -155,7 +156,7 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_open = True
         cv2.setMouseCallback(WINDOW, snapshot_mouse, state)
-        print('Camera started. Select a model below or press 1-6. N: new round. L: landmarks. Space: capture. Q/Esc: close.', flush=True)
+        print(f'Camera started. Select a model below or press 1-{len(MODEL_CHOICES)}. N: new round. L: landmarks. Space: capture. Q/Esc: close.', flush=True)
         while True:
             if state.pop('round_request',False) and not protocol:
                 round_info=new_round(round_name,round_info['number']+1)

@@ -9,6 +9,8 @@
 \usepackage[accepted]{icml2021}
 \usepackage[T1]{fontenc}
 \hypersetup{hypertexnames=false}
+\input{mirror_numbers.tex}
+\input{gh_y180_numbers.tex}
 \makeatletter\let\tableinput\@@input\makeatother
 \makeatletter
 \patchcmd{\printAffiliationsAndNotice}{Correspondence to: \icmlcorrespondingauthor@text.}{}{}{}
@@ -17,7 +19,7 @@
 \icmltitlerunning{Explicit hand-shape features for ASL recognition}
 \begin{document}
 \twocolumn[
-\icmltitle{Interpretable Hand-Shape Features for ASL Letter Recognition\\Do Explicit Descriptions Add Value Beyond Geometric Descriptors?}
+\icmltitle{Interpretable Hand-Shape Features for ASL Letter Recognition\\Representation Controls and Separate Augmentation Studies}
 \begin{icmlauthorlist}
 \icmlauthor{Author details to be added}{ou}
 \end{icmlauthorlist}
@@ -28,7 +30,7 @@
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-Can descriptions such as bent, extended, spread or touching improve a letter recognizer that already receives hand geometry? Webcam confusions motivated a comparison of categorical hand features, workbook agreement scores and continuous joint measurements added to a Shin-based reference. SVM and LightGBM used the same 60,251 accepted Kaggle ASL Alphabet images and five grouped validation folds. The full feature package did not improve SVM accuracy (97.628\% versus 97.637\%). Adding joint measurements from estimated world landmarks reached 97.748\% and 0.97524 macro-F1: 143 errors corrected, 76 correct predictions lost, net +67. A control deriving joint measurements from the same coordinates as Shin reached only 97.643\%, net +4; replacing directions with those measurements reduced accuracy to 94.511\%. Explicit descriptions therefore do not reliably improve this geometric reference, and the small world-coordinate gain cannot be attributed to the bending-angle formula alone. These exploratory results concern representation, not new sensing information or demonstrated reliability on unseen people and webcam conditions.
+Can descriptions such as bent, extended, spread or touching improve a letter recognizer that already receives hand geometry? Webcam confusions motivated a comparison of categorical features, workbook scores and joint measurements added to a Shin-based reference. SVM and LightGBM used the same 60,251 accepted Kaggle ASL Alphabet images and five grouped folds. The full feature package did not improve SVM accuracy (97.628\% versus 97.637\%). World-joint measurements reached 97.748\% and 0.97524 macro-F1: 143 errors corrected, 76 correct predictions lost, net +67. Same-coordinate joints reached only 97.643\%, net +4; replacing directions reduced accuracy to 94.511\%. Explicit descriptions do not reliably improve this reference; the world-coordinate gain cannot be attributed to the bending formula alone. Separate augmentation tests change SVM macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug\ on a synthetic mirror mix. Isolated G/H turns instead change original-view F1 only from \GHRotFoneBase\ to \GHRotFoneAug. These exploratory results do not establish unseen-person, real left-hand or back-view robustness.
 \end{abstract}
 
 \section{Brief Introduction}
@@ -44,7 +46,7 @@ The main research question is: \emph{Do interpretable hand-shape descriptions ad
 \item Do continuous measurements help, and does their coordinate representation matter?
 \item Which letters benefit or regress, and how consistent are the observed differences?
 \end{enumerate}
-The following sections connect these questions to prior work, explain the comparisons, report their outcomes and discuss their limits. Later webcam and augmentation experiments are supporting diagnostics, not additional requirements for answering the main question. Technical details and complete results are in the separate appendix.
+These questions concern feature design. Separate follow-ups test horizontal RGB mirroring and G/H-only vertical-axis rotation. The latter isolates rotation without mirroring or camera calibration. Earlier webcam probes remain diagnostic. Full settings and results are in the separate appendix.
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\linewidth]{figures/core_pipeline.pdf}
@@ -80,7 +82,7 @@ Bounded weighting checks used five outer and three inner group folds, with inner
 
 \section{Experimental Results}
 \subsection{Dataset and Evaluation}
-Kaggle ASL Alphabet supplies 78,000 training images, 3,000 for each A--Z label. Only 60,251 images with exactly one accepted hand detection enter the comparisons: 77.25\% coverage. Consequently, classification scores are conditional on successful landmark extraction. The small supplied test set duplicates training images and was excluded. Historical landmark records do not retain the confidence thresholds; the intended default extraction settings cannot be independently confirmed.
+Kaggle ASL Alphabet supplies 78,000 training images, 3,000 for each A--Z label. Only 60,251 images with exactly one accepted hand detection enter the feature comparisons: 77.24\% coverage. Consequently, those classification scores are conditional on landmark extraction. The supplied test set duplicates training images and was excluded. Historical landmark records do not retain confidence thresholds; the intended extraction settings cannot be independently confirmed. The mirror follow-up evaluates all 78,000 source attempts separately.
 
 Every main comparison uses the same accepted images and frozen five group folds. Adjacent image numbers are grouped into six filename blocks, distributed across the folds. Each image receives one prediction from a model that was not fitted on it. These groups are not verified people; possible similarity across blocks limits claims about new signers. Accuracy is pooled over all held-out predictions. Macro-F1 averages the 26 letter F1-scores, giving equal weight to each letter and accounting for false positives as well as missed examples. No untouched final classification test is available.
 
@@ -115,27 +117,30 @@ The world-joint addition fixes 143 formerly incorrect images and loses 76 former
 \label{fig:letter-effects}
 \end{figure*}
 
-Figure~\ref{fig:letter-effects} and Table~\ref{tab:core-letters} show why the pooled gain needs qualification. M gains 31 correct images, while O loses seven. N loses two true-letter recoveries yet improves in F1, because false-positive behaviour also changes. Different metrics therefore answer different questions. The angle model still has 142 R$\rightarrow$U, 141 N$\rightarrow$M, 102 M$\rightarrow$N and 41 D$\rightarrow$O errors. These residual patterns matter more than selecting only favourable letters.
+Figure~\ref{fig:letter-effects} shows why the pooled gain needs qualification. M gains 31 correct images, while O loses seven. N loses two true-letter recoveries yet improves in F1, because false positives also change. The world-joint model still has 142 R$\rightarrow$U, 141 N$\rightarrow$M, 102 M$\rightarrow$N and 41 D$\rightarrow$O errors. Appendix~A gives every letter's precision, recall and F1.
 
 \begin{table}[t]
-\centering\caption{Selected letter effects; F1 is a percentage and $\Delta n$ is the change in correctly recovered true-letter images. The appendix includes every letter.}
-\label{tab:core-letters}
-\begin{tabular}{lrrrr}\toprule
-Letter & Images & Base F1 & World F1 & $\Delta n$\\\midrule
-\tableinput core_letter_rows.tex
+\centering\caption{Separate mirror follow-up: SVM on 78,000 held-out attempts, selecting one fixed view per source (half mirrored per letter/fold). Failed detections remain incorrect attempts. P denotes macro-precision.}
+\label{tab:mirror-main}
+\begin{tabular}{lrrr}\toprule
+Training & Acc. (\%) & P (\%) & Macro-F1\\\midrule
+\tableinput mirror_main_rows.tex
 \bottomrule\end{tabular}
 \end{table}
 
-Targeted index-joint weighting did not yield a convincing overall benefit; selected weights varied across folds (Appendix~D).
+\subsection{RGB Mirroring Follow-up}
+ASL permits left-handed fingerspelling \citep{vicarsleft}. Historically, MediaPipe labels 57,424 of 60,251 accepted images Right (95.31\%) and 2,827 Left (4.69\%); these are not human-verified hand labels. I redetected all 78,000 originals and their pixel mirrors with the same fixed detector. A new baseline uses accepted originals; its candidate additionally uses accepted mirrors of the same fitting sources. Each source retains weight one. Scaling and SVM gamma/class weights come from original fitting rows only. Derivatives inherit source folds.
 
-\subsection{Supporting Webcam Diagnostics}
-A later guided development round retained all 27 planned C/D/O attempts with predictions hidden. The reference and angle models each recognized 17/27. Small tilt augmentation recognized 18/27; C-only tilt did not improve the predictions. Later 2D-angle and G/H-specific investigations likewise did not establish a general solution. Those results are retained in Appendix~I--J, outside the primary feature comparison.
+Table~\ref{tab:mirror-main} reports the fixed random test mix (seed 20261106), shared by both models. SVM macro-precision changes from \MirrorMixPrecisionBase\% to \MirrorMixPrecisionAug\%, and macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug. On originals alone, the SVM loses 26 correct predictions net; LightGBM also improves on the mixture. Full original/mirror, per-letter and conditional results are in Appendix~L. This tests synthetic reflection robustness, not real left-handed signer performance or the value of adding hand features.
 
-These observations illustrate a limit, not a new webcam accuracy claim. For example, one selected G had middle-PIP flexion consistent with training G but was still H; another H with visible palm was G. Palm/back viewpoint, other measurements and learned decision boundaries may all contribute. Selected errors cannot establish the frequency or main cause of failure, and projected image angles do not prove that an estimated 3D angle is wrong.
+\subsection{Standalone G/H Rotation}
+A matched SVM comparison adds only $180^\circ$ camera-$y$ turns to G/H fitting examples, with no mirrors, camera calibration or routing rule. It shares original-fit preprocessing, gamma, class weights and source folds. On the 60,251 unchanged originals, macro-precision changes from \GHRotPrecisionBase\% to \GHRotPrecisionAug\%, and macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug: \GHRotFixed\ errors corrected, \GHRotLost\ correct predictions lost, net \GHRotNet. This gives no overall benefit. Appendix~M details the recipe and limitations; real back-view robustness remains untested.
 
 \clearpage
 \section{Discussion}
 The interpretable feature package does not consistently improve the geometric reference. Its SVM result is slightly worse; the positive world-joint result is small and does not reproduce as a meaningful gain with same-coordinate joints. The evidence supports a bounded comparison of representations, not a general performance improvement.
+
+Augmentation addresses a different question from feature design. Mirroring changes balanced-presentation SVM macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug. Standalone G/H rotation instead changes original-view macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug. The latter contains no mirror or camera-calibration data. These scores describe different evaluation populations and cannot be compared directly. No separately collected left-hand or back-view test cohort is available.
 
 Joint angles and categories largely re-express landmark geometry; categorical flexion also derives from thresholded angles. The control therefore addresses redundancy directly. Coordinate estimates, scaling and model geometry may contribute to the different outcomes; their individual effects are not isolated. Removing direction features also discards axis-relative orientation, which may distinguish letters. Poor replacement performance does not prove that joint calculations are wrong or that categories are intrinsically unhelpful.
 
@@ -148,7 +153,7 @@ The report and much of the software were AI-generated. AI-assisted code inspecti
 \section{Conclusions}
 Interpretable hand descriptions give no consistent advantage over the Shin-based reference in this evaluation. The full package does not improve SVM accuracy. World-joint additions yield a small net gain of 67 images; same-coordinate additions yield only four, and replacing directions loses 1,883. The world result is specific to its representation and learner, with letter-level regressions and no independent final-test confirmation.
 
-The contribution is testing whether meaningful descriptions add predictive value when geometry is already available, and documenting their limits through matched comparisons and error analysis. Further G/H rotation experiments should separate feature-space rotation from rotating images and rerunning detection, and use a predefined, signer/session-separated evaluation. Current dataset scores do not establish webcam robustness.
+The contribution is testing whether meaningful descriptions add value when geometry is available, while separating feature design from augmentation. The mirror follow-up improves its synthetic balanced presentation. The standalone G/H turn changes macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug\ on original views, with net \GHRotNet\ correct images. Neither establishes recognition of new left-handed signers or real back-of-hand robustness. Those require prospective evaluations.
 
 \clearpage
 \bibliography{references}

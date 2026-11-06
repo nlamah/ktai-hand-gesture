@@ -18,7 +18,7 @@ This research repository tests whether interpretable descriptions such as bent, 
 
 ## Included artifacts and language
 
-The six deployed live-model `.joblib` files under `models/`, their provenance JSON files, the four G/H diagnostic models and the MediaPipe model asset are included in version control. No retraining is required when those files are present after cloning. The pinned Python/scikit-learn environment is still required to load them.
+The deployed live-model `.joblib` files under `models/`, their provenance JSON files, the four G/H diagnostic models and the MediaPipe model asset are included in version control. The mirror experiment adds a matched fresh-original and mirror-trained pair. No retraining is required when those files are present after cloning. The pinned Python/scikit-learn environment is still required to load them.
 
 Confusion matrices, OOF prediction tables and analysis reports under `results/` are versioned. Raw webcam captures under `captures/` remain local and ignored, as requested; they can contain participant information. Analysis reports may describe captures that are therefore unavailable in a fresh clone, and capture-replay commands require those local files. The Kaggle images under `data/` and new experiment runs under `runs/` are also ignored; see the download and extraction steps in `REPRODUCE.md`.
 
@@ -35,7 +35,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera
 ```
 
-A single fixed-size window displays the camera image and current letter. Select a trained model using the buttons below the image or keys **1-6**, without restarting:
+A single fixed-size window displays the camera image and current letter. Select a trained model using the buttons below the image or keys **1-9**, without restarting:
 
 | Button | Model |
 |---|---|
@@ -45,6 +45,9 @@ A single fixed-size window displays the camera image and current letter. Select 
 | **C-only tilt [4]** | Joint-angle model with ±15° tilt training for C only |
 | **G/H rotation [5]** | Joint-angle model with larger direction rotations for G/H only |
 | **Image + depth [6]** | Reference plus 3D and projected 2D joint angles (849 inputs; no augmentation) |
+| **Fresh original [7]** | Newly detected original-only training, matched baseline for the mirror experiment (835 inputs) |
+| **Mirror trained [8]** | Same fitting sources plus accepted horizontal RGB mirrors (835 inputs) |
+| **G/H y180 only [9]** | Standalone G/H vertical-axis 180° training turns; original data only, without mirrors or camera calibration |
 
 The default is World joints (called Joint angles in earlier reports), the earlier **world-coordinate** model. It is not the same-coordinate +4 variant; the two new control variants remain research-only. The augmented models are experimental comparisons, not generally better models. Model selection is locked during a guided round. Snapshot exports preserve the actual model hash and its 820/835/849-input schema.
 
@@ -152,7 +155,27 @@ conda activate ktai-hand-gesture
 python -m research.live_gh --variant middle
 ```
 
-This separate native window always chooses G or H; other letters are outside its scope. Buttons/keys 1-4 select all 3D angles, all 2D angles, both, or middle-PIP-only. L toggles the landmark overlay; Q/Esc closes. Close the ordinary camera window before starting this one. The selected development examples motivated the middle-only model; recognizing them does not establish independent live accuracy. The ordinary six-model tool remains `python -m research.live_camera`.
+This separate native window always chooses G or H; other letters are outside its scope. Buttons/keys 1-4 select all 3D angles, all 2D angles, both, or middle-PIP-only. L toggles the landmark overlay; Q/Esc closes. Close the ordinary camera window before starting this one. The selected development examples motivated the middle-only model; recognizing them does not establish independent live accuracy. The ordinary nine-model tool remains `python -m research.live_camera`.
+
+## Horizontal RGB mirroring
+
+The [mirror experiment](results/mirror_01/report.md) compares original-only and mirror-augmented training with SVM and LightGBM. All 78,000 originals and 78,000 reflected images are detected anew with the same fixed settings. Evaluation includes originals, mirrors and a fixed random mix selecting half the sources per letter/fold for reflection. Failed detections remain in all-attempt scores; accepted-only and paired-source results are also available.
+
+On the fixed balanced test mix, SVM macro-precision changes **73.566% -> 97.451%** and macro-F1 **0.53849 -> 0.84560**, with **22,349 net additional correct attempts**. LightGBM macro-F1 changes **0.64104 -> 0.84177**. Both improve on this mix in all five folds. On original-only attempts, SVM loses 26 correct predictions net (F1 0.84670 -> 0.84640). On accepted balanced-mix images alone, its F1 changes 0.62650 -> 0.97421. These all-attempt and conditional scores have different denominators; neither should be confused with the earlier 97.748% conditional accuracy.
+
+Historically, MediaPipe labels **95.31%** of accepted original images Right and **4.69%** Left. The selected test mix has **49.12% detector-labelled Left and 50.88% Right** among accepted detections. These are detector labels, not verified signer handedness. Synthetic mirroring tests a controlled shift; it does not establish real left-handed signer performance. Use **Fresh original [7]** versus **Mirror trained [8]** for a matched live comparison. See [protocol and reproduction instructions](docs/MIRROR_EXPERIMENT.md).
+
+## Standalone G/H rotation
+
+The [standalone G/H experiment](results/rotation_GH_y180_01/report.md) compares original-only training with extra 180° turns around the vertical camera y axis for G/H only. It uses the same 60,251 accepted original images, five folds, preprocessing, resolved SVM gamma and class weights. No mirrors, webcam calibration or routing rule enter either arm. Validation images are unchanged originals. Compare **World joints [2]** with **G/H y180 only [9]** live; [protocol and commands](docs/GH_ROTATION_STANDALONE.md) describe the experiment.
+
+Macro-precision changes **97.53902% -> 97.53874%** and macro-F1 **0.97524391 -> 0.97523305**: 4 errors corrected, 5 correct predictions lost, net **-1** of 60,251. G/H recall is unchanged and both letters' F1 decreases slightly. A known back-view H is recovered but two known back-view G examples remain wrong. These selected cases are diagnostic, not an independent test. The paper reports this negative result separately in Appendix M.
+
+## Earlier combined G/H adaptation
+
+The earlier [combined G/H adaptation](docs/GH_VERTICAL_ADAPTATION.md) adds vertical turns, three camera calibration images and a routing gate on top of mirror training. It remains available with `--model models/asl_gh_vertical_adapter.joblib`, for comparison with **Mirror trained [8]**. Button **9** now selects the standalone experiment above. Known calibration examples are training data, so their recognition does not establish independent live accuracy. [Results and regressions](results/gh_vertical_01/report.md) are also separate from the earlier [index-axis roll](docs/GH_BACK_ADAPTATION.md), which preserves pointing direction.
+
+The balanced source-data check corrects 11 errors and loses 5 correct predictions (net +6); all-attempt macro-F1 changes from 0.845599 to 0.845682. Rotation alone fixes the known back-facing H but leaves the two G examples wrong. Adding their calibration data fits all three. This is a small development result, not evidence that the live viewpoint problem is solved.
 
 ## Next G/H rotation experiments
 

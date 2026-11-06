@@ -71,7 +71,7 @@ For the optional extended feature-inspection app, launch Streamlit through the s
 python -m streamlit run app.py
 ```
 
-Stop the server with Ctrl-C in its terminal. The native camera window now provides six model buttons, also available through keys 1-6:
+Stop the server with Ctrl-C in its terminal. The native camera window now provides nine model buttons, also available through keys 1-9:
 
 - **Reference**: original Shin 820-input reference model (`models/asl_shin.joblib`).
 - **World joints**: Shin plus 15 joint-angle measurements (`models/asl_shin_angles.joblib`).
@@ -80,6 +80,8 @@ Stop the server with Ctrl-C in its terminal. The native camera window now provid
 - **C-only tilt [4]**: selective C-only tilt (`models/asl_shin_angles_C_tilt15.joblib`).
 - **G/H rotation [5]**: selective G/H direction rotations (`models/asl_shin_angles_GH_rotation.joblib`).
 - **Image + depth [6]**: the 849-input 3D-plus-projected-angle model (`models/asl_shin_angles_2d.joblib`).
+- **Fresh original [7]** and **Mirror trained [8]**: the matched original/reflected training comparison.
+- **G/H y180 only [9]**: standalone G/H turns on the original-data model, without mirrors, camera calibration or routing rules (`models/asl_shin_angles_GH_y180.joblib`).
 
 Models are loaded lazily and cached in the same window; switching does not restart the camera. A snapshot uses the currently displayed model's bundle/hash and matching 820-, 835- or 849-value vector. A model cannot be switched within a guided session. The extended Streamlit app can also predict letters using the default joint-angle SVM. If its generated model artifact is absent (e.g. after cloning), train it once:
 
@@ -95,7 +97,7 @@ python -m research.live_model --variant shin_angles
 python -m research.studies.tilt_augmentation --stage train
 ```
 
-The current local workspace already contains all six trained artifacts (the later sections reproduce the C-only and G/H models). The reference uses the same project-profile SVM and original inputs as its frozen CV comparison. Its separate live schema uses 820 features and no angle scaler; four variants use 835; Image + depth uses 849. The live reference was also compared on the existing 27 development captures: 17/27 correct, C/D/O macro-F1 .609524.
+The current local workspace contains the six historical trained artifacts and the two mirror-study artifacts (the later sections reproduce the C-only and G/H models). The reference uses the same project-profile SVM and original inputs as its frozen CV comparison. Its separate live schema uses 820 features and no angle scaler; six variants use 835; Image + depth uses 849. The live reference was also compared on the existing 27 development captures: 17/27 correct, C/D/O macro-F1 .609524.
 
 The default joint-angle training command uses all 60,251 accepted development images, the same 835 input columns and SVM/preprocessing configuration as the isolated five-fold angle study, and saves `models/asl_shin_angles.joblib` plus a provenance JSON. It refuses to overwrite an existing artifact unless `--force` is given. This deployment fit is not another evaluation run; the 97.748% accuracy belongs to the earlier five-fold comparison, not to an independent test of this final fit.
 
@@ -475,7 +477,7 @@ conda activate ktai-hand-gesture
 python -m research.live_gh --variant middle
 ```
 
-This separate native window always chooses G or H; other letters are outside its scope. Buttons/keys 1-4 select all 3D angles, all 2D angles, both, or middle-PIP-only. L toggles the landmark overlay; Q/Esc closes. Close the ordinary camera window before starting this one. The selected development examples motivated the middle-only model; recognizing them does not establish independent live accuracy. The ordinary six-model tool remains `python -m research.live_camera`.
+This separate native window always chooses G or H; other letters are outside its scope. Buttons/keys 1-4 select all 3D angles, all 2D angles, both, or middle-PIP-only. L toggles the landmark overlay; Q/Esc closes. Close the ordinary camera window before starting this one. The selected development examples motivated the middle-only model; recognizing them does not establish independent live accuracy. The ordinary nine-model tool remains `python -m research.live_camera`.
 
 ## Guided G/H viewpoint collection
 
@@ -540,6 +542,48 @@ python -m research.studies.verify_direction_joint
 
 This writes `results/direction_joint_01/verification.json`, including runtime versions and code/result hashes. It requires the local fold models in `runs/direction_joint_01/`.
 
-## Continuing with G/H rotations
+## Standalone G/H y180 experiment
+
+The isolated experiment uses the historical 60,251 accepted original images and five filename-block folds. A freshly fitted original-only SVM is compared with one additionally trained on G/H-only 180-degree camera-y turns. Originals and turns each have weight 0.5 for G/H; other sources have weight one. The candidate shares original-fit preprocessing, resolved gamma and class priors. It has 65,052 fitting rows and no mirrors, camera calibration or routing gate. Validation uses unchanged originals. Both arms remain 26-class classifiers.
+
+```bash
+python -m research.studies.gh_rotation_standalone --stage freeze
+python -m research.studies.gh_rotation_standalone --stage cv
+python -m research.studies.gh_rotation_standalone --stage train
+python -m research.studies.report_gh_rotation_standalone
+python -m research.live_camera --model models/asl_shin_angles_GH_y180.joblib
+```
+
+Compare **World joints [2]** with **G/H y180 only [9]**. Evidence is in `results/rotation_GH_y180_01/`, including every prediction, both arms' fold metrics, all 26 letter scores, paired changes, confusions, selected camera replay and verification. The fresh reference exactly reproduces all historical held-out predictions. The candidate corrects 4 errors and loses 5 (net -1); macro-precision changes 97.53902% to 97.53874% and macro-F1 0.97524391 to 0.97523305. This gives no overall benefit. The selected back-view H is recovered but both known back-view G examples remain wrong. No selected capture enters fitting or constitutes an independent test. Appendix M reports this separately from mirror augmentation and the earlier combined candidates.
+
+## Earlier combined G/H adaptation
+
+The earlier combined follow-up is described in `docs/GH_VERTICAL_ADAPTATION.md`, with results in `results/gh_vertical_01/`. Load it explicitly with `--model models/asl_gh_vertical_adapter.joblib`; button 9 now selects the standalone original-data experiment. The combined candidate adds G/H-only turns to the mirror-trained reference and reuses three saved back-of-hand images as calibration training. Those images cannot provide independent validation. The earlier index-axis roll remains a separate development artifact in `results/gh_view_adaptation_01/`; it is not the vertical turn.
+
+```bash
+python -m research.studies.gh_vertical_adaptation --stage prepare
+python -m research.studies.gh_vertical_adaptation --stage train
+python -m research.studies.gh_vertical_adaptation --stage cv
+python -m research.studies.check_gh_vertical_only
+python -m research.studies.report_gh_view_adaptation --study gh_vertical_01
+```
 
 See `docs/GH_ROTATION.md` for the distinction between the existing feature-space G/H candidate and a prospective RGB-image rotation experiment. The latter requires new landmark detection, fixed source-image groups and a separate training-only augmentation path. Neither the same-coordinate study nor the paper revision runs that new experiment or changes the default live model.
+
+## Horizontal RGB mirror experiment
+
+The full protocol is `docs/MIRROR_EXPERIMENT.md`; generated results are `results/mirror_01/report.md`, and Appendix L gives the paper version. All 78,000 A-Z originals and their mirrors are redetected, with recorded model hash, IMAGE mode, max two hands and 0.5/0.5 thresholds. Source pixels and frozen filename-block folds are checked. Mirrored derivatives never cross the source-group boundary.
+
+```bash
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.mirror_dataset --workers 4
+python -m research.studies.mirror_augmentation --stage cv
+python -m research.studies.mirror_augmentation --stage train
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.report_mirror
+python -m research.studies.verify_mirror
+```
+
+The test mixture has one view per source, with half mirrored within each letter/fold using seed 20261106. Its exact choices are in `test_mix.csv` and are shared by the two arms. Each original fitting source retains total weight one; only an accepted mirror of that same source is added. Training-only scaling, SVM gamma and original class priors are held equal. Both fixed SVM/LightGBM recipes are evaluated without tuning. Failures remain no predictions in all-attempt metrics. `metrics.csv` additionally contains accepted-only and paired-both-accepted scopes, all five folds, macro-precision/recall/F1 and accuracy. Confusion matrices retain the no-prediction column. Detector-labelled handedness metrics do not establish true left/right performance.
+
+Chunk checkpoints and fold models are under ignored `runs/mirror_01/`. The extraction and CV stages resume matching work. Full-data training refuses to overwrite its new artifacts. It creates `models/asl_shin_angles_mirror_baseline.joblib` and `models/asl_shin_angles_mirrored.joblib`, exposed by native buttons/keys **7** and **8**. These match the unchanged live 835-input encoder; the prior default remains World joints. Start with `python -m research.live_camera --model models/asl_shin_angles_mirror_baseline.joblib` for a matched comparison.
+
+The historical manifest labels 57,424/60,251 accepted images Right (95.31%) and 2,827 Left (4.69%), with 17,749 sources not accepted. Those estimates describe the depicted hand, not the person's dominant hand. Fresh original detections are used for the current baseline so that unknown historical thresholds are not silently mixed with the new mirrors. The study is a synthetic reflection test; separately collected left-handed signers are needed for prospective validation.

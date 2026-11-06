@@ -1,5 +1,9 @@
 # Reassessment against Assignment 3
 
+Standalone G/H note (6 November 2026): Appendix M now isolates G/H-only camera-y180 augmentation on the original-data SVM, with no mirroring, calibration or routing rule. It corrects 4 errors and loses 5 (net -1/60,251), with macro-F1 0.97524391 to 0.97523305. This is an exploratory negative result; the historical grade estimate below has not been reassessed. It does not establish real back-view recognition.
+
+Mirror follow-up note (6 November 2026): the paper now additionally reports an RGB-mirroring experiment in Appendix L, with fresh detection of both presentations, a fixed balanced test mix, two learners and explicit original-view regressions. The historical assessment and grade estimate below have not been reassessed. Synthetic reflection results do not establish real left-handed signer performance.
+
 Revision note (6 November 2026): the assessment below predates the same-coordinate control and is retained as a historical, indicative review, not a new score. The current paper centers interpretable hand descriptions, reports the full package's lack of SVM benefit, and distinguishes the world-joint net +67 from the same-coordinate net +4 result (Appendix K). The control does not isolate category-only value. A new G/H image-rotation experiment is future work; the existing G/H candidate rotates feature vectors. The numerical grade estimate below has not been reassessed for this revision.
 
 Assessed: the revised English `report.pdf` and separate `appendix.pdf`. The main question is: **To what extent do explicit hand-shape features improve ASL letter recognition relative to a Shin-inspired reference?** Webcam, augmentation and later G/H experiments support the diagnosis; they are not additional requirements for answering this main question.
