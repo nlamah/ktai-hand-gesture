@@ -10,6 +10,34 @@ from research import live_camera
 
 
 class LiveCameraTests(unittest.TestCase):
+    def test_compact_model_buttons_keep_standalone_gh_and_stable_shortcuts(self):
+        from research.model_choices import visible_model_buttons,model_shortcut
+        buttons=visible_model_buttons()
+        self.assertEqual(len(buttons),6)
+        self.assertIn('GH_back',[b[0] for b in buttons])
+        self.assertNotIn('GH_rotation',[b[0] for b in buttons])
+        self.assertEqual(model_shortcut('GH_back'),'9')
+        rect=next(b[-1] for b in buttons if b[0]=='GH_back')
+        state={}
+        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)
+        self.assertEqual(state['model_request'],'GH_back')
+        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,230,live_camera.ROUND_BUTTON[1]+5,0,state)
+        self.assertTrue(state['archive'])
+        self.assertEqual(len(visible_model_buttons(True)),10)
+
+    def test_zero_key_selects_canonical_model(self):
+        capture, detector = MagicMock(), MagicMock()
+        capture.isOpened.return_value = True
+        capture.read.return_value = (True, np.zeros((40,60,3), np.uint8))
+        detector.analyze.return_value = {'status': 'no_hand'}
+        with ExitStack() as stack:
+            self.patches(stack, capture, detector)
+            stack.enter_context(patch.object(live_camera.Path, 'read_bytes', return_value=b'model'))
+            stack.enter_context(patch.object(live_camera.cv2, 'waitKey', side_effect=[ord('0'),ord('q')]))
+            stack.enter_context(patch.object(live_camera, 'predict_letter', return_value=None))
+            live_camera.run_camera()
+            self.assertEqual(live_camera.load_bundle.call_args.args[0].name, 'asl_shin_angles_right_hand.joblib')
+
     def test_preview_size_does_not_change_with_frame_or_letter(self):
         for shape in ((480, 640, 3), (720, 1280, 3), (640, 480, 3)):
             frame = np.full(shape, 80, dtype=np.uint8)

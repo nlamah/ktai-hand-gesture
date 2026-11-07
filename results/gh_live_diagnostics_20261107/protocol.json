@@ -1,0 +1,28 @@
+{
+  "version": "fixed-live-gh-diagnostics-v1",
+  "source_ids": [
+    "20261107T161853209081Z_4883acb7",
+    "20261107T161915381494Z_aac80023",
+    "20261107T161907071284Z_0582e897",
+    "20261107T162048609081Z_600038ed"
+  ],
+  "selection": "All four new free captures found when the user reported live G failures; explicit IDs, no withdrawn guided captures",
+  "scope": "Qualitative error analysis, user-provided intended letters, two camera rounds; not a representative sample or independent accuracy estimate",
+  "view_labels": "Visual reading of saved photographs, not measured view angles or an expert ASL correctness assessment",
+  "replay": "Original stored image/world landmarks through both frozen deployment models; no redetection, fitting, calibration or thresholds",
+  "model_sha256": {
+    "reference": "c68d5884a43ddaa37537a5d496228f8846089dd39076884b3ba978e421ec6e80",
+    "rotation": "bf8fd1a3e0c556b517a67ffcfdbba193834e753f28c4049cf27bec49c31e9412"
+  },
+  "capture_sha256": {
+    "20261107T161853209081Z_4883acb7": "ca68f82462fdc3b5cc8d390fe13b9203fa09c4579ac3d53d3b5c0e2920cc6269",
+    "20261107T161915381494Z_aac80023": "845241075a63ebb821786625937d665e73f26cddfd29a7312ab95bd016f34f13",
+    "20261107T161907071284Z_0582e897": "d31399671c6dfe6678fefa6348d577aea5b23ca8897b9367b18e68e611c9b119",
+    "20261107T162048609081Z_600038ed": "db10337cadb7a63cb13e895d43f77418af4a2fa597d3cea36f2f76f2a3efd5f8"
+  },
+  "cache_sha256": {
+    "data/asl_kaggle/research/inputs.npz": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
+    "data/asl_kaggle/research/inputs_metadata.json": "1e8d7c66cf2ffadca8b780a24d315b804def7f97ac8ecd7076be2a8601d38e6b"
+  },
+  "source_sha256": "5ace60d677c00e02d24aa69f9d7f680f50fc6fa40eefbaef93390e763b2f084a"
+}

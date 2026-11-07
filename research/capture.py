@@ -39,6 +39,8 @@ def save_capture(packet, expected, bundle, model_path, model_sha256, preview, ou
     if packet.get('protocol') and expected != packet['protocol']['task']['letter']:
         raise ValueError('Annotation differs from the planned protocol letter.')
     output = Path(output)
+    if (output / 'withdrawn.json').exists():
+        raise ValueError('Deze opnameronde is ingetrokken. Start een nieuwe sessie.')
     output.mkdir(parents=True, exist_ok=True)
     capture_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ') + '_' + uuid4().hex[:8]
     detection = {**packet['detection'], 'image_size':[packet['model_frame'].shape[1],packet['model_frame'].shape[0]]}
@@ -54,6 +56,7 @@ def save_capture(packet, expected, bundle, model_path, model_sha256, preview, ou
         'model': {'path': str(Path(model_path).resolve()), 'sha256': model_sha256,
                   'metadata': {k: v for k, v in bundle.items() if k != 'estimator'}},
         'camera': packet.get('camera'), 'session_id': packet.get('session_id'),
+        'source_frame_id': packet.get('browser_frame_id'),
         'capture_round': packet.get('capture_round'), 'landmarks_visible': packet.get('landmarks_visible'), 'opencv_version': cv2.__version__,
         'orientation': {'frame.png': 'unmirrored raw camera frame',
                         'model_input.png': 'unmirrored exact detector input, aspect ratio preserved',

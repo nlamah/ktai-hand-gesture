@@ -76,10 +76,11 @@ class ModelChoiceTests(unittest.TestCase):
         capture.release.assert_called_once();detector.close.assert_called_once()
 
     def test_sixth_model_button_and_new_round_have_separate_hit_regions(self):
-        rect=live_camera.MODEL_BUTTONS[5][-1]
+        from research.model_choices import visible_model_buttons
+        rect=visible_model_buttons()[5][-1]
         state={'shown':object()}
         live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)
-        self.assertEqual(state['model_request'],'image_angles')
+        self.assertEqual(state['model_request'],'right_hand')
         self.assertNotIn('round_request',state)
         state={'shown':object()};rect=live_camera.ROUND_BUTTON
         live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)

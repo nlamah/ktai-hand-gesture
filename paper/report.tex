@@ -37,7 +37,7 @@
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-Kan een computer op een foto zien welke letter iemand met de hand uitbeeldt? Wij onderzoeken drie mogelijke verbeteringen: foto's vooraf bewerken, het programma meer voorbeelden geven en de handvorm duidelijker beschrijven. Voor de eerste twee onderdelen moeten de resultaten nog worden toegevoegd. Het derde onderdeel is getest op 60.251 foto's. Extra beschrijvingen, zoals ``de middelvinger is gebogen'', helpen niet steeds. Een kleine verbetering blijkt bovendien samen te hangen met de gebruikte handpunten. We weten nog niet of deze aanpak bij nieuwe mensen of met een gewone webcam beter werkt.
+Kan een computer op een foto zien welke letter iemand met de hand uitbeeldt? Wij onderzoeken drie mogelijke verbeteringen: foto's vooraf bewerken, het programma meer voorbeelden geven en de handvorm duidelijker beschrijven. Voor de eerste twee onderdelen moeten de resultaten nog worden toegevoegd. Het derde onderdeel vergelijkt acht combinaties van handbeschrijvingen op 60.251 foto's. Extra beschrijvingen, zoals ``de middelvinger is gebogen'', helpen niet steeds. Een kleine verbetering blijkt bovendien samen te hangen met de gebruikte handpunten. We weten nog niet of deze aanpak bij nieuwe mensen of met een gewone webcam beter werkt.
 \end{abstract}
 
 \section{Wat willen we onderzoeken?}
@@ -47,7 +47,7 @@ Onze hoofdvraag is: \emph{Wat helpt een computer om de hand op een foto te vinde
 \begin{enumerate}
 \item \textbf{RQ1 -- Foto's bewerken:} Vindt het programma vaker een hand als we de foto eerst bewerken? En liggen de gevonden punten dan ook op de juiste plek?
 \item \textbf{RQ2 -- Meer voorbeelden:} Herkent het programma letters beter als het met meer verschillende foto's oefent?
-\item \textbf{RQ3 -- Handvorm beschrijven:} Helpt extra uitleg, zoals welke vingers gebogen of gespreid zijn?
+\item \textbf{RQ3 -- Handvorm beschrijven:} Helpen eigen handkenmerken en gewrichtshoeken, en kunnen ze de richtingsbeschrijving van Shin vervangen?
 \end{enumerate}
 We testen deze mogelijkheden apart. Als een bewerkte foto meer handpunten oplevert, weten we bijvoorbeeld nog niet of het programma daardoor ook de juiste letter kiest.
 
@@ -70,37 +70,55 @@ Voor de beoordeling tellen we eerst hoeveel letters goed zijn herkend. Daarnaast
 
 \input{team_methods_pending.tex}
 
-\subsection{RQ3: Meer uitleg over de handvorm}
-We voegen beschrijvingen toe zoals ``vinger gebogen'', ``vingers uit elkaar'' en ``duim raakt wijsvinger''. Ook meten we hoe ver gewrichten gebogen zijn. Zo onderzoeken we of duidelijk benoemde eigenschappen het leren gemakkelijker maken. De meetregels en plek voor een toolfoto staan in bijlage C.
+\subsection{RQ3: Acht combinaties van handbeschrijvingen}
+We beschrijven de hand op vier manieren: afstanden, richtingen tussen handpunten, eigen categorieën zoals ``vinger gebogen'' en gemeten gewrichtshoeken. Afstanden blijven steeds aanwezig. De andere drie onderdelen zetten we aan of uit: dat geeft acht combinaties. Beide leermethoden krijgen dezelfde combinaties en toetsfoto's. De meetregels en controletool staan in bijlage C.
 
-De basisaanpak bevat al informatie over de handvorm. Het is dus mogelijk dat de extra beschrijvingen weinig nieuws toevoegen. Om dit te controleren, berekenen we gewrichtshoeken zowel met een aparte schatting van de hand in drie dimensies (3D) als met precies dezelfde punten die de basisaanpak gebruikt.
+De gewrichtshoeken en categorieën komen uit geschatte 3D-wereldpunten. Shin gebruikt beeldhandpunten. Een bestaande controle berekent daarom ook gewrichtshoeken uit precies dezelfde punten als Shin. Zo onderscheiden we een andere beschrijving van een andere coördinatenbron (bijlage A--B).
+
+Na het trainen onderzoeken we welke informatie een model gebruikt. We husselen één kenmerk of groep kenmerken tussen toetsfoto's en meten hoeveel precisie en F1 verloren gaan (permutatietest; \citealp{sklearnpermutation}). De juiste letters blijven staan; het model wordt niet opnieuw getraind. Deze husseltests gebruiken 13.000 vaste toetsbeelden. De gewone vergelijking van de acht combinaties gebruikt alle 60.251 beelden.
 
 \section{Resultaten}
 \input{team_results_pending.tex}
 
-\subsection{RQ3: Extra beschrijvingen helpen weinig}
-Tabel~\ref{tab:kern} laat zien hoeveel foto's goed worden herkend met SVM. De basisaanpak herkent bijna 98 van de 100 letters goed op de foto's waarin een hand gevonden is. Het volledige pakket extra beschrijvingen levert vijf correcte voorspellingen minder op. Bij de andere leermethode, LightGBM, helpt dit pakket een beetje, maar blijven de resultaten lager dan bij de SVM-basisaanpak.
-\begin{table}[t]
+\subsection{RQ3: Welke combinatie werkt beter?}
+Tabel~\ref{tab:kern} vergelijkt de acht combinaties. Alle scores gelden voor foto's waarin een hand gevonden is. ``Wereldgewrichtshoeken'' zijn metingen aan de geschatte 3D-hand; ``eigen categorieën'' zijn de beschrijvingen uit onze controletool.
+\begin{table*}[t]
 \centering\small
-\setlength{\tabcolsep}{4pt}
-\caption{Goed herkende foto's bij dezelfde toetsing. Iedere aanpak wordt op alle 60.251 foto's getoetst, zonder die toetsfoto's voor het oefenen te gebruiken.}
+\caption{De acht combinaties op dezelfde 60.251 toetsbeelden. Alle varianten bevatten afstanden. P is macro-precisie in procenten; F1 is macro-F1. Ieder beeld wordt uitsluitend voorspeld door een model dat zonder dat beeld is getraind.}
 \label{tab:kern}
-\begin{tabular}{p{.66\linewidth}r}\toprule
-Beschrijving van de hand & Aantal goed\\\midrule
-\tableinput plain_results_nl.tex
+\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
+Beschrijving van de hand & P (\%) & F1 & P (\%) & F1\\\midrule
+\tableinput factorial_main_rows_nl.tex
 \bottomrule\end{tabular}
-\end{table}
+\end{table*}
 
-De hoeken uit de andere 3D-schatting leveren 67 extra correcte voorspellingen op. Er worden daarbij 143 oude fouten hersteld, maar ook 76 nieuwe gemaakt. Met hoeken uit dezelfde handpunten als de basisaanpak blijven slechts vier extra correcte voorspellingen over. We kunnen de winst dus niet alleen verklaren doordat het programma extra uitleg over buiging krijgt. De precieze scores en de verschillen per letter staan in bijlage B.
+\input{factorial_main_results_nl.tex}
+De bestaande controle met gewrichtshoeken uit dezelfde punten als Shin levert bij SVM slechts vier extra correcte voorspellingen op. De grotere winst met wereldpunten kan dus niet aan de hoekformule alleen worden toegeschreven.
 
-\subsection{Extra proeven: spiegelen en G/H draaien}
+\subsection{Welke kenmerken gebruikt het model?}
+\input{factorial_main_permutation_nl.tex}
+Een kenmerk dat een model gebruikt, hoeft als toevoeging nog geen betere classificatie op te leveren; belangrijkheid is modelafhankelijk \citep{fisher2019}.
+
+\subsection{Extra proeven met handoriëntatie}
 We hebben ook oefenfoto's gespiegeld om het programma met links/rechts-variatie te laten oefenen. Dat helpt sterk op onze kunstmatig gespiegelde toetsfoto's, maar kost op de oorspronkelijke foto's 26 goede voorspellingen. Dit is nog geen bewijs dat het ook bij echte linkshandige gebruikers beter werkt (bijlage D).
 
-In een aparte proef draaien we de beschrijving van G/H-handen een halve slag om de verticale as. Dat moet het andere aanzicht van de hand nabootsen. De proef herstelt vier fouten en maakt vijf nieuwe: vrijwel geen verschil. Een echte draaiing kan vingers verbergen; alleen handpunten draaien bootst dat niet na (bijlage E).
+\input{handedness_main_nl.tex}
 
-\clearpage
+Bij G en H is de palm gewoonlijk naar de gebaarder of opzij gericht \citep{shield2022,vicarsfeedback}. De bekeken trainingsfoto's uit de Kaggle-set die Shin gebruikte tonen juist de palm. Daarom voegen we naast de oorspronkelijke G/H-trainingsbeschrijvingen een halve draai om de verticale as toe.
+
+Op ongewijzigde toetsfoto's herstellen we vier fouten en maken vijf nieuwe. Dat meet behoud op de dataset; palmgerichte G/H herkennen is niet ons gebruiksdoel. Een juiste datasetletter betekent niet vanzelf een juiste ASL-uitvoering.
+
+\input{occlusion_main_nl.tex}
+
+In vier vrij gekozen webcamvoorbeelden blijft de rotatievariant twee G's met zichtbare handrug als H herkennen; een H wordt wel hersteld. De geschatte handvorm verschilt van een zuiver gedraaid trainingsskelet (bijlage E). Dit is foutanalyse, geen nieuwe nauwkeurigheidsmeting.
+
 \section{Discussie en voorlopige conclusie}
-Extra uitleg over de handvorm maakt de herkenning in deze proeven niet steeds beter. De basisaanpak bevat al veel van die informatie. De kleine verbetering met andere 3D-punten vraagt daarom om een voorzichtige uitleg.
+De eigen categorieën leveren hier geen overtuigende extra herkenningswinst bovenop Shin. In de geteste combinaties vervangen categorieën en gewrichtshoeken de richtingen ook niet volledig. De kleine wereldgewrichtswinst bij SVM keert niet terug bij LightGBM; bovendien speelt de coördinatenbron een rol. De trainingsvergelijkingen meten het effect van toevoegen of weglaten. De husseltests meten de afhankelijkheid van een eenmaal getraind model, waarbij samenhangende kenmerken elkaar kunnen vervangen.
+
+Handen vóór het leren en toetsen naar dezelfde stand spiegelen maakt de herkenning minder gevoelig voor kunstmatig gespiegelde beelden. Op oorspronkelijke foto's met gevonden handpunten verbetert dit de resultaten niet. Trainen met oorspronkelijke én gespiegelde foto's werkt op het gemengde toetsbestand beter. Voor een conclusie over nieuwe linkshandige gebruikers zijn nog onafhankelijke opnamen nodig.
+
+De rotatie helpt op kunstmatig gedraaide G/H-punten. De oorspronkelijke toets meet behoud op het oude aanzicht. De nieuwe praktijkvoorbeelden laten zien dat G met zichtbare handrug nog als H wordt herkend. De hoge kunstmatige score draagt dus niet vanzelf over naar de live-camera. Rotatietraining is daarmee nog geen aangetoonde oplossing voor deze live-verwarring; de vier vrij gekozen beelden bepalen niet hoe vaak dit probleem voorkomt.
 
 De resultaten zijn nog geen eindtest. Tijdens de ontwikkeling is vaker naar dezelfde toetsgroepen gekeken; dat kan een te gunstig beeld geven \citep{cawley2010}. Bovendien weten we niet of de groepen echt verschillende mensen bevatten. Een goede score op deze foto's betekent dus niet vanzelf dat de webcam bij een nieuw persoon even goed werkt. Onze resultaten zijn ook niet rechtstreeks vergelijkbaar met die van Shin, omdat de selectie en verdeling van de foto's verschillen.
 

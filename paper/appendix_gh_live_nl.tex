@@ -1,0 +1,21 @@
+\subsection{Geselecteerde voorbeelden uit de vrije live-tool}\label{app:gh-live}
+De gebruiker bewaarde vier voorbeelden tijdens vrij testen met zichtbare voorspelling en modelkeuze. Alle vier hebben een geaccepteerde handdetectie. We voeren de \emph{opgeslagen} handpunten door de 835-inputreferentie en de G/H-rotatievariant. Modelhash, voorspelling en inputvector van de opname worden gecontroleerd; er wordt niet opnieuw gedetecteerd of getraind.
+
+\begin{table}[h]\centering\small
+\caption{Dezelfde opgeslagen handpunten door beide modellen. De bedoelde letters zijn door de gebruiker opgegeven. Het zichtbare aanzicht is achteraf aan de foto's beoordeeld; dit is geen onafhankelijke ASL-beoordeling.}
+\begin{tabular}{cllll}\toprule
+Voorbeeld & Bedoeld & Zichtbaar aanzicht & Referentie & Met G/H-rotatie\\\midrule
+\tableinput gh_live_diagnostics_rows_nl.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{figure}[h]\centering
+\includegraphics[width=.83\linewidth]{figures/gh_live_diagnostics.pdf}
+\caption{Uitsneden van alle vier nieuwe opnamen, met de oorspronkelijk opgeslagen landmarks als vectorlijnen. Bij A/B blijft G als H herkend; C toont H-herstel; D toont een herkende G met zichtbare palm. ``Referentie'' en ``Rotatie'' vermelden de modelvoorspellingen, geen zekerheidsscores.}
+\label{fig:gh-live-diagnostics}
+\end{figure}
+
+\paragraph{Verschil met de kunstmatige toets.}
+Een zuivere rotatie behoudt de intrinsieke gewrichtshoeken. De nieuw geschatte geometrie in A/B wijkt daarvan af: de middelvinger-DIP-hoek is 161,7\textdegree{} en 164,7\textdegree{}, tegenover een mediaan van 113,2\textdegree{} bij de 2.430 oorspronkelijke G-trainingsbronnen (middelste 50\%: 109,2--118,2\textdegree{}). De gesigneerde duimmeting is bij A/B $-1,9$\textdegree{} en $2,7$\textdegree{}, tegenover een G-mediaan van 35,9\textdegree{}. Bij D zijn deze twee waarden 120,0\textdegree{} en 29,7\textdegree{}. Dit zijn geschatte wereldpuntmetingen, geen echte 3D-grondwaarheid. Verschillen in uitvoering, camerastand en detectorfouten zijn met deze foto's niet afzonderlijk vast te stellen. Ook bewijst deze vergelijking niet dat één hoek de classificatiefout veroorzaakt.
+
+De hoge score op gedraaide datasetlandmarks draagt hier niet rechtstreeks over naar de live-camera: H wordt hersteld, maar beide handrug-G's blijven H. Rotatie is daarmee geen aangetoonde oplossing voor deze live-verwarring. De vier vrij gekozen beelden bepalen geen representatieve precisie, F1 of foutfrequentie. Bronselectie, metingen en hashes staan in \path{results/gh_live_diagnostics_20261107/}.

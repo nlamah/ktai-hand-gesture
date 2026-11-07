@@ -1,0 +1,16 @@
+{
+  "metrics_sha256": "e9800f3ca55745da501a462958e4f39781d6e983c030fc2aa3ddae57add12aa9",
+  "paired_sha256": "f00f622620dada3f4f878b9620ba1a91c342457344375a53e7605c887529c561",
+  "figure_examples": [
+    "003ed35e38eafb4474345302",
+    "00216cb15dd8ab359f453e59"
+  ],
+  "figure_scope": "Illustrative source-derived approximate volume, not a photographed dorsal hand or new detector landmarks",
+  "generated": {
+    "paper/figures/gh_occlusion_proxy.pdf": "c44a144b7770e521a0a9b8861b6a3d456c2ab053886622cadfd41c8be8d874d6",
+    "paper/occlusion_interpretation_nl.tex": "a53964fb37ca112dcc1ee6d7a5d6c12d68df354b707d7a5d7d1afef7b654fafc",
+    "paper/occlusion_main_nl.tex": "eb736d58c405e256dedc0aec973366be60c2be079cf965f4584e81d75d15cc9f",
+    "paper/occlusion_results_nl.tex": "c8dd385a983d5b9a22f5033d3846953e29554034dbd3791b61c42aad3f116745",
+    "paper/occlusion_synthetic_nl.tex": "eb83127d01b6b4f5bd8c95caec00b2bc3f967b4e76dd1df99e9d6f821090baf5"
+  }
+}

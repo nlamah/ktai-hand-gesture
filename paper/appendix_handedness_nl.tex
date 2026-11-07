@@ -1,0 +1,23 @@
+\section{Normaliseren naar dezelfde handoriëntatie}\label{app:handedness}
+Deze proef vergelijkt niets aanpassen, spiegeltraining en rechtsnormalisatie. De laatste aanpak brengt iedere hand vóór het leren en voorspellen naar dezelfde detector-Right-oriëntatie. Bij detector-Left wordt voor beeldhandpunten $x'=1-x$ en voor wereldhandpunten $x'=-x$ gebruikt; $y$, $z$, puntindices en het letterlabel blijven gelijk. Het handlabel wordt daarna Right. Detector-Right blijft ongewijzigd. Dit is een geometrische bewerking na detectie, geen nieuwe RGB-detectie of palm-/handrugrotatie.
+
+\subsection{Vaste opzet en controles}
+De bronbeelden, afzonderlijk gedetecteerde RGB-presentaties, folds en het vaste toetsmengsel zijn exact die van bijlage D. Alleen geldige oorspronkelijke bronnen worden voor training gebruikt. \input{handedness_counts_nl.tex}
+
+De 835 inputs volgen de wereldgewrichtvariant. Bij Left veranderen alleen de 210 $x$-richtingscosinussen van teken; afstanden en handbewuste gewrichtsmetingen blijven gelijk. Bij 312 detecties gaf deze cachebewerking exact dezelfde features als eerst handpunten spiegelen en daarna opnieuw berekenen, de route van de livevariant. Normalisatie gebruikt uitsluitend detectorhandlabels; onbekende labels worden afgewezen.
+
+Elke kandidaat hergebruikt de op oorspronkelijke trainingsrijen geleerde preprocessing. SVM behoudt $C=10$, de numerieke gamma en klassegewichten van de referentie; LightGBM behoudt het vaste profiel uit bijlage A. Er is geen aanvullende parameterzoektocht. Een bron en alle afgeleide presentaties blijven samen buiten de training van hun toetsfold. Het huidige idee is geformuleerd nadat eerdere uitkomsten bekend waren; dit is verkennende validatie.
+
+\begin{table}[h]\centering\small
+\caption{Classificatie uitsluitend bij geldige handdetectie. N is per presentatie voor alle aanpakken gelijk; mislukte detecties tellen niet mee. De primaire baseline is SVM op oorspronkelijke beelden, met 835 inputs. P is macro-precisie. LightGBM wordt compact op oorspronkelijke beelden getoond.}
+\begin{tabular}{lllrrrr}\toprule
+Model & Toetsbeelden & Training/invoer & N & P (\%) & Macro-F1 & Correct\\\midrule
+\tableinput handedness_rows_nl.tex
+\bottomrule\end{tabular}\end{table}
+
+\input{handedness_results_nl.tex}
+
+\subsection{Interpretatie en livegebruik}
+Normalisatie blijft op oorspronkelijke beelden onder de referentie en op het mengsel onder spiegeltraining. Mogelijke factoren zijn afwijkende handlabels en niet exact symmetrische detecties; deze proef isoleert hun invloed niet. Detectorlabels zijn niet onafhankelijk gecontroleerd. Spiegelparen vormen geen onafhankelijke deelnemers.
+
+Protocol en uitkomsten: \texttt{results/handedness\_01/}. De livefit is geen onafhankelijke test.

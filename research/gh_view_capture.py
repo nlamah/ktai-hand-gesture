@@ -1,4 +1,4 @@
-"""Guided G/H viewpoint study: 120 photos for 3 people, or 80 for 2."""
+"""Large Dutch G/H instructions: 40 photos per person, one to three people."""
 import argparse
 from hashlib import sha256
 from pathlib import Path
@@ -12,7 +12,7 @@ from research.live_model import DEFAULT_MODEL
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--participants',type=int,choices=(2,3),default=3)
+    parser.add_argument('--participants',type=int,choices=(1,2,3),default=3)
     parser.add_argument('--hands',nargs='+',choices=('right','left'),help='One hand per participant; default all right.')
     parser.add_argument('--camera',type=int,default=0)
     parser.add_argument('--model',type=Path,default=DEFAULT_MODEL)

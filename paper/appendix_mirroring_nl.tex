@@ -1,12 +1,12 @@
 \section{Spiegeltraining en links/rechts-variatie}\label{app:mirror}
 Deze proef onderbouwt de uitspraak over gespiegeld oefenen in de hoofdtekst. Alle 78.000 oorspronkelijke beelden en hun horizontale RGB-spiegelingen zijn afzonderlijk gedetecteerd: IMAGE-modus, maximaal twee handen, detectie- en aanwezigheidsdrempel 0,5. Er zijn 60.251 geldige originele detecties en 60.201 geldige spiegelingen. Handpunten en Left/Right-labels komen uit de eigen detectie van iedere presentatie; er worden geen anatomische puntindices verwisseld.
 
-De SVM-referentie traint op geldige originele bronnen; de kandidaat voegt geldige spiegelingen van dezelfde trainingsbronnen toe. Elke bron behoudt totaalgewicht één. Imputatie, schaling, numerieke gamma en oorspronkelijke klassegewichten worden gedeeld. Bron en spiegeling blijven in dezelfde fold. Dit is een nieuwe detectieproef met een eigen referentie, niet een vergelijking met de gefilterde percentages van bijlage B.
+De SVM-referentie traint op geldige originele bronnen; de kandidaat voegt geldige spiegelingen van dezelfde trainingsbronnen toe. Elke bron behoudt totaalgewicht één. Imputatie, schaling, numerieke gamma en oorspronkelijke klassegewichten worden gedeeld. Bron en spiegeling blijven in dezelfde fold. Dit is een nieuwe detectieproef met een eigen referentie. De classificatiescores sluiten mislukte detecties uit, zoals bij de featurestudie.
 
-Het vaste toetsmengsel selecteert met seed 20261106 per letter/fold de helft van de bronnen voor spiegeling: 39.000 originele en 39.000 gespiegelde beelden. Selectie is onafhankelijk van detectiesucces. Het mengsel bevat 60.225 geaccepteerde detecties. Beide modellen krijgen dezelfde toetsbeelden; mislukte detecties blijven gemiste pogingen. Geen voorspelling voegt geen fout-positieve letter toe, maar verlaagt recall en F1.
+Het vaste toetsmengsel selecteert met seed 20261106 per letter/fold de helft van de bronnen voor spiegeling: 39.000 originele en 39.000 gespiegelde beelden. Selectie is onafhankelijk van detectiesucces. Na uitsluiting van mislukte detecties blijven 60.225 beelden over. Binnen elke presentatie krijgen beide modellen exact dezelfde geaccepteerde toetsbeelden. Het mengsel is een andere toetsverdeling dan uitsluitend oorspronkelijke foto's.
 
 \begin{table}[h]\centering\small
-\caption{SVM over 78.000 pogingen per presentatie. N geldig is het aantal geaccepteerde detecties; P is macro-precisie. De noemer voor de F1 omvat ook mislukte detecties.}
+\caption{SVM-classificatie bij geldige handdetectie; mislukte detecties zijn uitgesloten. N geldig is de noemer per presentatie; P is macro-precisie. Alle-pogingenscores, inclusief detectiemislukkingen, blijven beschikbaar in de resultaatbestanden.}
 \begin{tabular}{llrrrr}\toprule
 Toetsbeelden & Training & N geldig & P (\%) & Macro-F1 & Correct\\\midrule
 \tableinput appendix_mirror_nl.tex

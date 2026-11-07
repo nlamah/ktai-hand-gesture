@@ -58,8 +58,8 @@ class MirroringTests(unittest.TestCase):
     def test_live_mirror_comparison_buttons_do_not_overlap_round_or_clip_panel(self):
         from research import live_camera
         panel=live_camera.camera_panel(np.zeros((480,640,3),np.uint8),model_key='mirror')
-        for index in (6,7):
-            key,_,_,rect=live_camera.MODEL_BUTTONS[index]
+        for model_key in ('mirror_base','mirror'):
+            key,_,_,rect=next(b for b in live_camera.MODEL_BUTTONS if b[0]==model_key)
             state={'shown':object()}
             live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)
             self.assertEqual(state['model_request'],key)

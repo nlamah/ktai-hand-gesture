@@ -1,82 +1,68 @@
-# Capture G and H from four viewpoints
+# G en H opnemen met duidelijke handposities
 
-We test whether the same intended letter is recognized differently when the palm or the back of the hand faces the camera. The same saved images are subsequently compared across the existing models. This is a first paired viewpoint experiment: the views are qualitative categories, not measured rotation angles.
+De twee recente sessies van 7 november zijn ingetrokken omdat de uitvoering niet goed ging. Hun opnamen en afgeleide resultaten zijn uit de actieve verzameling en appendix gehaald. Een herstelbaar archief staat onder `runs/discarded_gh_20261107/`; details en hashes staan in `results/gh_capture_reset_20261107/withdrawal.json`. Een ingetrokken sessie kun je niet hervatten.
 
-![Four hand viewpoints](../assets/gh_viewpoint_guide.png)
+## Opnieuw beginnen
 
-The image is an AI-generated orientation guide showing an open hand. It does not demonstrate a G or H sign and is not an authoritative ASL instruction.
-
-## Required images
-
-Three participants (P01, P02, P03) each capture 40 photos:
-
-| Viewpoint | G | H |
-|---|---:|---:|
-| Palm directly facing the camera | 5 | 5 |
-| Oblique palm view; part of the palm remains visible | 5 | 5 |
-| Oblique back view; part of the back remains visible | 5 | 5 |
-| Back of the hand directly facing the camera | 5 | 5 |
-| Total per participant | 20 | 20 |
-
-Total: 120 photos, or 80 with two participants. The additional oblique back view replaces the earlier three-view plan of 60/90 photos.
-
-Form the same intended G or H with the same hand throughout. For G the index finger is extended and the middle, ring and little fingers are bent; for H both the index and middle fingers are extended. Keep the thumb position consistent within each letter. The open hand in the guide only illustrates orientation. Relax and form the sign again for every attempt, rather than saving five nearly identical video frames.
-
-Use the same camera, lighting, background and approximate distance. Include the whole hand and wrist, preferably without the face. Keep the position and direction of extended fingers as consistent as possible when changing the visible side. Some variation remains: this is not a calibrated 3D rotation experiment. Obtain participants' consent before storing photos locally.
-
-The default is the right hand for everyone. Another choice can be recorded at startup, but each participant must use the same selected hand throughout. Handedness is a possible additional factor to report in the analysis.
-
-## Start
-
-Close other camera apps and windows. From the repository root:
+Sluit het oude cameravenster. Start vanuit de repository een nieuwe ronde voor alleen je eigen hand:
 
 ```bash
 conda activate ktai-hand-gesture
-python -m research.gh_view_capture
+python -m research.gh_view_capture --participants 1
 ```
 
-The camera starts only when this command runs. The terminal prints the session directory. Every start without `--resume` creates a new session.
+Er worden 40 pogingen gepland: twee letters, vier aanzichten en vijf herhalingen. Je kunt tussendoor pauzeren. Voor twee of drie personen gebruik je `--participants 2` of `--participants 3`; zonder argument is de standaard drie. Iedere nieuwe start krijgt een nieuw sessiepad.
 
-For two participants:
+## Wat moet je doen?
 
-```bash
-python -m research.gh_view_capture --participants 2
-```
+Rechts van het camerabeeld staan nu grote Nederlandse aanwijzingen:
 
-If P01 and P03 use the right hand and P02 uses the left:
+1. **Hand:** gebruik de getoonde fysieke rechter- of linkerhand. De cameraweergave kan gespiegeld zijn; verwissel je hand daarom niet op basis van de schermrichting.
+2. **Letter:** bij **G** strek je wijsvinger en duim ongeveer evenwijdig en buig je de andere drie vingers. Bij **H** strek je wijs- en middelvinger naast elkaar; ringvinger en pink zijn gebogen en de duim is ingevouwen.
+3. **Aanzicht:** maak eerst de letter en draai vervolgens je hele hand naar het gevraagde aanzicht. Houd de vingerstand vast. De wijsrichting op het scherm mag daarbij veranderen.
 
-```bash
-python -m research.gh_view_capture --hands right left right
-```
+| Aanwijzing | Wat ziet de camera? |
+|---|---|
+| HANDPALM NAAR CAMERA | De palm; de knokkels wijzen van de camera af. Dit is een experimentele palmcontrole. |
+| SCHUIN: PALM ZICHTBAAR | Begin bij de palmcontrole en draai ongeveer 45 graden; een deel van de palm blijft zichtbaar. |
+| SCHUIN: RUG ZICHTBAAR | Begin met de handrug naar de camera en draai ongeveer 45 graden; een deel van de handrug blijft zichtbaar. |
+| HANDRUG NAAR CAMERA | De knokkels en handrug; de palm wijst van de camera af. |
 
-## Controls
+Het kleine schema is een **bovenaanzicht**: oranje is de palmzijde, blauw de handrug en de camera staat onderaan. **De pijl wijst vanaf de palm, niet langs de vingers.** Het schema geeft alleen het aanzicht aan; het is geen foto of anatomisch handmodel. De genoemde hoeken zijn kwalitatieve aanwijzingen, geen gekalibreerde metingen.
 
-1. Check the participant code and requested hand. Press Enter to start that participant.
-2. Read the requested letter, viewpoint and repetition. The fixed sequence alternates conditions to limit order effects.
-3. Form the sign and press Space or click the capture button.
-4. The selected frame freezes. Press Enter to save the attempt. The intended letter is prefilled and locked.
-5. Relax and follow the next task. After 40 photos, the tool explicitly asks for the next participant.
+Voor de gebruikelijke ASL-uitvoering van G/H beschrijft [ASL University](https://www.lifeprint.com/asl101/fingerspelling/fingerspelling3.htm) een naar binnen of opzij gerichte palm. De palmcontrole is een onderzoeksconditie. Bekijk de uitvoering vooraf en laat die zo mogelijk controleren door iemand met ASL-kennis.
 
-Save every planned attempt, including failed detections. Predictions are hidden to prevent outcome-driven adjustment. Use Esc on the confirmation screen only for a procedural mistake, such as the wrong participant or sign, or an accidental keypress; do not replace a classifier error. Q/Esc in the live window pauses the session and releases the camera.
+## Bediening
 
-## Pause and resume
+- **Enter bij de start:** bevestig persoon en hand en begin de ronde.
+- **Spatie of fotoknop:** bevries het gekozen camerabeeld.
+- **Enter na de foto:** bewaar de poging; de bedoelde letter staat vast.
+- **Esc bij de bevestiging:** opnieuw proberen bij een procedurefout, zoals een verkeerde letter of onbedoelde toetsdruk.
+- **Q/Esc in het livebeeld:** pauzeer en sluit de camera.
 
-Use the actual session directory printed at startup:
+De voorspelling blijft verborgen. Bewaar bij een geplande ronde ook fouten en mislukte detecties. Ontspan de hand en vorm het gebaar opnieuw na iedere foto. Houd camera, afstand, licht en de gebruikte hand gelijk. Zorg dat hand en pols volledig in beeld zijn.
+
+## Pauzeren en hervatten
+
+De terminal toont het nieuwe sessiepad. Gebruik datzelfde pad om later verder te gaan:
 
 ```bash
 python -m research.gh_view_capture --resume captures/gh_viewpoint/GH_views_DATE_ID
-```
-
-The tool counts finalized captures and continues with the first missing task. Confirm the current participant again after resuming. To inspect progress without opening the camera:
-
-```bash
 python -m research.gh_view_capture --resume captures/gh_viewpoint/GH_views_DATE_ID --status
 ```
 
-## Saved information and evaluation
+`GH_views_DATE_ID` is een voorbeeld: vul het werkelijke nieuwe mapje in. Ingetrokken sessies zijn geblokkeerd. Nieuwe sessies leggen instructieversie `explicit-gh-pose-v3` en weergaveversie `large-nl-gh-guidance-v1` vast; meng instructieversies niet ongemerkt.
 
-Each photo has its own directory containing the unchanged camera frame, exact detector input, a preview without the predicted letter, and `capture.json`. Metadata include participant code, requested hand, intended letter, viewpoint, repetition, detection status, landmarks, features, model hash and hidden prediction. `session.json` stores the fixed plan and comparison-model hashes. Captures remain local under `captures/gh_viewpoint/` and are not training data.
+## Opslag en interpretatie
 
-P01 is development. Reserve P02 and P03 for checking a predefined approach. Two additional participants still do not justify population-wide claims. With frozen models, compare viewpoints within each participant. Report detection coverage, accuracy, macro-F1 and G/H confusion by participant and viewpoint, acknowledging the small sample. Do not adapt a model using results intended as a final check.
+Elke foto bevat het oorspronkelijke beeld, de exacte detectorinvoer, een preview zonder voorspelling en `capture.json`. Daarin staan doelletter, persoon, hand, aanzicht, detectiestatus, landmarks en modelgegevens. De vergelijking gebruikt later dezelfde beelden voor beide vooraf vastgelegde modellen. Er wordt bij de opname niet getraind.
 
-Legacy Dutch viewpoint IDs remain in saved metadata for compatibility; the interface displays English labels.
+P01 is ontwikkeling. Alleen als je meer personen toevoegt, zijn P02/P03 bedoeld voor een vooraf afgesproken controle; pas de modellen niet op die resultaten aan. De opnamen blijven lokaal onder `captures/gh_viewpoint/` en worden niet automatisch trainingsdata.
+
+## Afdekking van vingers nabootsen
+
+Alleen landmarks draaien genereert geen afdekking. Voor een realistischer synthetisch experiment kun je een handmodel met oppervlakken en dikte vanuit de rugzijde renderen en MediaPipe opnieuw op die beelden toepassen. Daarmee kan een vinger achter een andere vinger of de palm verdwijnen. Een eenvoudig model met volumes voor vingers en palm is een grove benadering; pasvorm, huidskleur, belichting en materiaal blijven onzekerheden.
+
+Alleen punten verwijderen is een andere proef: MediaPipe schat normaal een volledige handpose, ook bij gedeeltelijke zichtbaarheid. De [officiële documentatie](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/hands.md#hand-landmark-model) beschrijft zowel zelfafdekking als training met gerenderde handbeelden. Puntverstoring of maskering kan een robuustheidstest zijn, maar meet niet automatisch echte detectiefouten bij een handrug.
+
+Deze benadering is inmiddels verkend: een grof handvolume rond bestaande landmarks levert na rendering geen geaccepteerde handdetecties op (0/128, tegenover 64/64 echte bronfoto's). Een afzonderlijke proxy verstoort alleen vermoedelijk afgedekte vingerpunten na rotatie, met twee vaste sterktes. Daarvoor zijn tien foldmodellen getraind. Ze geven op de oorspronkelijke en kunstmatig gedraaide toets geen extra winst boven alleen rotatie. Dit zijn geen gevalideerde nieuwe handrugbeelden. De live-modellen zijn niet vervangen. Zie bijlage E en [de opgeslagen resultaten](../results/gh_occlusion_01/); reproduceercommando's staan in [REPRODUCE.md](../REPRODUCE.md).

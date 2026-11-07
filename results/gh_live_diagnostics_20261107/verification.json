@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "captures_replayed": 4,
+  "models": 2,
+  "image_capture_model_hashes_checked": true,
+  "recorded_prediction_and_input_vector_reproduced": true,
+  "redetections": 0,
+  "training_sources_added": 0,
+  "withdrawn_capture_sources": 0,
+  "new_live_accuracy_estimate": false,
+  "figure_sources": [
+    {
+      "id": "20261107T161853209081Z_4883acb7",
+      "crop_box": [
+        206,
+        259,
+        397,
+        371
+      ],
+      "capture_json": "captures/confusions/20261107T161853209081Z_4883acb7/capture.json",
+      "frame_sha256": "59675433103afe2118e8a137640df0660347aea63c733af3f94a80469788f18e",
+      "view_visual": "handrug zichtbaar"
+    },
+    {
+      "id": "20261107T161915381494Z_aac80023",
+      "crop_box": [
+        127,
+        176,
+        548,
+        401
+      ],
+      "capture_json": "captures/confusions/20261107T161915381494Z_aac80023/capture.json",
+      "frame_sha256": "53a4c6e71d6a1ffdce6543380ab159719fd000eb5acfcecaddeb72b9e70e7f20",
+      "view_visual": "handrug zichtbaar"
+    },
+    {
+      "id": "20261107T161907071284Z_0582e897",
+      "crop_box": [
+        176,
+        276,
+        376,
+        383
+      ],
+      "capture_json": "captures/confusions/20261107T161907071284Z_0582e897/capture.json",
+      "frame_sha256": "83ec899aa83b1e21511b33b7a66060c5066a3724fd5f1a13675eab33c617f071",
+      "view_visual": "handrug zichtbaar"
+    },
+    {
+      "id": "20261107T162048609081Z_600038ed",
+      "crop_box": [
+        61,
+        243,
+        321,
+        421
+      ],
+      "capture_json": "captures/confusions/20261107T162048609081Z_600038ed/capture.json",
+      "frame_sha256": "36205f177e264154132b3ae6d6a0a90c18fe83d3b536c281c7b6e4d4ce02b828",
+      "view_visual": "palm zichtbaar"
+    }
+  ],
+  "figure_sha256": "6434e6dfb1717ab88de819bda0ab11f3cf6b520b532b1d2538364a2131b3c975",
+  "csv_sha256": {
+    "predictions.csv": "5bc259aba5ac514c5bc2a53f760945858e79805fce6410389df2a24ec7e45833",
+    "training_angles.csv": "efb4005b8763ed6074bafe1f2cbfdbf89b5b68de8de304202a3fb3b8efe9603e"
+  },
+  "TeX_table_rows_checked": 4,
+  "figure_current_sha256": "6434e6dfb1717ab88de819bda0ab11f3cf6b520b532b1d2538364a2131b3c975",
+  "figure_generated_table_sha256": "aeea5a2a5024a45622f05efb4c4d085b42a49f5982ee77610adffe43fe392834"
+}

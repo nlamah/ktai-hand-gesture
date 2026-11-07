@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "raw_samples_recomputed": 390,
+  "all_19_one_hot_groups_valid_on_images": 60251,
+  "current_workbook_order_matches_cached_categories": true,
+  "shin_categories_and_world_angles_exact_float32_parity": true
+}

@@ -13,6 +13,7 @@
     "results/rotation_GH_y180_01/per_letter.csv": "c72b6ae27f31f0b5ab2d969e0f533c4dd84a8b1a005d2cceba2f56dd86383bbd",
     "results/rotation_GH_y180_01/paired_changes.csv": "ce0e851282c55603821a65539e6f9029d20f85bad89915128edb22d229886a19"
   },
+  "mirror_scope": "accepted_only",
   "generated_rows": {
     "feature_summary": 4,
     "feature_letters": 26,
@@ -20,6 +21,6 @@
     "gh_summary": 2,
     "gh_letters": 4
   },
-  "script_sha256": "d78040ca8a4ccfd2dd3117526bd03e6559e760769c7340364708212ac25fd3a6",
+  "script_sha256": "e77abe2c2eeed655cecdb8ee01eaa00c690b5b04cc1476faaefc23ff1fe26e9a",
   "note": "No training, tuning, new predictions or changes to frozen experiment evidence."
 }

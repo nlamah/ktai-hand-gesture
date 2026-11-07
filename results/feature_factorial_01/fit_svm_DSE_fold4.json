@@ -1,0 +1,18 @@
+{
+  "model": "svm",
+  "variant": "DSE",
+  "fold": 4,
+  "inputs": 890,
+  "training_images": 49747,
+  "test_images": 10504,
+  "seconds": 25.78534387500258,
+  "training_ids_sha256": "64c1422da743f8513fb4a5280b162fea292a992f3396b54f225ea088cbe8e3c7",
+  "test_ids_sha256": "07994edaa4f7ce7af882e78947d07945ace21bc811a1dc9b9a612359daf153b6",
+  "estimator_sha256": "abdae5acb707f98b1f0312d955b99140686c8d83b4be6ad5afb86c4ce70ea02a",
+  "images": 10504,
+  "correct": 10292,
+  "accuracy": 0.9798172124904798,
+  "macro_precision": 0.9797291779595773,
+  "macro_recall": 0.9761198451886502,
+  "macro_f1": 0.9774596045534907
+}

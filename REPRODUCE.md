@@ -35,7 +35,11 @@ python -m research.live_camera
 
 It opens one fixed 640x480 camera area with the current letter overlaid and model buttons below. The camera is opened once; each capture is analyzed without browser/component reruns. Display mirroring does not change the model input. A dash replaces the previous letter when no valid hand is found. Press Q/Esc or close the window to release the camera. Close other camera apps first; use `--camera 1` for a second camera and `--model PATH` for another compatible trusted bundle. On macOS, grant camera access to Terminal/Python if required. Images are recorded only after an explicit confirmed snapshot. This is raw per-frame prediction, without temporal smoothing or a new accuracy claim.
 
-To collect an example of a live confusion, click **Bewaar verwarring** or press Space. The selected displayed frame is frozen; type the intended letter A-Z and press Enter. Esc cancels and resumes the camera. Backspace clears the intended label if unknown. The intended label does not enter the model and the original prediction is retained.
+The compact panel exposes six current choices: Reference [1], World joints [2], G/H y180 only [9], Fresh original [7], Mirror trained [8] and Right normalized [0]. **More models [A]** opens four older exploratory models; all historical digit shortcuts remain valid. **N** starts a new round and **L** toggles landmarks. Compare [2] with [9] for the standalone G/H rotation, not the older G/H rotation [5].
+
+To collect an example, click **Save example** or press Space. The selected displayed frame is frozen; type the intended letter A-Z and press Enter. Esc cancels and resumes the camera. Backspace clears the intended label if unknown. The intended label does not enter the model and the original prediction is retained.
+
+The browser alternative is `python -m streamlit run app.py`: use the sidebar model selector, **Camera aan**, **Bedoelde letter** and **Meetmoment bewaren**. The last analyzed browser frame is saved with that frame's detection and the active model; a failed detection is also a valid saved attempt. The webcam's continuously displayed video can have advanced beyond the analyzed frame. Saved snapshots have the same format as native snapshots, with `camera: browser` and `source_frame_id`. They remain selected diagnostic examples. See [the practical test and handoff plan](docs/LIVE_TESTPLAN_NL.md) for planned evaluation.
 
 The default destination is `captures/confusions/` (ignored by Git). Each unique capture folder contains lossless `frame.png` (raw unmirrored camera image), `model_input.png` (exact detector input), `preview.png` (mirrored visual context) and `capture.json`. The JSON preserves image hashes, capture/save UTC timestamps, human intended letter, prediction/alternatives, detection status/settings/version, image/world landmarks, the selected model's 820 or 835 feature names and raw/preprocessed values, joint angles when included in that model, 26 SVM decision values and model hash/metadata. The save operation uses the stored displayed-frame detection and never reruns detection on a later frame. Missing-hand snapshots remain valid diagnostic examples with no classification vector. Decision values are not probabilities; selected confusion examples do not form a representative test set. Files are written into a temporary directory and only finalized when the complete capture succeeds.
 
@@ -490,7 +494,7 @@ Three participants, G/H, four views (palm, oblique palm, oblique back, back), fi
 
 ## Core-question report revision
 
-The ICML-style report is a Dutch group draft for readers without ML background: RQ1 concerns preprocessing/detection recovery, RQ2 training-set size and RQ3 explicit features. RQ1/RQ2 contributions remain TODOs. The main text explains the pipeline and evaluation with examples and uses exact correct counts in `plain_results_nl.tex`. The Dutch appendix now contains only five referenced sections: A data/settings, B feature results, C featuretool, D mirroring and E standalone G/H rotation. Its selected tables come from the same frozen results via `research.studies.compact_appendix_tables`; hashes are in `paper/appendix_table_sources.json`. Earlier detailed sources remain archived in the repository and are not included in the compiled appendix. Augmentation studies remain separate supporting evidence. `paper/INTEGRATION_TODO.md` lists the handoff. Regenerate the existing detailed feature tables/plots from frozen results with:
+The ICML-style report is a Dutch group draft for readers without ML background: RQ1 concerns preprocessing/detection recovery, RQ2 training-set size and RQ3 explicit features. RQ1/RQ2 contributions remain TODOs. The main text explains the pipeline and evaluation with examples and uses exact correct counts in `plain_results_nl.tex`. The Dutch appendix now contains only six referenced sections: A data/settings, B feature results, C featuretool, D mirroring, E standalone G/H rotation and F handedness normalization. Its selected tables come from the same frozen results via `research.studies.compact_appendix_tables`; hashes are in `paper/appendix_table_sources.json`. Earlier detailed sources remain archived in the repository and are not included in the compiled appendix. Augmentation studies remain separate supporting evidence. `paper/INTEGRATION_TODO.md` lists the handoff. Regenerate the existing detailed feature tables/plots from frozen results with:
 
 ```bash
 MPLCONFIGDIR=/tmp/ktai-mpl python -m research.paper_core_assets
@@ -590,7 +594,7 @@ The historical manifest labels 57,424/60,251 accepted images Right (95.31%) and 
 
 ## Bijlagebeelden en opgeslagen featurecontrole
 
-De hoofdtekst en de volledige opgeschoonde bijlage A–E zijn Nederlands. Alleen onderdelen waarnaar de hoofdtekst verwijst worden opgenomen. De bijlage veronderstelt kennis van precisie en F1 en geeft de technische uitwerking. De huidige bijlage telt zeven pagina's; de hoofdtekst met referenties drie. Vijf pagina's geldt voor de hoofdtekst; referenties mogen op pagina zes staan.
+De hoofdtekst en de volledige opgeschoonde bijlage A–F zijn Nederlands. Alleen onderdelen waarnaar de hoofdtekst verwijst worden opgenomen. De bijlage veronderstelt kennis van precisie en F1 en geeft de technische uitwerking. De actuele pagina-aantallen staan in `paper/team_draft_verification.json`. Vijf pagina's geldt voor de hoofdtekst; referenties mogen op pagina zes staan.
 
 ```bash
 python -m research.studies.compact_appendix_tables
@@ -600,4 +604,110 @@ tectonic -o paper paper/report.tex
 tectonic -o paper paper/appendix.tex
 ```
 
-De figuurgenerator vereist de vier gebruikte lokale cameraregistraties, de dataset, de bestaande spiegelcache en de referentie-/G/H-y180-modellen. Er wordt niet opnieuw gedetecteerd of getraind. De eerdere rapportweergaven blijven als bronmateriaal beschikbaar; bijlage C toont nu een placeholder voor een eigen toolfoto. Sla die op als `paper/figures/feature_tool_screenshot.png`: bij compileren wordt de placeholder automatisch vervangen. PNG's, featurewaarden, selectiebeleid en hashes staan in `results/appendix_visuals_01/`; PDF-figuren staan in `paper/figures/`. De synthetische spiegelvoorbeelden gebruiken opgeslagen held-out voorspellingen. Zie `docs/APPENDIX_VISUALS.md`.
+De figuurgenerator vereist de vier gebruikte lokale cameraregistraties, de dataset, de bestaande spiegelcache en de referentie-/G/H-y180-modellen. Er wordt niet opnieuw gedetecteerd of getraind. De eerdere rapportweergaven blijven als bronmateriaal beschikbaar; bijlage C toont nu de door de gebruiker aangeleverde screenshot in `paper/figures/feature_tool_screenshot.png`, met twee als Nederlandse vectortekst heropgemaakte detailkaartjes en een vectoroverzicht van de kenmerken. Het bronbestand is ongewijzigd; bij vervanging moeten bijschrift en overgenomen kaartinhoud worden gecontroleerd. PNG's, featurewaarden, selectiebeleid en hashes staan in `results/appendix_visuals_01/`; PDF-figuren staan in `paper/figures/`. De synthetische spiegelvoorbeelden gebruiken opgeslagen held-out voorspellingen. Zie `docs/APPENDIX_VISUALS.md`.
+
+## Canonical detector-Right normalization (standalone comparison)
+
+This study reuses the completed `runs/mirror_01/detections/` cache and the original-only fold estimators; it does not redetect RGB images or add mirror rows to canonical training. Keep the existing mirror evidence intact. The candidate shares each original-only fold's preprocessing, resolved SVM gamma and class priors. Each independently detected test view is normalized using its own detector handedness.
+
+```bash
+conda activate ktai-hand-gesture
+python -m research.studies.handedness_normalization --stage geometry
+python -m research.studies.handedness_normalization --stage cv --model svm
+python -m research.studies.handedness_normalization --stage cv --model lightgbm
+python -m research.studies.handedness_normalization --stage train
+python -m research.studies.handedness_normalization --stage export
+python -m research.studies.verify_handedness
+python -m research.studies.report_handedness
+tectonic -o paper paper/report.tex
+tectonic -o paper paper/appendix.tex
+```
+
+`results/handedness_01/protocol.json` freezes code, detection-cache and split hashes before fitting. Fold estimators/checkpoints live under `runs/handedness_01/`; all predictions, metrics, per-letter scores, paired changes and verification live under `results/handedness_01/`. Generated `paper/handedness_*_nl.tex` extracts contain only verified measurements. Main text and appendix F distinguish canonicalization from RGB-mirror augmentation and G/H rotation. The candidate is selectable in the native camera as **Right normalized [0]**, or via `--model models/asl_shin_angles_right_hand.joblib` in both camera and featuretool. Legacy bundles omit the normalization flag and retain their original input path.
+
+The fixed mix is half original RGB and half reflected RGB per letter/fold; it is not a verified equal mix of real human left/right hands. Rejected detections remain false negatives in all-attempt scores. Accepted-only and both-accepted-source results are reported separately. No independent signer evaluation is implied by repeated filename-block validation.
+
+### Primary reporting denominator for mirroring and normalization
+
+The paper and appendices D/F now compare classification **only on accepted detections** (`scope=accepted_only`), consistent with the original feature study. The primary normalization baseline is the SVM 835-input model on 60,251 original accepted images: macro-precision 97.53902%, macro-F1 0.97524391. Original, reflected and mixed test presentations are reported separately; the mixed baseline is not the original-image baseline. Within a presentation all arms use exactly the same accepted test IDs.
+
+`research.studies.report_handedness` and `research.studies.compact_appendix_tables` select these existing verified rows. All-attempt results remain secondary in the study report and raw CSVs. Since rejected detections have no predicted letter, excluding them changes recall/F1 but not precision. No models, predictions or train/test assignments were changed for this reporting revision.
+
+### Feature illustrations and the supplied screenshot
+
+```bash
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.feature_illustrations
+tectonic -o paper paper/appendix.tex
+```
+
+This generates the explanatory vector diagram `paper/figures/feature_concepts_nl.pdf` and its provenance in `results/feature_illustrations_01/`. The diagram uses schematic drawing coordinates, not measured hands. The unchanged user-supplied screenshot (7 November 2026) is versioned as `paper/figures/feature_tool_screenshot.png`; LaTeX displays the full image and two clipped detail views without changing that PNG. Appendix C contains 19 workbook checks (13 flexion, 2 spread, 1 crossing, 1 thumb shape, 2 contacts). The thumb-over-palm idea is explicitly distinguished from its implemented signed-MCP-angle proxy. This is an illustration-only update with no new training, predictions or feature-rule changes.
+
+## Eight-variant feature study and held-out permutations
+
+This is the current primary RQ3 study, replacing the earlier 931-input full-package comparison in the paper. Historical experiment files remain intact. `research/feature_study.py` defines D (190 distances), S (630 axis-direction cosines), E (70 one-hot categorical values for 19 own checks), and J (15 world-joint measurements). The eight representations are DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. Columns 890:916 (26 candidate-letter workbook-match scores) are explicitly excluded. D is always present.
+
+```bash
+conda activate ktai-hand-gesture
+python -m research.studies.feature_factorial --stage parity
+python -m research.studies.feature_factorial --stage train --model svm
+python -m research.studies.feature_factorial --stage train --model lightgbm
+python -m research.studies.fast_factorial_permutation
+python -m research.studies.feature_factorial --stage permutation --model svm
+python -m research.studies.feature_factorial --stage permutation --model lightgbm
+python -m research.studies.feature_factorial --stage export
+python -m research.studies.verify_feature_factorial
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.report_feature_factorial
+tectonic -o paper paper/report.tex
+tectonic -o paper paper/appendix.tex
+```
+
+`--stage train` and `--stage permutation` can be run separately; `--variants` and `--folds` select disjoint work items for parallel execution. `--stage run` trains its requested models first and then permutes their held-out inputs. All outputs resume from checkpoints under `runs/feature_factorial_01/`; numerical evidence and the protocol live in `results/feature_factorial_01/`. Use new paths/code version for a changed protocol; the frozen source/input hashes intentionally reject silent changes.
+
+Classification uses all 60,251 accepted original sources, with the existing five filename-block folds. All 80 fold estimators use the same fixed model recipes; only J is imputed and standardized using its training fold. The DS and DSJ predictions must reproduce the historical 820/835-input predictions exactly. The current translated workbook has different bytes from the original but the category layout is checked by recomputing 390 raw cases and checking every one-hot group across the complete cache. It supplies feature order/options, not a true letter label.
+
+Permutation uses a separately frozen subset: 100 held-out images per letter/fold (13,000 total), shared by every variant and learner. Five seeded row permutations move every column of one group together; labels and the fitted model stay unchanged. Present D/S/E/J blocks are tested for all eight variants. The 19 individual categorical checks are tested in DSE/DE without J; five E families and five J finger families are tested in DSEJ/DEJ. This gives 3,900 fold/group/repeat interventions. CSVs retain macro-precision and macro-F1 drops; paper figures show F1 drops in percentage points. Spread over folds/repeats is descriptive, not an independent confidence interval.
+
+`predictions.csv`, `metrics.csv`, `per_letter.csv`, `paired_changes.csv` and `confusions.csv` preserve the full accepted-image evaluation. `factor_effects.csv` gives the four contexts for adding each optional block. `permutation_selection.csv`, `permutation.csv` and `permutation_summary.csv` preserve selection and all hussel results. The verifier independently reconciles scores, checks train-only scalers, hashes and shared permutation orders, replays saved fold models and selected interventions, and checks historical DS/DSJ parity. `paper_extracts.json` records the generated TeX/figure hashes.
+
+The same-coordinate joint-angle controls remain separate supporting evidence. E/J use world landmarks while D/S use image landmarks; neither factorial nor permutation results establish an independent sensor contribution or causal feature importance. All folds were repeatedly inspected during development and are not verified participants. The existing live and augmentation models retain their recorded protocols.
+
+The optional optimized SVM route (`fast_factorial_permutation`) fills the same whole-group checkpoints using float64 RBF distance decomposition and the fitted LIBSVM coefficients. It verifies every selected baseline prediction against ordinary-SVC OOF predictions and replays perturbed cases; near-zero pairwise margins use ordinary prediction. `execution_backend.json` freezes this execution addendum and `kernel_verification.json` records parity. No models, sampling, metric definitions or permutations change. Omitting the optimized step gives the ordinary prediction route with identical experimental settings, at higher computation cost.
+
+## G/H capture reset and larger Dutch guidance (7 November 2026)
+
+The two rejected sessions and 22 attempts were withdrawn from active capture folders and the paper. They and their derived results/figure remain recoverable under ignored `runs/discarded_gh_20261107/`; the manifest and original hashes are in `results/gh_capture_reset_20261107/withdrawal.json`. The active session locations contain withdrawal markers, and both resuming and new writes are blocked. Their camera-example exporter also refuses to regenerate withdrawn evidence.
+
+Start a fresh personal round with `python -m research.gh_view_capture --participants 1`. The 1160×752 native panel keeps the exact 640×480 preview and original model inputs, with large Dutch instructions and a schematic palm-normal arrow. New plans record `explicit-gh-pose-v3` and `large-nl-gh-guidance-v1`. One, two and three participants give 40, 80 and 120 planned photos. See `docs/GH_CAPTURE.md`.
+
+## G/H-afdekking: verkennende volumemodellen en puntverstoring
+
+Deze aanvullende proef gebruikt alleen de bestaande trainingslandmarks. `research/synthetic_hand.py` bouwt een grof palm-/vingervolume met dieptebuffer. Het is geen anatomische passing. Een vaste selectie van 64 oorspronkelijke G/H-foto's wordt vergeleken met hun renders bij 0 en 180 graden. MediaPipe accepteert 64/64 bronfoto's en 0/64 renders bij elk aanzicht. Deze route levert dus geen nieuwe detecties voor training op; de bekende bronpunten worden niet als detectoruitvoer gepresenteerd.
+
+Een afzonderlijke proxy voegt alleen aan vermoedelijk afgedekte vingerpunten in de geroteerde beschrijvingen normaalverdeelde verstoring toe, met standaardafwijking 2% of 5% van de pols–middelvingerknokkelafstand per coördinaat. Beide sterktes gebruiken hetzelfde reproduceerbare bronpatroon. De modellen zijn opnieuw getraind op de vijf bestaande folds, met de oorspronkelijke train-only preprocessing, gamma, klassegewichten en hetzelfde totale gewicht per bron. Dit modelleert onzekere handpunten, geen empirisch gemeten afdekkingsfouten. Er worden geen ingetrokken webcamopnamen gebruikt en geen live-modellen vervangen.
+
+```bash
+python -m research.studies.gh_occlusion --stage prepare
+python -m research.studies.gh_occlusion --stage screen
+python -m research.studies.gh_occlusion --stage train --arm noise002
+python -m research.studies.gh_occlusion --stage train --arm noise005
+python -m research.studies.gh_occlusion --stage report
+python -m research.studies.gh_occlusion_rotated_test
+python -m research.studies.verify_gh_occlusion
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.report_gh_occlusion
+tectonic -o paper paper/report.tex
+tectonic -o paper paper/appendix.tex
+```
+
+`screen` gebruikt de bestaande lokale MediaPipe-asset en de grafische diensten van macOS. `prepare` controleert voor alle 4.801 G/H-bronnen dat nulverstoring de historische rotatie reproduceert. De bevroren protocollen en CSV's staan in `results/gh_occlusion_01/`; features en tien nieuwe foldmodellen in `runs/gh_occlusion_01/`. Gewijzigde broncode/inputhashes worden geweigerd: gebruik voor een gewijzigde methode een nieuwe run.
+
+De eerste toets gebruikt alle 60.251 ongewijzigde, geaccepteerde foto's en meet behoud van datasetclassificatie. Dat is geen handrugtoets en bevestigt de ASL-uitvoering van de labels niet. De aanvullende kunstmatige toets vervangt uitsluitend de 4.801 G/H-toetsbeschrijvingen door hun y180-rotatie en houdt de overige letters gelijk. Ze meet het leren van de toegevoegde geometrie. Ze omvat geen nieuwe RGB-waarneming, nieuwe detectiefout of onafhankelijke handrug-/persoonstoets. Beide toetsen en beide ruissterktes worden gerapporteerd; er wordt geen beste variant achteraf als live-standaard gekozen.
+
+### Vier nieuwe vrije G/H-voorbeelden
+
+```bash
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.gh_live_diagnostics
+tectonic -o paper paper/report.tex
+tectonic -o paper paper/appendix.tex
+```
+
+De runner gebruikt vier expliciete bron-ID's uit `captures/confusions/` van 7 november 2026; die lokale bestanden zijn nodig bij reproductie. De 22 ingetrokken begeleide opnamen worden niet gebruikt. Hij controleert beeld-/modelhashes, de opgeslagen inputvector en voorspelling en voert dezelfde opgeslagen landmarks door de referentie en de rotatievariant. Er wordt niet opnieuw gedetecteerd of getraind. `results/gh_live_diagnostics_20261107/` bevat het bevroren protocol, alle vier voorspellingen, de hoekvergelijking met de bestaande trainingscache en verificatie. Bijlage E.4 toont de vier handuitsneden met vectorlandmarks. De bedoelde letters zijn gebruikersannotaties en de aanzichten zijn visueel beschreven; dit zijn geen ASL-expertlabels of representatieve precisie-/F1-resultaten.

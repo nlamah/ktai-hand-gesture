@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "files": {
+    "paper/report.pdf": {
+      "sha256": "11038143bd5d4c7ea14be7403430ff9caba2fc14a0190123e0bc4cb312cd4285",
+      "pages": 4
+    },
+    "paper/appendix.pdf": {
+      "sha256": "438f420ee4f821af0cfbc48b91a551cf19a6632439e04803e5ce5b436b03eea4",
+      "pages": 13
+    }
+  },
+  "main_body_pages": 4,
+  "references_share_last_body_page": true,
+  "body_page_limit": 5,
+  "appendix_sections_and_pages": {
+    "A": [
+      1
+    ],
+    "B": [
+      2,
+      3,
+      4
+    ],
+    "C": [
+      5,
+      6
+    ],
+    "D": [
+      7,
+      8
+    ],
+    "E": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "F": [
+      13
+    ]
+  },
+  "visually_inspected_changed_pages": {
+    "report": [
+      3,
+      4
+    ],
+    "appendix": [
+      9,
+      11,
+      12
+    ]
+  },
+  "previous_pages_pixel_identical": {
+    "report": [
+      1,
+      2
+    ],
+    "appendix": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10
+    ],
+    "F_moved_from_to": [
+      11,
+      13
+    ]
+  },
+  "tex_overfull_or_undefined_warnings": false,
+  "full_unit_tests": {
+    "tests": 128,
+    "status": "passed",
+    "log_sha256": "fd9db046e1012480a084453951c65152972f14130e9fcf4148189afef9cfe58b"
+  },
+  "computational_verification_sha256": "c63a1bbe4d402bad0684442b1bf12b2a58d9f223a30463101444035d48351ba1",
+  "figure_source": "Two fixed original GH training sources, approximate hand volumes, not generated detector output or photographed dorsal hands",
+  "no_new_real_dorsal_evaluation": true,
+  "historical_numeric_table_hashes_checked": true,
+  "limitations": "Synthetic rotated geometry and assumed occlusion noise only; no independent ASL correctness, subject or real dorsal RGB validation.",
+  "all_six_existing_live_model_hashes_unchanged": true,
+  "generated_TeX_and_figure_hashes_checked": true,
+  "snapshot_note": "Layout audit of the occlusion revision before four additional live diagnostic examples were added.",
+  "current_document_verification": "results/gh_live_diagnostics_20261107/document_verification.json"
+}

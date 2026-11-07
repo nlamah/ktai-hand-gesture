@@ -1,0 +1,11 @@
+
+\begin{table}[h]\centering\small
+\caption{Kunstmatige toets: G/H-landmarks gedraaid, overige letters ongewijzigd. Dezelfde 60.251 bronnen; geen nieuwe RGB-detecties.}
+\begin{tabular}{lrrr}\toprule
+Training & P (\%) & Macro-F1 & Correct\\\midrule
+Oorspronkelijk & 85.0689 & 0.869284 & 54.151 \\
+Alleen rotatie & 97.5861 & 0.975715 & 58.924 \\
+Rotatie + 2\% puntverstoring & 97.5830 & 0.975683 & 58.922 \\
+Rotatie + 5\% puntverstoring & 97.5802 & 0.975653 & 58.920 \\
+\bottomrule\end{tabular}\end{table}
+Met alleen rotatie worden netto 4.773 extra letters goed herkend ten opzichte van de oorspronkelijke training. De recall op de gedraaide G/H-punten stijgt van 0\% / 0,04\% naar 99,47\% / 99,45\%. De puntverstoring geeft ook in deze controle geen extra winst. De rotatie leert dus de aangeboden geometrie, terwijl de vrijwel gelijke oorspronkelijke score alleen behoud op het oude aanzicht beschrijft.

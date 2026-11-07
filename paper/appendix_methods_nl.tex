@@ -1,30 +1,30 @@
-\section{Data, evaluatie en modelinstellingen}\label{app:protocol}
-Deze bijlage onderbouwt de uitleg over handpunten, oefenen en toetsen in de hoofdtekst. Zij beschrijft de uitgewerkte featurestudie; de definitieve uitvoering van RQ1 en RQ2 moet nog worden aangeleverd.
+\section{Data, varianten en evaluatie}\label{app:protocol}
+Deze bijlage beschrijft de featurestudie onder RQ3. De bijdragen over beeldvoorbewerking (RQ1) en trainingsomvang (RQ2) moeten nog worden aangeleverd.
 
-\subsection{Beeldselectie en vaste toetsgroepen}
-De Kaggle ASL Alphabet-verzameling bevat 78.000 trainingsbeelden voor A--Z, 3.000 per letter. De historische cache accepteert 60.251 beelden met precies \mbox{\'e\'en} hand: 77,24\%. Classificatiescores in bijlage B gelden alleen voor die geaccepteerde beelden. De meegeleverde testbeelden dupliceren trainingsbeelden en zijn uitgesloten. De historische detectiedrempels zijn niet bewaard; een nieuw detectieproces moet daarom zijn eigen instellingen en beeldselectie documenteren.
+\subsection{Beelden en vaste toetsgroepen}
+Van de 78.000 A--Z-trainingsbeelden uit Kaggle ASL Alphabet zijn historisch 60.251 beelden met precies één geldige hand geaccepteerd (77,24\%). Alleen deze oorspronkelijke beelden tellen mee; detectiemislukkingen zijn uitgesloten. Meegeleverde testbeelden dupliceren trainingsbeelden en zijn niet onafhankelijk. De historische detectiedrempels zijn niet bewaard.
 
-De vijf vaste folds verdelen zes blokken van opeenvolgende bestandsnummers. Dit zijn geen geverifieerde personen of sessies. Iedere variant krijgt dezelfde bron-ID's, labels en toetsfolds. Elk geaccepteerd beeld ontvangt \mbox{\'e\'en} out-of-fold voorspelling. Een afgeleid beeld blijft in de fold van zijn bron. Dezelfde folds zijn tijdens de ontwikkeling meermaals gebruikt: dit is verkennende validatie, geen onaangeroerde eindtest.
+De vijf vaste folds verdelen zes blokken van opeenvolgende bestandsnummers, geen geverifieerde personen of sessies. Alle varianten gebruiken dezelfde bron-ID's, labels en folds. Ieder beeld krijgt één out-of-fold voorspelling. De folds zijn vaker tijdens ontwikkeling bekeken: dit blijft verkennende validatie, geen onaangeroerde eindtest.
 
-\subsection{Invoer en leermethoden}
+\subsection{Vier bouwblokken, acht varianten}
 \begin{table}[h]\centering\small
-\caption{Geteste beschrijvingen van dezelfde geaccepteerde hand. Toevoegingen behouden de volledige Shin-basis.}
-\begin{tabular}{lrp{.59\linewidth}}\toprule
-Variant & Inputs & Samenstelling\\\midrule
-Basis & 820 & 190 genormaliseerde afstanden en 630 richtingswaarden uit beeldhandpunten.\\
-Alle toevoegingen & 931 & Basis + 70 categorische inputs + 26 werkboekovereenkomstscores + 15 gewrichtsmetingen.\\
-Wereldgewrichten & 835 & Basis + 14 interne hoeken en een getekende duimafwijking uit geschatte 3D-wereldpunten.\\
-Zelfde-coördinatenhoeken & 835 & Basis + dezelfde 15 metingen, nu uit precies de genormaliseerde beeldpunten van de basis.\\\bottomrule
+\caption{D blijft altijd aanwezig; S, E en J worden onafhankelijk aan- of uitgezet. De acht combinaties staan in bijlage B.}
+\begin{tabular}{lrp{.72\linewidth}}\toprule
+Blok & Inputs & Betekenis\\\midrule
+D & 190 & Genormaliseerde afstanden tussen beeldhandpunten volgens Shin.\\
+S & 630 & Richtingscosinussen van 210 handpuntparen ten opzichte van de beeldassen; geen interne gewrichtshoeken.\\
+E & 70 & One-hot categorieën van de 19 eigen controles: buiging, spreiding, kruising, duimstand en contact (bijlage C).\\
+J & 15 & Veertien interne hoeken en één getekende duimafwijking uit geschatte 3D-wereldhandpunten. MCP-hoeken zijn geometrische benaderingen.\\\bottomrule
 \end{tabular}\end{table}
 
-Het vaste SVM-profiel gebruikt een RBF-kernel, $C=10$, \texttt{gamma=scale} en gebalanceerde klassen. LightGBM gebruikt 100 bomen, 31 bladeren, leersnelheid 0,1 en minimaal 20 voorbeelden per blad. Toegevoegde hoeken krijgen mediaanimputatie en standaardisering, uitsluitend geleerd op het trainingsdeel. De basiswaarden worden niet zo geschaald. Werkboekscores worden voor alle kandidaatletters berekend, zonder het ware beeldlabel als invoer. Deze vaste profielen zijn geen even uitgebreid geoptimaliseerde bovengrenzen voor beide algoritmen.
+De volledige combinatie DSEJ heeft 905 inputs: 190 afstanden, 630 richtingswaarden, 70 categoriewaarden en 15 gewrichtsmetingen. E gebruikt gemeten categorieën en een vaste codevolgorde, niet de juiste letter. De acht varianten gebruiken oorspronkelijke beelden zonder augmentatie of rechtsnormalisatie. D/S/E/J zijn op 390 brongevallen exact opnieuw berekend; alle 19 one-hot groepen zijn voor alle beelden gecontroleerd.
 
-\subsection{Rapportage en reproduceerbaarheid}
-Scores zijn gepoold over de out-of-fold voorspellingen. Macro-precisie en macro-F1 middelen ongewogen over A--Z; niet-gedefinieerde letterscores worden nul. Paarsgewijze foutanalyse telt herstelde fouten, verloren goede voorspellingen en hun netto verschil. De spiegelproef in bijlage D heeft daarnaast resultaten over alle aangeboden beelden, inclusief mislukte detecties; die noemer is anders dan bij de featurestudie.
+\subsection{Training en rapportage}
+Acht varianten, twee leermethoden en vijf folds leveren 80 foldmodellen. SVM gebruikt RBF, $C=10$, \texttt{gamma=scale} en gebalanceerde klassen. LightGBM gebruikt 100 bomen, 31 bladeren, leersnelheid 0,1, minimaal 20 voorbeelden per blad en seed 42. Alleen J krijgt mediaanimputatie en standaardisering, geleerd op de trainingsfold; D/S/E blijven ongeschaald. Er is geen optimalisatie per variant. Modelgeometrie en het vaste profiel begrenzen daarom de interpretatie.
 
-\texttt{results/model\_comparison/}, \texttt{results/angles/} en \texttt{results/direction\_joint\_01/} bewaren de uitkomsten en individuele voorspellingen. De papertabellen zijn daaruit geselecteerd; bronhashes staan in \texttt{paper/appendix\_table\_sources.json}. Dit controleert de berekeningen, niet de ASL-labels of anatomische juistheid van de geschatte handpunten.
+Gepoolde macro-precisie en macro-F1 middelen ongewogen over A--Z; niet-gedefinieerde letterscores worden nul. Paarsgewijze analyse telt herstelde en verloren voorspellingen op dezelfde beelden. De eerdere controles met J uit beeldpunten delen de bronnen, folds en profielen, maar blijven afzonderlijk gerapporteerd. D/S komt uit beeldpunten; E/J uit wereldpunten. Bijlagen D--F behouden hun eigen protocol en 835-inputreferentie, tegenover DS met 820 inputs in deze hoofdproef.
 
-\subsection{Nog te bevestigen voor RQ1 en RQ2}
-Het eerdere RQ1-concept stelt een tweede detectiepoging voor met $3\times3$-dilatatie, erosie en een Canny-overlay. Definitieve instellingen, unieke herstelaantallen en visuele beoordeling ontbreken nog. Een technische acceptatie mag niet als correcte anatomie worden geteld zonder aanvullende beoordeling.
+Code en uitkomsten: \texttt{research/feature\_study.py} en \texttt{results/feature\_factorial\_01/}. Protocol, bronhashes, voorspellingen en verificatie controleren de berekening, niet de anatomie of ASL-labels.
 
-Voor RQ2 moeten aantallen per klasse, trainingssubsets, toets-ID's, seeds en herhalingen worden vastgelegd. Detector, representatie, modelprofiel en toetsbeelden blijven gelijk; preprocessing wordt binnen iedere trainingssubset geleerd. Augmentatiekopieën tellen niet als nieuwe bronnen. Dit is de afgesproken opzet, geen resultaatclaim over de nog ontbrekende bijdrage.
+\subsection{Nog aan te vullen voor RQ1 en RQ2}
+RQ1 vraagt definitieve instellingen en visueel beoordeeld detectieherstel; het eerdere concept noemt $3\times3$-dilatatie, erosie en een Canny-overlay. RQ2 vraagt vaste toets-ID's, aantallen unieke bronnen per klasse, subset-ID's, seeds en herhalingen. Detector en modelprofiel blijven gelijk; preprocessing wordt binnen iedere trainingssubset geleerd. Kopieën tellen niet als nieuwe bronnen. Dit zijn nog geen resultaatclaims.

@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "protocol.json": "03ee30ffe08c96d9cea0ab4b7eb8783157401f92e54c7ebffe361668048b4653",
+    "metrics.csv": "02e02c97abad2a33784d67ad6394f6bbb9538bad05ce15b709632c6b3cb8403b",
+    "per_letter.csv": "ecebf3d68ed328d5ff81cc73d9e728295f08d09d2b87cffea8827f2d317937f5",
+    "paired_changes.csv": "c7b826ca9b1f525f3c1899f5cd5953e5e9f89bac9686c1d7d0b58e07fc6ea64d",
+    "predictions.csv": "62577153f2470df7385b32fdd8221e4efdc757a4084276184f72e9e5d939a12c",
+    "permutation.csv": "e5bbc9f22d98b1eb2647a3f9b9ed0771fdbf3b1ad938e7291d036b9b7b6d34c3",
+    "permutation_summary.csv": "abb4c984270db9125aaa431d59f6960c53da3952ed186b3713c6ac8ba87c7824",
+    "confusions.csv": "e34c4a3590db5e6fbfe1a810897fc5850b64a6235f5cc126d1e8adda6e8d177f"
+  },
+  "reporter_sha256": "d32e87893ec4a767994da021bc514e450b15a0257e2d2e581d5e08017c8fb1b5",
+  "generated_sha256": {
+    "paper/factorial_main_results_nl.tex": "e73c80451d4f6b61883c6e5934668c91365d55761c75fb262df1f85072d303dc",
+    "paper/factorial_controls_nl.tex": "15af2d84911af59f8870bf6924c69fd68656a69785a976591f16391ea8d4afd0",
+    "paper/factorial_main_permutation_nl.tex": "1a068a64b0b52daa3bf4887603eea482e7d667be8b7a67e72cbd38cf85398149",
+    "paper/factorial_summary_rows_nl.tex": "697dd04d31a27e5c0b4eecde4683fc9a8c590a6b51294415c9b99b9c10a55ae4",
+    "paper/factorial_main_rows_nl.tex": "7941418fe4b6e0f4c4e6308c79d7b262a9285b6506d094b01283a71ceb04cff6",
+    "paper/factorial_paired_rows_nl.tex": "24b8a3a42163c56c41ad74d5615d09460180706ae797501e44ec539c1c41b126",
+    "paper/figures/factorial_family_importance.pdf": "6b9fe7a3a7fab50312583c38f8c03efca14e92b1ab828d2ca2305db3d53120b8",
+    "paper/figures/factorial_block_importance.pdf": "9f3b1bd2357b4d404dd7a9c0c551d2b057688bed4f84b4e412ca64d963296896",
+    "paper/figures/factorial_category_importance.pdf": "ac49f2dbd9b1bea065474d1ca34fba769747765cc90ff892785808af9b8da03e"
+  },
+  "control_source_sha256": "d2ca2f3d70b22068eec48e545d219fae7d0d393762ca4f8eb2813a125e33bb96"
+}

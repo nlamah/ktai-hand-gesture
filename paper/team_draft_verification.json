@@ -1,7 +1,7 @@
 {
   "status": "passed",
   "main_language": "Dutch",
-  "main_text_pages": 3,
+  "main_text_pages": 4,
   "reference_pages": 1,
   "page_budget": "At most five body pages; references may continue on page six",
   "coauthor_results_pending": [
@@ -12,12 +12,12 @@
   "visible_TODOs_main": 8,
   "files": {
     "paper/report.pdf": {
-      "sha256": "28517dddf94319ed37012252d19381e5a590e6b1129f5e06b4616fc82aba6ba6",
-      "pages": 3
+      "sha256": "d931d5f8cd27d0be08e04307d3f3b787477ec684963a3cfc9721ed0f944fc96a",
+      "pages": 4
     },
     "paper/appendix.pdf": {
-      "sha256": "b1b907552723f0f6e77ad18e4e6b3df78e637fa6c9fe6093c3432c36cf444251",
-      "pages": 7
+      "sha256": "ea89a9c5f879ec13b0c1e053ad6e3c460aec36a776be8f0fe83fc6f0672e9f46",
+      "pages": 14
     }
   },
   "existing_numerical_sources_unchanged": {
@@ -33,21 +33,15 @@
     "paper/gh_y180_main_rows.tex": "fc44401638ce53bfae33cbf014b2c26c0754df2f818e4223b30e5dca30510f8d",
     "paper/gh_y180_numbers.tex": "7746e4659603d02b9b64c15d16e9b230e63e184f56191d7ab8db56cf62fbc029"
   },
-  "visual_review": "All seven final appendix pages and three main pages inspected; no clipping, overlaps or orphan pages.",
+  "visual_review": "Main pages 3/4 and new appendix E.4 page 13 inspected. Main pages 1/2 and appendix pages 1-12 match the preceding render pixel-for-pixel; F moves unchanged from 13 to 14. No overflow or unresolved references.",
   "tex_overfull_or_undefined_warnings": false,
-  "note": "Editorial appendix cleanup and Dutch translation. Main plain language preserved; references renumbered. No models, predictions or frozen experiment settings changed.",
-  "feature_tool_image_status": "Placeholder; user will supply the actual photo/screenshot",
+  "note": "Added the conclusion that synthetic GH rotation success does not directly transfer to live-camera G/H recognition, supported by four user-selected diagnostic captures. No accuracy estimate or causal detector-error claim.",
+  "feature_tool_image_status": "Original supplied screenshot unchanged. Two source details are now typeset as sharp Dutch vector cards, with provenance explicitly stated in the caption.",
   "feature_tool_image_path": "paper/figures/feature_tool_screenshot.png",
   "references_share_last_page": true,
-  "main_total_pages_including_references": 3,
+  "main_total_pages_including_references": 4,
   "target_audience": "Secondary-school reader without prior machine-learning knowledge",
   "main_uses_correct_counts_from_saved_OOF_predictions": true,
-  "verified_correct_counts": [
-    58827,
-    58822,
-    58894,
-    58831
-  ],
   "count_table_source_sha256": {
     "results/model_comparison/oof_predictions.csv": "7c2b25537d489e47caec3559dd8e66f618ff975bf7af870f1c3619341c3a32c0",
     "results/angles/oof_predictions_svm.csv": "be2abe826a79332ed5cbc6f250397dc85a4aa8da0dd7ab2e23739e1a553585b4",
@@ -58,18 +52,27 @@
       1
     ],
     "B": [
-      2
+      2,
+      3,
+      4
     ],
     "C": [
-      3
+      5,
+      6
     ],
     "D": [
-      4,
-      5
+      7,
+      8
     ],
     "E": [
-      6,
-      7
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "F": [
+      14
     ]
   },
   "scope_verified_main_refs": [
@@ -77,17 +80,19 @@
     "B",
     "C",
     "D",
-    "E"
+    "E",
+    "F"
   ],
   "active_appendix_sources": [
     "appendix_methods_nl.tex",
     "appendix_features_nl.tex",
     "appendix_tool_nl.tex",
     "appendix_mirroring_nl.tex",
-    "appendix_gh_nl.tex"
+    "appendix_gh_nl.tex",
+    "appendix_handedness_nl.tex"
   ],
   "appendix_pages_before": 23,
-  "appendix_pages_after": 7,
+  "appendix_pages_after": 14,
   "selected_table_rows_verified_against_frozen_sources": 42,
   "table_source_provenance": "paper/appendix_table_sources.json",
   "removed_from_compiled_appendix": [
@@ -97,5 +102,129 @@
     "complete confusion matrices",
     "duplicate explanations"
   ],
-  "historical_sources_preserved": true
+  "historical_sources_preserved": true,
+  "normalization_experiment": {
+    "results": "results/handedness_01/",
+    "verification": {
+      "status": "passed",
+      "metric_rows_recomputed": 324,
+      "letter_rows_recomputed": 1404,
+      "paired_rows_recomputed": 216,
+      "held_out_estimator_predictions_replayed": 40,
+      "live_raw_landmark_cases": 16,
+      "source_and_detection_hashes_verified": true,
+      "model_sha256": "c6f20cbf7bc80857e3200ad6c4b20394c465cb1d1037dd9191d1f608f6d90094",
+      "predictions_sha256": "d0f601a57dceb63e1ff9d0092855dde020032a67633904c1d98a4d619b7d8804",
+      "scope": "Computational parity and score verification, not independent handedness or live-view validation."
+    },
+    "published_table_rows_checked": 12,
+    "main_correct_gain_vs_original": -136,
+    "main_correct_gain_vs_mirror": -110,
+    "original_view_correct_gain": -136,
+    "full_unit_test_suite": {
+      "tests": 113,
+      "status": "passed"
+    },
+    "default_live_model_unchanged": true,
+    "primary_scope": "accepted_only",
+    "primary_presentation": "original",
+    "secondary_mix_correct_gain_vs_original": 21535,
+    "secondary_mix_correct_gain_vs_mirror": -814,
+    "reporting_verification": "results/handedness_01/reporting_verification.json"
+  },
+  "feature_tool_image_sha256": "d196b7c43e9cbdc31396eff5796c9005b4c41e791bd7a7dd12d6c84ca35ab92b",
+  "feature_tool_pages": [
+    5,
+    6
+  ],
+  "feature_concepts": {
+    "diagram": "paper/figures/feature_concepts_nl.pdf",
+    "schematic_panels": 6,
+    "workbook_checks": 19,
+    "counts": {
+      "flexion": 13,
+      "spread": 2,
+      "crossing": 1,
+      "thumb_shape": 1,
+      "contact": 2
+    },
+    "provenance": "results/feature_illustrations_01/provenance.json",
+    "thumb_palm_concept_distinguished_from_MCP_proxy": true,
+    "not_spread_distinguished_from_contact": true
+  },
+  "references_start_page": 4,
+  "references_only_pages": [
+    4
+  ],
+  "historical_verified_correct_counts": [
+    58827,
+    58822,
+    58894,
+    58831
+  ],
+  "verified_correct_counts": {
+    "svm": {
+      "DS": 58827,
+      "D": 56942,
+      "DSE": 58805,
+      "DE": 57067,
+      "DSJ": 58894,
+      "DJ": 57314,
+      "DSEJ": 58824,
+      "DEJ": 57260
+    },
+    "lightgbm": {
+      "DS": 58502,
+      "D": 56482,
+      "DSE": 58501,
+      "DE": 56532,
+      "DSJ": 58454,
+      "DJ": 56608,
+      "DSEJ": 58485,
+      "DEJ": 56619
+    }
+  },
+  "primary_feature_experiment": {
+    "results": "results/feature_factorial_01/",
+    "baseline": "DS, 820 inputs",
+    "models": 80,
+    "permutation_observations": 3900,
+    "verification": "results/feature_factorial_01/verification.json",
+    "full_unit_test_suite": {
+      "tests": 118,
+      "status": "passed"
+    },
+    "default_live_model_unchanged": true
+  },
+  "current_full_unit_test_suite": {
+    "tests": 123,
+    "status": "passed"
+  },
+  "live_cleanup_verification": "results/live_cleanup_01/verification.json",
+  "recent_GH_examples": {
+    "status": "withdrawn",
+    "capture_count": 22,
+    "reason": "User rejected execution of both recent sessions. Camera examples and claims removed.",
+    "audit": "results/gh_capture_reset_20261107/withdrawal.json"
+  },
+  "training_GH_rotation_figure": {
+    "verification": "results/gh_training_rotation_01/verification.json",
+    "page": 10,
+    "source_examples": 2
+  },
+  "gh_occlusion_experiment": {
+    "results": "results/gh_occlusion_01/",
+    "verification": "results/gh_occlusion_01/verification.json",
+    "new_fold_models": 10,
+    "real_dorsal_evaluation_sources": 0,
+    "withdrawn_capture_sources": 0,
+    "default_live_model_unchanged": true
+  },
+  "gh_live_diagnostics": {
+    "results": "results/gh_live_diagnostics_20261107",
+    "appendix_page": 13,
+    "capture_count": 4,
+    "new_training_sources": 0,
+    "independent_accuracy_estimate": false
+  }
 }

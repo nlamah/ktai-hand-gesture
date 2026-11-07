@@ -1,0 +1,13 @@
+{
+  "version": "synthetic-gh-test-view-v1",
+  "motivation": "User clarified that retaining palm-facing GH classification is not the target; separate transformed-geometry test requested after primary study freeze",
+  "test": "In held-out source blocks, rotate only G/H feature rows by diag(-1,1,-1); other letters retain original OOF predictions",
+  "fitting": "Reuse frozen original/rotation/proxy fold models; no refitting, new selection or threshold tuning",
+  "denominator": "60251 accepted sources, 4801 synthetic G/H descriptions replacing their originals; 26-letter precision and F1",
+  "claim_limit": "Verifies learned synthetic geometry only; does not simulate actual RGB occlusion or test ASL correctness",
+  "source_sha256": {
+    "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/research/studies/gh_occlusion_rotated_test.py": "d6540ff2f9f259b9a847c66bd827aefb16824fe08a7b0289ef7ebcac76131d02",
+    "research/gh_vertical.py": "e83c90c83efbb1355928db378fabf51c58c379ac9822d0d68c4a4ef81ef74440"
+  },
+  "parent_protocol_sha256": "e4c41ff6ef0d40730d25a462f9dee20015394699d1a833b72f28e4a2c65978d8"
+}

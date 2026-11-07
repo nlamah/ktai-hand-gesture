@@ -1,0 +1,18 @@
+{
+  "model": "lightgbm",
+  "variant": "DSJ",
+  "fold": 2,
+  "inputs": 835,
+  "training_images": 50242,
+  "test_images": 10009,
+  "seconds": 169.20215312499204,
+  "training_ids_sha256": "f366286fffe19bf76301fa4880aa22ee35bb903c8a9dcfb07b5c31e13201c2ed",
+  "test_ids_sha256": "56a6406d6a31cfb5546415f5ad27a4f1d02b1cc4b26b29d0dc1f70e5e76ceef2",
+  "estimator_sha256": "80fe31a53b7205b9428e70e1658c0c291679daca5352b4874ef6f564ce54183a",
+  "images": 10009,
+  "correct": 9402,
+  "accuracy": 0.9393545808772105,
+  "macro_precision": 0.9326993596875093,
+  "macro_recall": 0.9303058444034978,
+  "macro_f1": 0.9304528184918301
+}

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "selected_native_baseline_predictions_checked": 104000,
+  "native_perturbed_cases_checked": 1820,
+  "computed_permutation_rows": 870,
+  "reused_native_checkpoint_rows": 1080,
+  "near_margin_native_fallback_rows": 67943,
+  "execution_backend_sha256": "c8e3f0cc5dc7cadc1c858f3e7be76e508672d4d967889c04235f3c1e8e4966fe",
+  "scope": "Same inference function and frozen protocol, accelerated through cached float64 RBF distance blocks."
+}

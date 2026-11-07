@@ -56,10 +56,10 @@ def main():
     rows=[]
     for presentation,title in [('original','Origineel'),('mirrored_rgb','Gespiegeld'),('balanced_mix','Vast mengsel')]:
         for arm,training in [('original_training','Origineel'),('mirror_training','+ spiegeling')]:
-            r=mirror[(mirror.model=='svm')&(mirror.presentation==presentation)&(mirror.scope=='all_attempts')&
+            r=mirror[(mirror.model=='svm')&(mirror.presentation==presentation)&(mirror.scope=='accepted_only')&
                      (mirror.fold=='pooled')&(mirror.training==arm)].iloc[0]
-            assert int(r.images)==78000
-            rows.append([title,training,integer(round(r.images*r.coverage)),fmt(100*r.macro_precision,3),
+            assert int(r.images)=={'original':60251,'mirrored_rgb':60201,'balanced_mix':60225}[presentation]
+            rows.append([title,training,integer(r.images),fmt(100*r.macro_precision,3),
                          fmt(r.macro_f1,5),integer(r.correct)])
     write('appendix_mirror_nl.tex',rows)
     gh=read('results/rotation_GH_y180_01/metrics.csv')
@@ -81,7 +81,7 @@ def main():
     assert int(row.fixed)==4 and int(row.lost)==5
     atomic_json(PAPER/'appendix_table_sources.json',{
         'status':'passed','selection':'Only tables supporting the five referenced Dutch appendix sections',
-        'sources':SOURCES,'generated_rows':{'feature_summary':4,'feature_letters':26,'mirror':6,'gh_summary':2,'gh_letters':4},
+        'sources':SOURCES,'mirror_scope':'accepted_only','generated_rows':{'feature_summary':4,'feature_letters':26,'mirror':6,'gh_summary':2,'gh_letters':4},
         'script_sha256':sha256(Path(__file__).read_bytes()).hexdigest(),
         'note':'No training, tuning, new predictions or changes to frozen experiment evidence.'})
     print('Selected 42 frozen result rows; Dutch tables generated.',flush=True)

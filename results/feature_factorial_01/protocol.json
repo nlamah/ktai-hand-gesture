@@ -1,0 +1,154 @@
+{
+  "version": "feature-factorial-dsej-v1",
+  "variants": {
+    "DS": {
+      "blocks": [
+        "D",
+        "S"
+      ],
+      "inputs": 820
+    },
+    "D": {
+      "blocks": [
+        "D"
+      ],
+      "inputs": 190
+    },
+    "DSE": {
+      "blocks": [
+        "D",
+        "S",
+        "E"
+      ],
+      "inputs": 890
+    },
+    "DE": {
+      "blocks": [
+        "D",
+        "E"
+      ],
+      "inputs": 260
+    },
+    "DSJ": {
+      "blocks": [
+        "D",
+        "S",
+        "J"
+      ],
+      "inputs": 835
+    },
+    "DJ": {
+      "blocks": [
+        "D",
+        "J"
+      ],
+      "inputs": 205
+    },
+    "DSEJ": {
+      "blocks": [
+        "D",
+        "S",
+        "E",
+        "J"
+      ],
+      "inputs": 905
+    },
+    "DEJ": {
+      "blocks": [
+        "D",
+        "E",
+        "J"
+      ],
+      "inputs": 275
+    }
+  },
+  "models": [
+    "svm",
+    "lightgbm"
+  ],
+  "accepted_images": 60251,
+  "folds": 5,
+  "blocks": {
+    "D": "190 within-image normalized distances",
+    "S": "630 axis-relative direction cosines",
+    "E": "70 one-hot values for 19 own categorical checks",
+    "J": "15 world-joint measurements"
+  },
+  "excluded": "26 workbook-match scores (source columns 890:916); all augmentation and hand canonicalization",
+  "preprocessing": "D/S/E unchanged; J train-only median imputation plus standardization, same historical implementation.",
+  "svm": {
+    "C": 10,
+    "gamma": "scale",
+    "class_weight": "balanced",
+    "kernel": "rbf"
+  },
+  "lightgbm": {
+    "n_estimators": 100,
+    "num_leaves": 31,
+    "learning_rate": 0.1,
+    "min_child_samples": 20,
+    "seed": 42,
+    "threads": 4
+  },
+  "permutation": {
+    "seed": 20261107,
+    "repeats": 5,
+    "max_images_per_letter_per_fold": 100,
+    "selection": "One deterministic held-out subset shared by every arm/model. Classification CV always uses all held-out images.",
+    "blocks": "Every present D/S/E/J block in every variant",
+    "details": "19 categorical checks in DSE and DE; five E families and five J finger families in DSEJ and DEJ",
+    "order": "Same row permutation for all columns of a group; same fold/repeat order across models/variants/groups.",
+    "no_training": "Frozen estimator predicts altered validation inputs; labels unchanged; no refit or hyperparameter selection.",
+    "report": "Mean fold/repeat macro-precision and macro-F1 drops, with descriptive spread; no independent confidence interval."
+  },
+  "reference_keys": [
+    "thumb_mcp_shape",
+    "flexion_thumb_ip",
+    "flexion_index_mcp",
+    "flexion_index_pip",
+    "flexion_index_dip",
+    "flexion_middle_mcp",
+    "flexion_middle_pip",
+    "flexion_middle_dip",
+    "flexion_ring_mcp",
+    "flexion_ring_pip",
+    "flexion_ring_dip",
+    "flexion_pinky_mcp",
+    "flexion_pinky_pip",
+    "flexion_pinky_dip",
+    "spread_index_middle",
+    "spread_middle_ring",
+    "crossing_index_middle",
+    "thumb_tip_index_proximity",
+    "thumb_tip_middle_proximity"
+  ],
+  "reference_file_sha256": "0b396e53d2b7a99147c5984c0c3c2144ce0054016c46b221e1fb9ee1dc7a71ef",
+  "historical_input_hashes": {
+    "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "reference": "a84bea3370df5ca712b3a68f863fceaa71d297643a836a2645c1ca8dfd935f45",
+    "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
+  },
+  "reference_note": "The current English workbook differs in bytes from the historical Dutch workbook. Only feature order/options are used here; no candidate-letter match scores. Raw-coordinate parity is checked before training.",
+  "input_sha256": {
+    "data/asl_kaggle/research/inputs.npz": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
+    "data/asl_kaggle/research/inputs_metadata.json": "1e8d7c66cf2ffadca8b780a24d315b804def7f97ac8ecd7076be2a8601d38e6b",
+    "data/asl_kaggle/research/summary.json": "c3212bfe77c124e5cb84a6acaf4034c074c7918b77ab1e51849be224b36df0d5"
+  },
+  "source_sha256": {
+    "research/feature_study.py": "a3f2cb7951045085727607b61d7cb7b922a032f51309683b0aa86aa0f56522ad",
+    "research/studies/feature_factorial.py": "d137e33d72075a5cf72e86a24b5ee4dbda1699772312376d8d987a58e71dfae4",
+    "research/inputs.py": "f2f4c820c98c7604206be1d325dd68bccbe70c60f5763b5f241af3d2f907e6f4",
+    "research/geometry.py": "92ab102ba119976ed84ccfcac272c9c42c4a1270f308bfb64caf849a2cab5b2a",
+    "research/workbook.py": "9ef50ee5b90b58b1780e1dd81a24cf7d84ca20e384eeffb27cc57bfd854c96b9",
+    "research/references.py": "8a2d1198404f8f89eff69afbf225e9f1ed0ec3a2386dd58c3e46eddfe2e9d649",
+    "research/shin.py": "9a0078e4bf61888af11cbb0528b7bff6f0ff6821b07be5dec91417750fb6f819",
+    "research/studies/compare_models.py": "b08802092342c19f8e5a4190920dc18e5194f37b11ceecf5883a90438612a2c2",
+    "research/classifiers.py": "783fc8023784f358dc59466f03a7dfd1bf2b8db0de80fe5b0f1fc01fa7a52fd0"
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scikit-learn": "1.8.0",
+    "lightgbm": "4.7.0"
+  },
+  "scope": "Exploratory study on repeatedly used filename-block folds, not verified participants; accepted detections only; no tuning."
+}

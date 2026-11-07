@@ -6,17 +6,24 @@ This research repository tests whether interpretable descriptions such as bent, 
 - [Supplementary appendix](paper/appendix.pdf)
 - [Editable LaTeX](paper/report.tex)
 
-De paper is een **Nederlandse groepswerkversie voor lezers zonder machine-learningvoorkennis**, over foto's bewerken (RQ1), oefenen met meer voorbeelden (RQ2) en de handvorm beschrijven (RQ3). De eerste twee bijdragen hebben nog TODO's. De hoofdtekst legt de aanpak en resultaten in gewone taal uit; modelinstellingen en precieze scores staan in bijlagen A–B; de featuretool en twee augmentatieproeven staan in C–E. Er geldt ruimte voor maximaal vijf pagina's hoofdtekst; referenties mogen afzonderlijk doorlopen. [Aanleverchecklist en invoegplekken](paper/INTEGRATION_TODO.md).
+De paper is een **Nederlandse groepswerkversie voor lezers zonder machine-learningvoorkennis**, over foto's bewerken (RQ1), oefenen met meer voorbeelden (RQ2) en de handvorm beschrijven (RQ3). De eerste twee bijdragen hebben nog TODO's. De hoofdtekst legt de aanpak en resultaten in gewone taal uit; modelinstellingen en precieze scores staan in bijlagen A–B; de featuretool en oriëntatieproeven staan in C–F. Er geldt ruimte voor maximaal vijf pagina's hoofdtekst; referenties mogen afzonderlijk doorlopen. [Aanleverchecklist en invoegplekken](paper/INTEGRATION_TODO.md).
 - [All setup and reproduction steps](REPRODUCE.md)
 - [Start from scratch: Kaggle download, landmark detection, rejected images and threshold experiments](REPRODUCE.md#3-from-downloaded-images-to-accepted-landmarks-start-from-scratch)
 - [Frozen results and verification](results/)
 
-## What the experiments show
+## Hoofdonderzoek: acht combinaties van handfeatures
 
-- The complete category/workbook/world-joint package does not improve SVM accuracy: 97.628% versus 97.637% for the reference. This is not an isolated category-only comparison.
-- Adding 15 world-joint measurements gives a small SVM increase to 97.748%: 143 errors corrected, 76 correct predictions lost, **net +67 of 60,251 images**.
-- Adding joint measurements from Shin's exact coordinates gives 97.643%: 89 corrected, 85 lost, **net +4**, with no convincing overall benefit. Replacing directions with distances plus those joints reduces accuracy to 94.511%.
-- Joint measurements and categorical flexion re-express landmark geometry. They are not independent sensor information. The results do not establish better recognition of unseen people or webcam viewpoints.
+De nieuwe hoofdvergelijking gebruikt vier bouwblokken: **D** (190 afstanden), **S** (630 Shin-richtingen), **E** (70 categorie-invoerwaarden voor 19 eigen controles) en **J** (15 wereldgewrichtsmetingen). Afstanden blijven altijd aanwezig; de acht varianten zijn **DS, D, DSE, DE, DSJ, DJ, DSEJ en DEJ**. De 26 werkboekovereenkomstscores horen hier niet bij. Het vroegere volledige pakket met 931 inputs is dus een andere, historische proef dan DSEJ met 905 inputs.
+
+Alle varianten zijn opnieuw met SVM en LightGBM op dezelfde vijf folds en 60.251 geaccepteerde oorspronkelijke beelden getraind. De primaire baseline is **DS (820 inputs)**. De ondersteunende spiegel-, normalisatie- en G/H-proeven behouden hun eigen referentie met wereldgewrichten (835 inputs); die baselines mogen niet door elkaar worden gebruikt.
+
+Boven op DS geven de eigen categorieën bij SVM netto 22 minder correcte voorspellingen en bij LightGBM één minder. Alleen wereldgewrichtsmetingen toevoegen geeft bij SVM 67 meer, bij LightGBM 48 minder; beide toevoegingen samen geven respectievelijk drie en zeventien minder. De geteste eigen beschrijvingen vervangen de Shin-richtingen niet volledig. Dit geldt voor deze vaste modelprofielen en hergebruikte folds, niet als onafhankelijke eindtest.
+
+Na training volgen gegroepeerde permutatietests op 13.000 vaste toetsbeelden: vijf husselingen per groep/fold, zonder opnieuw trainen. Grote D/S/E/J-blokken worden in iedere variant onderzocht. De 19 eigen controles worden afzonderlijk onderzocht in DSE en DE; categorische en gewrichtsfamilies in DSEJ en DEJ. Samenhangende features kunnen elkaar vervangen, dus trainingsvergelijkingen en permutatiedalingen beantwoorden aanvullende vragen.
+
+[Resultaten, alle varianten en beperkingen](results/feature_factorial_01/report.md) · [Reproduceerbaarheid](REPRODUCE.md#eight-variant-feature-study-and-held-out-permutations)
+
+De controle met gewrichtshoeken uit dezelfde punten als Shin blijft apart staan: zij onderscheidt een andere beschrijving van een andere coördinatenbron. Bijlage C bewaart de feature-uitleg, echte screenshot en schema’s. De overige oriëntatieproeven staan in D–F. De modelprofielen zijn vast; er is geen nieuwe parameterzoektocht of onafhankelijke eindtest.
 
 ## Included artifacts and language
 
@@ -24,7 +31,27 @@ The deployed live-model `.joblib` files under `models/`, their provenance JSON f
 
 Confusion matrices, OOF prediction tables and analysis reports under `results/` are versioned. Raw webcam captures under `captures/` remain local and ignored, as requested; they can contain participant information. Analysis reports may describe captures that are therefore unavailable in a fresh clone, and capture-replay commands require those local files. The Kaggle images under `data/` and new experiment runs under `runs/` are also ignored; see the download and extraction steps in `REPRODUCE.md`.
 
-The concise paper and saved-capture feature review are Dutch working versions. Existing live interfaces, workbook labels and older technical appendices largely retain English. Legacy category/viewpoint IDs, session names and filenames remain unchanged for compatibility with the models and evidence.
+The concise paper and saved-capture feature review are Dutch working versions. The compiled appendix is also Dutch. Existing live interfaces, workbook labels and archived technical sources largely retain English. Legacy category/viewpoint IDs, session names and filenames remain unchanged for compatibility with the models and evidence.
+
+### Live controleren en voorbeelden bewaren
+
+De browsertool draait op `http://localhost:8501` wanneer Streamlit actief is:
+
+```bash
+python -m streamlit run app.py
+```
+
+Kies links een van zes actuele modellen; oudere kantelvarianten staan achter **Meer modellen uit eerdere proeven**. Zet **Camera aan**, vul de **Bedoelde letter** in en gebruik **Meetmoment bewaren** voor het laatst geanalyseerde beeld, inclusief model, voorspelling en landmarks. Ook een mislukte detectie kan worden bewaard. Het doelletterveld beïnvloedt de voorspelling niet. De cameraweergave is gespiegeld; de detector krijgt het oorspronkelijke beeld.
+
+Voor G/H vergelijk je **World joints [2]** met **G/H y180 only [9]**. De eerste is de 835-inputreferentie; de tweede voegt alleen bij de training gedraaide G/H-beschrijvingen toe. De zes huidige livekeuzes zijn bestaande deploymentmodellen: ze vormen niet de volledige achtvariantenmatrix uit bijlage B. Los gekozen opnamen zijn foutdiagnostiek, geen representatieve precisie-/F1-test.
+
+De native tool heeft dezelfde zes hoofdkeuzes, met de overige modellen achter **A**. **Spatie** bevriest een beeld; kies de bedoelde letter en bevestig met **Enter**. **N** begint een nieuwe ronde, **L** toont/verbergt handpunten en **Q/Esc** sluit de camera:
+
+```bash
+python -m research.live_camera
+```
+
+Beide tools bewaren lokaal onder `captures/confusions/`. Voor een betere evaluatie is een geplande ronde met goede én foute pogingen nuttiger dan alleen confusions. Zie [wat nog nodig is en het testplan](docs/LIVE_TESTPLAN_NL.md).
 
 ### Opgeslagen vingerkenmerken bekijken
 
@@ -32,7 +59,7 @@ The concise paper and saved-capture feature review are Dutch working versions. E
 python -m streamlit run app.py -- --capture captures/confusions/20261031T152116143793Z_11756e66
 ```
 
-Dit opent een bestaand lokaal handbeeld zonder camera of training. Je kunt de vergelijkingsletter wijzigen; de voorspelling blijft daarvan onafhankelijk. De bijlage heeft een placeholder voor een eigen toolfoto, naast de G/H- en spiegelvoorbeelden. [Invoegplek en herkomst](docs/APPENDIX_VISUALS.md). De genoemde opname moet lokaal aanwezig zijn.
+Dit opent een bestaand lokaal handbeeld zonder camera of training. Je kunt de vergelijkingsletter wijzigen; de voorspelling blijft daarvan onafhankelijk. Bijlage C toont de eigen screenshot van de tool, twee scherp heropgemaakte detailkaartjes en zes schema’s van de handkenmerken, naast de G/H- en spiegelvoorbeelden in de andere bijlagen. [Invoegplek en herkomst](docs/APPENDIX_VISUALS.md). De genoemde opname moet lokaal aanwezig zijn.
 
 ## Direction features versus explicit joint angles
 
@@ -45,7 +72,7 @@ conda activate ktai-hand-gesture
 python -m research.live_camera
 ```
 
-A single fixed-size window displays the camera image and current letter. Select a trained model using the buttons below the image or keys **1-9**, without restarting:
+A single fixed-size window displays the camera image and current letter. Select a trained model using the buttons below the image or keys **1-9** (or **0** for Right normalized), without restarting:
 
 | Button | Model |
 |---|---|
@@ -58,6 +85,7 @@ A single fixed-size window displays the camera image and current letter. Select 
 | **Fresh original [7]** | Newly detected original-only training, matched baseline for the mirror experiment (835 inputs) |
 | **Mirror trained [8]** | Same fitting sources plus accepted horizontal RGB mirrors (835 inputs) |
 | **G/H y180 only [9]** | Standalone G/H vertical-axis 180° training turns; original data only, without mirrors or camera calibration |
+| **Right normalized [0]** | Canonical detector-Right landmarks before features, in training and inference; one original row per source (835 inputs) |
 
 The default is World joints (called Joint angles in earlier reports), the earlier **world-coordinate** model. It is not the same-coordinate +4 variant; the two new control variants remain research-only. The augmented models are experimental comparisons, not generally better models. Model selection is locked during a guided round. Snapshot exports preserve the actual model hash and its 820/835/849-input schema.
 
@@ -181,6 +209,12 @@ The [standalone G/H experiment](results/rotation_GH_y180_01/report.md) compares 
 
 Macro-precision changes **97.53902% -> 97.53874%** and macro-F1 **0.97524391 -> 0.97523305**: 4 errors corrected, 5 correct predictions lost, net **-1** of 60,251. G/H recall is unchanged and both letters' F1 decreases slightly. A known back-view H is recovered but two known back-view G examples remain wrong. These selected cases are diagnostic, not an independent test. The paper reports this negative result separately in Appendix E.
 
+**Aanvullende controle:** de oorspronkelijke toets hierboven meet behoud op de oude dataset, inclusief palmgerichte G/H-labels. De training voegt een tweede geometrie toe; de toets wordt daar niet gedraaid. Als uitsluitend de G/H-toetslandmarks wél worden gedraaid, stijgt macro-F1 door rotatietraining van **0,869284 naar 0,975715** (macro-precisie 85,0689% naar 97,5861%). Het model leert de toegevoegde geometrie dus wel. Dit is geen toets met echte handrugfoto's of een bevestiging van de ASL-correctheid van datasetlabels.
+
+Een verkenning met grove palm-/vingervolumes geeft **0/128 geaccepteerde renders**, tegenover 64/64 oorspronkelijke foto's. Een afzonderlijke proxy voegt 2% of 5% puntverstoring toe aan vermoedelijk afgedekte vingerpunten na rotatie. Tien nieuwe foldmodellen geven op beide bovenstaande toetsen geen extra winst boven alleen rotatie. Deze aannames zijn geen gemeten MediaPipe-afdekkingsfouten; er wordt geen nieuw live-model gekozen. [Resultaten en protocollen](results/gh_occlusion_01/), [commando's](REPRODUCE.md#g-h-afdekking-verkennende-volumemodellen-en-puntverstoring) en bijlage E bevatten de uitwerking.
+
+Vier nieuwe vrije live-opnamen tonen de resterende beperking: beide G's met zichtbare handrug blijven na rotatietraining H; een H wordt wel hersteld. De geslaagde G toont de palm. De geschatte wereldgewrichtshoeken verschillen van de oorspronkelijke G-training, terwijl een zuivere rotatie die hoeken behoudt. De hoge kunstmatige score bewijst dus geen oplossing voor live-herkenning. Deze geselecteerde voorbeelden zijn foutanalyse, geen nauwkeurigheidsmeting; ze worden niet voor training gebruikt. Zie [opgeslagen analyse](results/gh_live_diagnostics_20261107/) en bijlage E.4.
+
 ## Earlier combined G/H adaptation
 
 The earlier [combined G/H adaptation](docs/GH_VERTICAL_ADAPTATION.md) adds vertical turns, three camera calibration images and a routing gate on top of mirror training. It remains available with `--model models/asl_gh_vertical_adapter.joblib`, for comparison with **Mirror trained [8]**. Button **9** now selects the standalone experiment above. Known calibration examples are training data, so their recognition does not establish independent live accuracy. [Results and regressions](results/gh_vertical_01/report.md) are also separate from the earlier [index-axis roll](docs/GH_BACK_ADAPTATION.md), which preserves pointing direction.
@@ -208,3 +242,39 @@ python -m research.alphabet_capture
 ```
 
 The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALPHABET_CAPTURE.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.
+
+## Links/rechts normaliseren vóór de features
+
+De afzonderlijke variant **Right normalized [0]** spiegelt detector-Left-handpunten naar detector-Right vóór de featureberekening, zowel in training als bij voorspellen. Er worden geen extra trainingsbeelden toegevoegd. `Left`/`Right` zijn detectorschattingen, geen onafhankelijk gecontroleerde handlabels. De webcamweergave blijft het oorspronkelijke camerabeeld tonen; de modelinvoer wordt intern aangepast.
+
+```bash
+python -m research.live_camera --model models/asl_shin_angles_right_hand.joblib
+```
+
+In de bestaande camera-app kun je ook op **Right normalized [0]** klikken of **0** indrukken. Voor de featuretool:
+
+```bash
+python -m streamlit run app.py -- --model models/asl_shin_angles_right_hand.joblib
+```
+
+De vergelijking gebruikt dezelfde bronnen, vijf folds en vaste synthetische toetsmix als de eerdere spiegelproef. Resultaten en beperkingen staan in [het experimentverslag](results/handedness_01/report.md) en bijlage F. De bestaande standaardmodellen worden niet vervangen.
+
+De primaire baseline gebruikt **alleen de 60.251 oorspronkelijke beelden met geldige handdetectie**, met dezelfde 835 inputs en dezelfde toetsbeelden voor alle drie aanpakken:
+
+| Aanpak | Macro-precisie | Macro-F1 | Correct / 60.251 |
+|---|---:|---:|---:|
+| Zonder aanpassing | 97,539% | 0,97524 | 58.894 |
+| Rechtsnormalisatie | 97,322% | 0,97320 | 58.758 |
+| Spiegeltraining | 97,495% | 0,97493 | 58.868 |
+
+Normalisatie geeft hier **136 minder** correcte voorspellingen dan de oorspronkelijke baseline, en **110 minder dan spiegeltraining**. De oorspronkelijke baseline heeft 97,75% nauwkeurigheid; dat is een andere maat dan de 97,54% macro-precisie.
+
+Het aparte synthetische mengsel is een andere toetsverdeling. Na uitsluiting van mislukte detecties blijven 60.225 beelden over:
+
+| Aanpak | Macro-precisie | Macro-F1 | Correct / 60.225 |
+|---|---:|---:|---:|
+| Zonder aanpassing | 73,566% | 0,62650 | 36.452 |
+| Rechtsnormalisatie | 96,076% | 0,96047 | 57.987 |
+| Spiegeltraining | 97,451% | 0,97421 | 58.801 |
+
+Op dit mengsel levert normalisatie 21.535 extra correcte voorspellingen op tegenover niets aanpassen, maar 814 minder dan spiegeltraining. Dit vervangt de oorspronkelijke baseline niet en is geen onafhankelijke test met echte linkshandige deelnemers. Het uitsluiten van detectiemislukkingen verandert hier de precisie niet (er was geen letter voorspeld), maar wel recall en F1. Scores over alle aangeboden beelden staan afzonderlijk in het experimentverslag en de CSV-bestanden. Er is niet opnieuw getraind.
