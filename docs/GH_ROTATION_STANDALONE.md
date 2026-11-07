@@ -15,7 +15,7 @@ Both arms use the same 60,251 accepted original images and frozen five filename-
 
 Four errors are corrected and five correct predictions lost: net **-1**. G and H recall stay unchanged; their precision and F1 decline slightly. This gives no overall benefit on original views. One known back-view H is recovered, but both known back-view G examples remain wrong. All previously selected camera cases are diagnostic controls, never fitting data in this experiment and never an independent test.
 
-The [full report](../results/rotation_GH_y180_01/report.md) contains all 26 letter scores, fold changes, camera diagnostics and limitations. The paper reports the result separately in Appendix M. Computational verification passes for all metrics, frozen inputs, model replay, shared preprocessing, source weights and source-group separation. Filename blocks are not verified signers; there is no independent back-view evaluation. Conditional original-view scores do not demonstrate live robustness.
+The [full report](../results/rotation_GH_y180_01/report.md) contains all 26 letter scores, fold changes, camera diagnostics and limitations. The paper reports the result separately in Appendix E. Computational verification passes for all metrics, frozen inputs, model replay, shared preprocessing, source weights and source-group separation. Filename blocks are not verified signers; there is no independent back-view evaluation. Conditional original-view scores do not demonstrate live robustness.
 
 ## Reproduce and try live
 

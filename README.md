@@ -2,9 +2,11 @@
 
 This research repository tests whether interpretable descriptions such as bent, extended, spread and touching add predictive value to a Shin-inspired geometric reference. Continuous joint measurements are a comparison with the categorical descriptions; a coordinate control checks how much they add when Shin already contains the underlying geometry. SVM and LightGBM use one Kaggle ASL Alphabet dataset.
 
-- [English interim report, ICML 2021 format](paper/report.pdf)
+- [Toegankelijke Nederlandse werkversie, ICML 2021-opmaak](paper/report.pdf)
 - [Supplementary appendix](paper/appendix.pdf)
 - [Editable LaTeX](paper/report.tex)
+
+De paper is een **Nederlandse groepswerkversie voor lezers zonder machine-learningvoorkennis**, over foto's bewerken (RQ1), oefenen met meer voorbeelden (RQ2) en de handvorm beschrijven (RQ3). De eerste twee bijdragen hebben nog TODO's. De hoofdtekst legt de aanpak en resultaten in gewone taal uit; modelinstellingen en precieze scores staan in bijlagen A–B; de featuretool en twee augmentatieproeven staan in C–E. Er geldt ruimte voor maximaal vijf pagina's hoofdtekst; referenties mogen afzonderlijk doorlopen. [Aanleverchecklist en invoegplekken](paper/INTEGRATION_TODO.md).
 - [All setup and reproduction steps](REPRODUCE.md)
 - [Start from scratch: Kaggle download, landmark detection, rejected images and threshold experiments](REPRODUCE.md#3-from-downloaded-images-to-accepted-landmarks-start-from-scratch)
 - [Frozen results and verification](results/)
@@ -22,11 +24,19 @@ The deployed live-model `.joblib` files under `models/`, their provenance JSON f
 
 Confusion matrices, OOF prediction tables and analysis reports under `results/` are versioned. Raw webcam captures under `captures/` remain local and ignored, as requested; they can contain participant information. Analysis reports may describe captures that are therefore unavailable in a fresh clone, and capture-replay commands require those local files. The Kaggle images under `data/` and new experiment runs under `runs/` are also ignored; see the download and extraction steps in `REPRODUCE.md`.
 
-Documentation, application text, feature labels and the active workbook use English. Legacy serialized category/viewpoint IDs, recorded session names, original filenames and Dutch import aliases are retained for compatibility with existing models and evidence. They do not require participants to use Dutch labels. Documentation files are `docs/ALPHABET_CAPTURE.md` and `docs/GH_CAPTURE.md`.
+The concise paper and saved-capture feature review are Dutch working versions. Existing live interfaces, workbook labels and older technical appendices largely retain English. Legacy category/viewpoint IDs, session names and filenames remain unchanged for compatibility with the models and evidence.
+
+### Opgeslagen vingerkenmerken bekijken
+
+```bash
+python -m streamlit run app.py -- --capture captures/confusions/20261031T152116143793Z_11756e66
+```
+
+Dit opent een bestaand lokaal handbeeld zonder camera of training. Je kunt de vergelijkingsletter wijzigen; de voorspelling blijft daarvan onafhankelijk. De bijlage heeft een placeholder voor een eigen toolfoto, naast de G/H- en spiegelvoorbeelden. [Invoegplek en herkomst](docs/APPENDIX_VISUALS.md). De genoemde opname moet lokaal aanwezig zijn.
 
 ## Direction features versus explicit joint angles
 
-A separate controlled comparison uses the same normalized image landmarks for Shin directions and joint measurements. It tests the 820-input reference, a 205-input replacement (distances + joints), and the 835-input combination with both SVM and LightGBM on the frozen five folds. The previous world-angle model is a contextual fourth arm. The main paper reports the near-zero addition result and Appendix K gives the full control. See [results and all-letter effects](results/direction_joint_01/report.md) and [reproduction commands](REPRODUCE.md#same-coordinate-direction-versus-joint-angle-experiment). No live model is replaced by this study.
+A separate controlled comparison uses the same normalized image landmarks for Shin directions and joint measurements. It tests the 820-input reference, a 205-input replacement (distances + joints), and the 835-input combination with both SVM and LightGBM on the frozen five folds. The previous world-angle model is a contextual fourth arm. The main paper reports the near-zero addition result and Appendix B gives the relevant comparison. See [results and all-letter effects](results/direction_joint_01/report.md) and [reproduction commands](REPRODUCE.md#same-coordinate-direction-versus-joint-angle-experiment). No live model is replaced by this study.
 
 ## Simple live camera (recommended)
 
@@ -169,7 +179,7 @@ Historically, MediaPipe labels **95.31%** of accepted original images Right and 
 
 The [standalone G/H experiment](results/rotation_GH_y180_01/report.md) compares original-only training with extra 180° turns around the vertical camera y axis for G/H only. It uses the same 60,251 accepted original images, five folds, preprocessing, resolved SVM gamma and class weights. No mirrors, webcam calibration or routing rule enter either arm. Validation images are unchanged originals. Compare **World joints [2]** with **G/H y180 only [9]** live; [protocol and commands](docs/GH_ROTATION_STANDALONE.md) describe the experiment.
 
-Macro-precision changes **97.53902% -> 97.53874%** and macro-F1 **0.97524391 -> 0.97523305**: 4 errors corrected, 5 correct predictions lost, net **-1** of 60,251. G/H recall is unchanged and both letters' F1 decreases slightly. A known back-view H is recovered but two known back-view G examples remain wrong. These selected cases are diagnostic, not an independent test. The paper reports this negative result separately in Appendix M.
+Macro-precision changes **97.53902% -> 97.53874%** and macro-F1 **0.97524391 -> 0.97523305**: 4 errors corrected, 5 correct predictions lost, net **-1** of 60,251. G/H recall is unchanged and both letters' F1 decreases slightly. A known back-view H is recovered but two known back-view G examples remain wrong. These selected cases are diagnostic, not an independent test. The paper reports this negative result separately in Appendix E.
 
 ## Earlier combined G/H adaptation
 

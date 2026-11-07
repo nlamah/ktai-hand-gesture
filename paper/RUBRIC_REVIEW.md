@@ -1,5 +1,11 @@
 # Reassessment against Assignment 3
 
+Actuele redactionele noot (6 november 2026): de Nederlandstalige bijlage is opgeschoond tot A–E (zeven pagina’s), met uitsluitend vanuit de hoofdtekst verwezen onderdelen. De beoordeling hieronder betreft een eerdere versie en is niet opnieuw uitgevoerd.
+
+Dutch working-version note (6 November 2026): the main report is now substantially shortened and translated into Dutch. The completed feature findings are summarized under RQ3, with TODOs for RQ1/RQ2. The new Dutch visual appendices O--Q explain feature verification, known G/H errors and selected synthetic mirrors. The historical assessment below does not grade this revision.
+
+Group-draft note (6 November 2026): the common framing now covers preprocessing/recovery (RQ1), training-set size (RQ2) and features (RQ3). Coauthor methods/results for RQ1/RQ2 remain visible TODOs. The earlier feature questions are now RQ3a--RQ3c. This historical assessment and its grade estimate do not assess the expanded, incomplete group draft; see `INTEGRATION_TODO.md` and Appendix N.
+
 Standalone G/H note (6 November 2026): Appendix M now isolates G/H-only camera-y180 augmentation on the original-data SVM, with no mirroring, calibration or routing rule. It corrects 4 errors and loses 5 (net -1/60,251), with macro-F1 0.97524391 to 0.97523305. This is an exploratory negative result; the historical grade estimate below has not been reassessed. It does not establish real back-view recognition.
 
 Mirror follow-up note (6 November 2026): the paper now additionally reports an RGB-mirroring experiment in Appendix L, with fresh detection of both presentations, a fixed balanced test mix, two learners and explicit original-view regressions. The historical assessment and grade estimate below have not been reassessed. Synthetic reflection results do not establish real left-handed signer performance.

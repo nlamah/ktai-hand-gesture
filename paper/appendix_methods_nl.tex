@@ -1,0 +1,30 @@
+\section{Data, evaluatie en modelinstellingen}\label{app:protocol}
+Deze bijlage onderbouwt de uitleg over handpunten, oefenen en toetsen in de hoofdtekst. Zij beschrijft de uitgewerkte featurestudie; de definitieve uitvoering van RQ1 en RQ2 moet nog worden aangeleverd.
+
+\subsection{Beeldselectie en vaste toetsgroepen}
+De Kaggle ASL Alphabet-verzameling bevat 78.000 trainingsbeelden voor A--Z, 3.000 per letter. De historische cache accepteert 60.251 beelden met precies \mbox{\'e\'en} hand: 77,24\%. Classificatiescores in bijlage B gelden alleen voor die geaccepteerde beelden. De meegeleverde testbeelden dupliceren trainingsbeelden en zijn uitgesloten. De historische detectiedrempels zijn niet bewaard; een nieuw detectieproces moet daarom zijn eigen instellingen en beeldselectie documenteren.
+
+De vijf vaste folds verdelen zes blokken van opeenvolgende bestandsnummers. Dit zijn geen geverifieerde personen of sessies. Iedere variant krijgt dezelfde bron-ID's, labels en toetsfolds. Elk geaccepteerd beeld ontvangt \mbox{\'e\'en} out-of-fold voorspelling. Een afgeleid beeld blijft in de fold van zijn bron. Dezelfde folds zijn tijdens de ontwikkeling meermaals gebruikt: dit is verkennende validatie, geen onaangeroerde eindtest.
+
+\subsection{Invoer en leermethoden}
+\begin{table}[h]\centering\small
+\caption{Geteste beschrijvingen van dezelfde geaccepteerde hand. Toevoegingen behouden de volledige Shin-basis.}
+\begin{tabular}{lrp{.59\linewidth}}\toprule
+Variant & Inputs & Samenstelling\\\midrule
+Basis & 820 & 190 genormaliseerde afstanden en 630 richtingswaarden uit beeldhandpunten.\\
+Alle toevoegingen & 931 & Basis + 70 categorische inputs + 26 werkboekovereenkomstscores + 15 gewrichtsmetingen.\\
+Wereldgewrichten & 835 & Basis + 14 interne hoeken en een getekende duimafwijking uit geschatte 3D-wereldpunten.\\
+Zelfde-coördinatenhoeken & 835 & Basis + dezelfde 15 metingen, nu uit precies de genormaliseerde beeldpunten van de basis.\\\bottomrule
+\end{tabular}\end{table}
+
+Het vaste SVM-profiel gebruikt een RBF-kernel, $C=10$, \texttt{gamma=scale} en gebalanceerde klassen. LightGBM gebruikt 100 bomen, 31 bladeren, leersnelheid 0,1 en minimaal 20 voorbeelden per blad. Toegevoegde hoeken krijgen mediaanimputatie en standaardisering, uitsluitend geleerd op het trainingsdeel. De basiswaarden worden niet zo geschaald. Werkboekscores worden voor alle kandidaatletters berekend, zonder het ware beeldlabel als invoer. Deze vaste profielen zijn geen even uitgebreid geoptimaliseerde bovengrenzen voor beide algoritmen.
+
+\subsection{Rapportage en reproduceerbaarheid}
+Scores zijn gepoold over de out-of-fold voorspellingen. Macro-precisie en macro-F1 middelen ongewogen over A--Z; niet-gedefinieerde letterscores worden nul. Paarsgewijze foutanalyse telt herstelde fouten, verloren goede voorspellingen en hun netto verschil. De spiegelproef in bijlage D heeft daarnaast resultaten over alle aangeboden beelden, inclusief mislukte detecties; die noemer is anders dan bij de featurestudie.
+
+\texttt{results/model\_comparison/}, \texttt{results/angles/} en \texttt{results/direction\_joint\_01/} bewaren de uitkomsten en individuele voorspellingen. De papertabellen zijn daaruit geselecteerd; bronhashes staan in \texttt{paper/appendix\_table\_sources.json}. Dit controleert de berekeningen, niet de ASL-labels of anatomische juistheid van de geschatte handpunten.
+
+\subsection{Nog te bevestigen voor RQ1 en RQ2}
+Het eerdere RQ1-concept stelt een tweede detectiepoging voor met $3\times3$-dilatatie, erosie en een Canny-overlay. Definitieve instellingen, unieke herstelaantallen en visuele beoordeling ontbreken nog. Een technische acceptatie mag niet als correcte anatomie worden geteld zonder aanvullende beoordeling.
+
+Voor RQ2 moeten aantallen per klasse, trainingssubsets, toets-ID's, seeds en herhalingen worden vastgelegd. Detector, representatie, modelprofiel en toetsbeelden blijven gelijk; preprocessing wordt binnen iedere trainingssubset geleerd. Augmentatiekopieën tellen niet als nieuwe bronnen. Dit is de afgesproken opzet, geen resultaatclaim over de nog ontbrekende bijdrage.

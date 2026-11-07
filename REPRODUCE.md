@@ -308,7 +308,7 @@ python -m research.paper_assets
 MPLCONFIGDIR=/tmp/ktai-mpl python -m research.paper_core_assets
 ```
 
-The first command regenerates the pipeline diagram, actual dataset O-error examples, all-letter tables, model-effect plot and complete confusion matrices from frozen results. It requires the retained dataset for qualitative examples and recomputes paired statistics and the descriptive block-resampling sensitivity range. The second command generates the current main table and Appendix K control table, checking that coordinate-control baselines match the historical scores and that corrected/lost counts reconcile with accuracy. It also updates the main pipeline and letter-effects figures. These assets distinguish the earlier world-joint net +67 result from the same-coordinate net +4 result; no model is retrained. Figure source is code, not generated illustrative data.
+The first command regenerates the pipeline diagram, actual dataset O-error examples, all-letter tables, model-effect plot and complete confusion matrices from frozen results. It requires the retained dataset for qualitative examples and recomputes paired statistics and the descriptive block-resampling sensitivity range. The second command regenerates the earlier detailed feature-study assets (the former Appendix K control table), checking that coordinate-control baselines match the historical scores and that corrected/lost counts reconcile with accuracy. It also updates the main pipeline and letter-effects figures. These assets distinguish the earlier world-joint net +67 result from the same-coordinate net +4 result; no model is retrained. Figure source is code, not generated illustrative data.
 
 With a standard TeX installation:
 
@@ -329,7 +329,7 @@ tectonic -o paper paper/report.tex
 tectonic -o paper paper/appendix.tex
 ```
 
-The official ICML2021 `.sty`/`.bst` are included; download origin/checksums are in `paper/template_provenance.json`. T1 font encoding preserves Times under both pdfLaTeX and Tectonic/XeTeX. Inspect the rendered PDF after modifications and keep main text <=5pages. References start after `\clearpage`; appendices compile separately to keep the assignment page limit literal.
+The official ICML2021 `.sty`/`.bst` are included; download origin/checksums are in `paper/template_provenance.json`. T1 font encoding preserves Times under both pdfLaTeX and Tectonic/XeTeX. The current main report is a concise Dutch working version with TODOs for the two pending contributions. Keep the main text within five pages; references may continue on page six. The technical appendix remains a separate document. Inspect the rendered PDF after modifications.
 
 `results/angles/` contains the main8comparisons and full26-letter metrics/predictions; `results/model_comparison/` the full feature/permutation/ablation study; `results/index_weights/` targeted tuning; `results/weights/` broad nested tuning; `results/pilot_*` the earlier3fold81-feature comparison. Do not compare pilot fold means directly to pooled5fold metrics. Compact historical reports contain old path strings as provenance; current commands in this file replace those paths.
 
@@ -401,7 +401,7 @@ The original and all-letter models are retained separately. Full per-letter metr
 
 ## 11. Narrative report and technical supplement
 
-The main English ICML report now follows the research story: informal C/D/O and U/V/R observations, hand-shape features, measured angles, persistent C/D confusion and the two tilt-augmentation trials. The main text is four pages, followed by references. Technical equations, detailed settings, original all-letter tables/confusions and augmentation controls are in the separate appendix. AI-generation and verification limitations remain explicit.
+Historical revision (superseded by the Dutch group draft below): the English ICML report followed the research story: informal C/D/O and U/V/R observations, hand-shape features, measured angles, persistent C/D confusion and the two tilt-augmentation trials. The main text is four pages, followed by references. Technical equations, detailed settings, original all-letter tables/confusions and augmentation controls are in the separate appendix. AI-generation and verification limitations remain explicit.
 
 Rebuild the narrative figures/tables from the local stored evidence:
 
@@ -490,7 +490,7 @@ Three participants, G/H, four views (palm, oblique palm, oblique back, back), fi
 
 ## Core-question report revision
 
-The main English ICML-style report now centers on the explicit-feature research question, with matched representation/model comparisons and all-letter effects. Later webcam/augmentation diagnostics remain in Appendix I–J. Regenerate its core tables/plots from frozen results with:
+The ICML-style report is a Dutch group draft for readers without ML background: RQ1 concerns preprocessing/detection recovery, RQ2 training-set size and RQ3 explicit features. RQ1/RQ2 contributions remain TODOs. The main text explains the pipeline and evaluation with examples and uses exact correct counts in `plain_results_nl.tex`. The Dutch appendix now contains only five referenced sections: A data/settings, B feature results, C featuretool, D mirroring and E standalone G/H rotation. Its selected tables come from the same frozen results via `research.studies.compact_appendix_tables`; hashes are in `paper/appendix_table_sources.json`. Earlier detailed sources remain archived in the repository and are not included in the compiled appendix. Augmentation studies remain separate supporting evidence. `paper/INTEGRATION_TODO.md` lists the handoff. Regenerate the existing detailed feature tables/plots from frozen results with:
 
 ```bash
 MPLCONFIGDIR=/tmp/ktai-mpl python -m research.paper_core_assets
@@ -554,7 +554,7 @@ python -m research.studies.report_gh_rotation_standalone
 python -m research.live_camera --model models/asl_shin_angles_GH_y180.joblib
 ```
 
-Compare **World joints [2]** with **G/H y180 only [9]**. Evidence is in `results/rotation_GH_y180_01/`, including every prediction, both arms' fold metrics, all 26 letter scores, paired changes, confusions, selected camera replay and verification. The fresh reference exactly reproduces all historical held-out predictions. The candidate corrects 4 errors and loses 5 (net -1); macro-precision changes 97.53902% to 97.53874% and macro-F1 0.97524391 to 0.97523305. This gives no overall benefit. The selected back-view H is recovered but both known back-view G examples remain wrong. No selected capture enters fitting or constitutes an independent test. Appendix M reports this separately from mirror augmentation and the earlier combined candidates.
+Compare **World joints [2]** with **G/H y180 only [9]**. Evidence is in `results/rotation_GH_y180_01/`, including every prediction, both arms' fold metrics, all 26 letter scores, paired changes, confusions, selected camera replay and verification. The fresh reference exactly reproduces all historical held-out predictions. The candidate corrects 4 errors and loses 5 (net -1); macro-precision changes 97.53902% to 97.53874% and macro-F1 0.97524391 to 0.97523305. This gives no overall benefit. The selected back-view H is recovered but both known back-view G examples remain wrong. No selected capture enters fitting or constitutes an independent test. Appendix E reports this separately from mirror augmentation and the earlier combined candidates.
 
 ## Earlier combined G/H adaptation
 
@@ -572,7 +572,7 @@ See `docs/GH_ROTATION.md` for the distinction between the existing feature-space
 
 ## Horizontal RGB mirror experiment
 
-The full protocol is `docs/MIRROR_EXPERIMENT.md`; generated results are `results/mirror_01/report.md`, and Appendix L gives the paper version. All 78,000 A-Z originals and their mirrors are redetected, with recorded model hash, IMAGE mode, max two hands and 0.5/0.5 thresholds. Source pixels and frozen filename-block folds are checked. Mirrored derivatives never cross the source-group boundary.
+The full protocol is `docs/MIRROR_EXPERIMENT.md`; generated results are `results/mirror_01/report.md`, and Appendix D gives the paper version. All 78,000 A-Z originals and their mirrors are redetected, with recorded model hash, IMAGE mode, max two hands and 0.5/0.5 thresholds. Source pixels and frozen filename-block folds are checked. Mirrored derivatives never cross the source-group boundary.
 
 ```bash
 MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.mirror_dataset --workers 4
@@ -587,3 +587,17 @@ The test mixture has one view per source, with half mirrored within each letter/
 Chunk checkpoints and fold models are under ignored `runs/mirror_01/`. The extraction and CV stages resume matching work. Full-data training refuses to overwrite its new artifacts. It creates `models/asl_shin_angles_mirror_baseline.joblib` and `models/asl_shin_angles_mirrored.joblib`, exposed by native buttons/keys **7** and **8**. These match the unchanged live 835-input encoder; the prior default remains World joints. Start with `python -m research.live_camera --model models/asl_shin_angles_mirror_baseline.joblib` for a matched comparison.
 
 The historical manifest labels 57,424/60,251 accepted images Right (95.31%) and 2,827 Left (4.69%), with 17,749 sources not accepted. Those estimates describe the depicted hand, not the person's dominant hand. Fresh original detections are used for the current baseline so that unknown historical thresholds are not silently mixed with the new mirrors. The study is a synthetic reflection test; separately collected left-handed signers are needed for prospective validation.
+
+## Bijlagebeelden en opgeslagen featurecontrole
+
+De hoofdtekst en de volledige opgeschoonde bijlage A–E zijn Nederlands. Alleen onderdelen waarnaar de hoofdtekst verwijst worden opgenomen. De bijlage veronderstelt kennis van precisie en F1 en geeft de technische uitwerking. De huidige bijlage telt zeven pagina's; de hoofdtekst met referenties drie. Vijf pagina's geldt voor de hoofdtekst; referenties mogen op pagina zes staan.
+
+```bash
+python -m research.studies.compact_appendix_tables
+MPLCONFIGDIR=/tmp/ktai-mpl python -m research.studies.appendix_visuals
+python -m streamlit run app.py -- --capture captures/confusions/20261031T152116143793Z_11756e66
+tectonic -o paper paper/report.tex
+tectonic -o paper paper/appendix.tex
+```
+
+De figuurgenerator vereist de vier gebruikte lokale cameraregistraties, de dataset, de bestaande spiegelcache en de referentie-/G/H-y180-modellen. Er wordt niet opnieuw gedetecteerd of getraind. De eerdere rapportweergaven blijven als bronmateriaal beschikbaar; bijlage C toont nu een placeholder voor een eigen toolfoto. Sla die op als `paper/figures/feature_tool_screenshot.png`: bij compileren wordt de placeholder automatisch vervangen. PNG's, featurewaarden, selectiebeleid en hashes staan in `results/appendix_visuals_01/`; PDF-figuren staan in `paper/figures/`. De synthetische spiegelvoorbeelden gebruiken opgeslagen held-out voorspellingen. Zie `docs/APPENDIX_VISUALS.md`.

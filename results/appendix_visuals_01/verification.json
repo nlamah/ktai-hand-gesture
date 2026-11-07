@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "exported_figures": 4,
+  "selected_camera_examples": 4,
+  "selected_mirror_pairs": 2,
+  "same_image_H_G_reference_prediction_invariant": true,
+  "saved_capture_mode_AppTest": "passed",
+  "full_test_suite": {
+    "tests": 107,
+    "status": "passed"
+  },
+  "image_and_model_hashes_checked": true,
+  "mirror_pixel_hashes_both_views_checked": true,
+  "feature_images_are_report_renders_not_screenshots": true,
+  "pdf_pages_with_figures": [
+    5,
+    7
+  ],
+  "figure_provenance_sha256": "886915a370c6158bbf3a97e447efe9a4b2c8f3f8922207c3ea8eb91d7f3feb18",
+  "appendix_sha256": "b1b907552723f0f6e77ad18e4e6b3df78e637fa6c9fe6093c3432c36cf444251",
+  "feature_tool_placeholder": true,
+  "embedded_data_figures": 2,
+  "note": "Dutch appendix cleaned to A–E. Figure assets and their source evidence unchanged; tool photo remains a placeholder in C. Earlier app-test results retained, not rerun for this editorial revision.",
+  "feature_tool_placeholder_page": 3
+}

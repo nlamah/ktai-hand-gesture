@@ -1,0 +1,101 @@
+{
+  "status": "passed",
+  "main_language": "Dutch",
+  "main_text_pages": 3,
+  "reference_pages": 1,
+  "page_budget": "At most five body pages; references may continue on page six",
+  "coauthor_results_pending": [
+    "RQ1",
+    "RQ2"
+  ],
+  "appendix_language": "Dutch throughout; technical identifiers and literal detector outputs retained",
+  "visible_TODOs_main": 8,
+  "files": {
+    "paper/report.pdf": {
+      "sha256": "28517dddf94319ed37012252d19381e5a590e6b1129f5e06b4616fc82aba6ba6",
+      "pages": 3
+    },
+    "paper/appendix.pdf": {
+      "sha256": "b1b907552723f0f6e77ad18e4e6b3df78e637fa6c9fe6093c3432c36cf444251",
+      "pages": 7
+    }
+  },
+  "existing_numerical_sources_unchanged": {
+    "paper/core_results.tex": "0c5c73fa988fccdbad29dedc4e7df09378592889388ff65a967d1a47d2114895",
+    "paper/letter_rows.tex": "428f2bf8b6f1d583e3bf19167b2603c78e88b68775ef6a33d34b784caa8d0fed",
+    "paper/mirror_detail_rows.tex": "5f0af3c1e6552dc6c5faea13751483f1792132de85a035594e12d40e7541e0e5",
+    "paper/mirror_conditional_rows.tex": "f4089cfc7be663f955b28106818964deeec3aa0a1a902ae1c5a34139b0a014c2",
+    "paper/mirror_main_rows.tex": "be0b3c8e6f75b942296c0fa47b96da7f065d1275ffbf07ad7ea14ca82012285c",
+    "paper/mirror_numbers.tex": "b6e8a5dacc09793f2925d2ba834a5b5302ccb7afd8ecd915b6af7747e9f713ce",
+    "paper/gh_y180_captures_rows.tex": "8be27c5aa4931667207ac467c5874f639ee723a9d7ecaff16cb4d9d7d91b97eb",
+    "paper/gh_y180_folds_rows.tex": "172d2d65b1a6f5c6aa3044ea094427a23811a4a2963046a2aabf1cf41de26b37",
+    "paper/gh_y180_letters_rows.tex": "fca147ae40efa319345c6300e69eb7ec389ec269f7eea13e389f3c25d4d508d4",
+    "paper/gh_y180_main_rows.tex": "fc44401638ce53bfae33cbf014b2c26c0754df2f818e4223b30e5dca30510f8d",
+    "paper/gh_y180_numbers.tex": "7746e4659603d02b9b64c15d16e9b230e63e184f56191d7ab8db56cf62fbc029"
+  },
+  "visual_review": "All seven final appendix pages and three main pages inspected; no clipping, overlaps or orphan pages.",
+  "tex_overfull_or_undefined_warnings": false,
+  "note": "Editorial appendix cleanup and Dutch translation. Main plain language preserved; references renumbered. No models, predictions or frozen experiment settings changed.",
+  "feature_tool_image_status": "Placeholder; user will supply the actual photo/screenshot",
+  "feature_tool_image_path": "paper/figures/feature_tool_screenshot.png",
+  "references_share_last_page": true,
+  "main_total_pages_including_references": 3,
+  "target_audience": "Secondary-school reader without prior machine-learning knowledge",
+  "main_uses_correct_counts_from_saved_OOF_predictions": true,
+  "verified_correct_counts": [
+    58827,
+    58822,
+    58894,
+    58831
+  ],
+  "count_table_source_sha256": {
+    "results/model_comparison/oof_predictions.csv": "7c2b25537d489e47caec3559dd8e66f618ff975bf7af870f1c3619341c3a32c0",
+    "results/angles/oof_predictions_svm.csv": "be2abe826a79332ed5cbc6f250397dc85a4aa8da0dd7ab2e23739e1a553585b4",
+    "results/direction_joint_01/oof_predictions.csv": "d2ca2f3d70b22068eec48e545d219fae7d0d393762ca4f8eb2813a125e33bb96"
+  },
+  "appendix_sections_and_pages": {
+    "A": [
+      1
+    ],
+    "B": [
+      2
+    ],
+    "C": [
+      3
+    ],
+    "D": [
+      4,
+      5
+    ],
+    "E": [
+      6,
+      7
+    ]
+  },
+  "scope_verified_main_refs": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "active_appendix_sources": [
+    "appendix_methods_nl.tex",
+    "appendix_features_nl.tex",
+    "appendix_tool_nl.tex",
+    "appendix_mirroring_nl.tex",
+    "appendix_gh_nl.tex"
+  ],
+  "appendix_pages_before": 23,
+  "appendix_pages_after": 7,
+  "selected_table_rows_verified_against_frozen_sources": 42,
+  "table_source_provenance": "paper/appendix_table_sources.json",
+  "removed_from_compiled_appendix": [
+    "historical rubric review",
+    "administrative handoff checklist",
+    "unreferenced exploratory studies",
+    "complete confusion matrices",
+    "duplicate explanations"
+  ],
+  "historical_sources_preserved": true
+}

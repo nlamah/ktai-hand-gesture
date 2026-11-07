@@ -1,161 +1,116 @@
 \documentclass{article}
 \usepackage{microtype}
 \usepackage{graphicx}
-\usepackage{subfigure}
 \usepackage{booktabs}
-\usepackage{multirow}
 \usepackage{hyperref}
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 \usepackage[accepted]{icml2021}
 \usepackage[T1]{fontenc}
+\IfFileExists{babel.sty}{\usepackage[dutch]{babel}}{%
+  % Tectonic kan de Nederlandse afbreekpatronen al in het formaat hebben.
+  \AtBeginDocument{\ifcsname l@dutch\endcsname
+    \language=\csname l@dutch\endcsname\lefthyphenmin=2\righthyphenmin=3\fi}}
 \hypersetup{hypertexnames=false}
-\input{mirror_numbers.tex}
-\input{gh_y180_numbers.tex}
+\newcommand{\drafttodo}[2]{\par\noindent\textbf{TODO [#1]:} #2\par}
 \makeatletter\let\tableinput\@@input\makeatother
 \makeatletter
 \patchcmd{\printAffiliationsAndNotice}{Correspondence to: \icmlcorrespondingauthor@text.}{}{}{}
-\renewcommand{\Notice@String}{Interim course project report. Not a conference publication.}
+\patchcmd{\abstract}{Abstract}{Samenvatting}{}{}
+\renewcommand{\fnum@table}{Tabel \thetable}
+\renewcommand{\fnum@figure}{Figuur \thefigure}
+\renewcommand{\Notice@String}{Nederlandse werkversie van een gezamenlijk studieproject.}
 \makeatother
-\icmltitlerunning{Explicit hand-shape features for ASL recognition}
+\renewcommand{\refname}{Referenties}
+\renewcommand{\tablename}{Tabel}
+\renewcommand{\figurename}{Figuur}
+\icmltitlerunning{Herkenning van het ASL-alfabet}
 \begin{document}
 \twocolumn[
-\icmltitle{Interpretable Hand-Shape Features for ASL Letter Recognition\\Representation Controls and Separate Augmentation Studies}
+\icmltitle{Hoe kan een computer handgebaren voor letters herkennen?\\Fotobewerking, meer voorbeelden en uitleg over de handvorm}
 \begin{icmlauthorlist}
-\icmlauthor{Author details to be added}{ou}
+\icmlauthor{TODO: drie namen en studentnummers}{ou}
 \end{icmlauthorlist}
 \icmlaffiliation{ou}{Open Universiteit}
 \icmlcorrespondingauthor{}{}
-\icmlkeywords{ASL, fingerspelling, feature engineering, joint angles, ablation}
+\icmlkeywords{ASL, handdetectie, trainingsdata, handkenmerken}
 \vskip 0.3in
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-Can descriptions such as bent, extended, spread or touching improve a letter recognizer that already receives hand geometry? Webcam confusions motivated a comparison of categorical features, workbook scores and joint measurements added to a Shin-based reference. SVM and LightGBM used the same 60,251 accepted Kaggle ASL Alphabet images and five grouped folds. The full feature package did not improve SVM accuracy (97.628\% versus 97.637\%). World-joint measurements reached 97.748\% and 0.97524 macro-F1: 143 errors corrected, 76 correct predictions lost, net +67. Same-coordinate joints reached only 97.643\%, net +4; replacing directions reduced accuracy to 94.511\%. Explicit descriptions do not reliably improve this reference; the world-coordinate gain cannot be attributed to the bending formula alone. Separate augmentation tests change SVM macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug\ on a synthetic mirror mix. Isolated G/H turns instead change original-view F1 only from \GHRotFoneBase\ to \GHRotFoneAug. These exploratory results do not establish unseen-person, real left-hand or back-view robustness.
+Kan een computer op een foto zien welke letter iemand met de hand uitbeeldt? Wij onderzoeken drie mogelijke verbeteringen: foto's vooraf bewerken, het programma meer voorbeelden geven en de handvorm duidelijker beschrijven. Voor de eerste twee onderdelen moeten de resultaten nog worden toegevoegd. Het derde onderdeel is getest op 60.251 foto's. Extra beschrijvingen, zoals ``de middelvinger is gebogen'', helpen niet steeds. Een kleine verbetering blijkt bovendien samen te hangen met de gebruikte handpunten. We weten nog niet of deze aanpak bij nieuwe mensen of met een gewone webcam beter werkt.
 \end{abstract}
 
-\section{Brief Introduction}
-American Sign Language (ASL) fingerspelling recognition can be approached by locating hand landmarks and classifying their arrangement. This project concerns individual letter images, rather than continuous signing or the movement required for letters such as J and Z. Its practical motivation came from a webcam recognizer: I could intend the same letter but receive a different prediction after changing my hand position. I noticed C/D/O and U/V/R confusions. Those observations were informal and motivated questions; they did not measure error rates.
+\section{Wat willen we onderzoeken?}
+In het handalfabet van de Amerikaanse Gebarentaal (ASL) worden letters met de hand uitgebeeld. Wij onderzoeken losse foto's van de letters A tot en met Z. We onderzoeken daarmee geen gesprekken of de bewegingen die bij J en Z horen.
 
-The recognizer followed the geometric approach of \citet{shin2021}. Instead of learning directly from image pixels, it describes distances and directions between hand points. This prompted an intuitive question: could explicit descriptions such as ``the middle finger is bent'', ``these fingers cross'' or ``the thumb touches the index finger'' make the distinction easier?
-
-I developed a workbook of expected hand features and a tool to inspect the measured hand. Continuous joint measurements serve as a comparison with the broader categorical descriptions. A later control uses the same coordinates as Shin to distinguish representation from coordinate source. Figure~\ref{fig:core-process} summarizes the investigation. The contribution is a matched empirical comparison, including negative results; no new classification algorithm or independent sensor information is claimed.
-
-The main research question is: \emph{Do interpretable hand-shape descriptions add value to a Shin-based ASL letter recognizer?} Three questions make it testable:
+Onze hoofdvraag is: \emph{Wat helpt een computer om de hand op een foto te vinden en de uitgebeelde letter goed te herkennen?} We verdelen dit in drie vragen:
 \begin{enumerate}
-\item Does the full package of categories, workbook scores and joint measurements improve the reference, and does classifier choice matter?
-\item Do continuous measurements help, and does their coordinate representation matter?
-\item Which letters benefit or regress, and how consistent are the observed differences?
+\item \textbf{RQ1 -- Foto's bewerken:} Vindt het programma vaker een hand als we de foto eerst bewerken? En liggen de gevonden punten dan ook op de juiste plek?
+\item \textbf{RQ2 -- Meer voorbeelden:} Herkent het programma letters beter als het met meer verschillende foto's oefent?
+\item \textbf{RQ3 -- Handvorm beschrijven:} Helpt extra uitleg, zoals welke vingers gebogen of gespreid zijn?
 \end{enumerate}
-These questions concern feature design. Separate follow-ups test horizontal RGB mirroring and G/H-only vertical-axis rotation. The latter isolates rotation without mirroring or camera calibration. Earlier webcam probes remain diagnostic. Full settings and results are in the separate appendix.
+We testen deze mogelijkheden apart. Als een bewerkte foto meer handpunten oplevert, weten we bijvoorbeeld nog niet of het programma daardoor ook de juiste letter kiest.
 
-\begin{figure*}[t]
-\centering\includegraphics[width=\linewidth]{figures/core_pipeline.pdf}
-\caption{The research sequence. Webcam observations motivated feature design; the primary evidence comes from matched dataset comparisons and analysis of both improvements and regressions.}
-\label{fig:core-process}
-\end{figure*}
+\section{Hoe werkt de herkenning?}
+Het programma begint met het zoeken naar de hand. MediaPipe, bestaande software voor beeldherkenning, schat 21 punten bij onder meer de pols, knokkels en vingertoppen \citep{zhang2020}. Je kunt deze punten zien als stippen op een eenvoudig handskelet. Als een stip verkeerd ligt, kan ook de beschrijving van de hand verkeerd worden.
 
-\section{Related Works}
-\citet{shin2021} represent hand landmarks through pairwise distances and directions and compare SVM with LightGBM. Their approach provides the reference representation here. This study asks whether more explicit hand descriptions help when that geometric information is already present. Additional features may reorganize existing information rather than supply independent evidence.
+Daarna beschrijven we de hand met afstanden en richtingen tussen de stippen. Deze basisaanpak komt van \citet{shin2021}. Een leerprogramma oefent met zulke beschrijvingen en de bijbehorende letters. Vervolgens testen we of het de letter kiest op foto's waarmee het niet heeft geoefend.
 
-MediaPipe Hands estimates a hand skeleton from an RGB image \citep{zhang2020}. The classifier therefore receives measurements produced by another model. Describing a feature in meaningful terms does not guarantee that the landmark estimate measures it accurately. In contrast, the colour-and-depth approach of \citet{pugeault2011} uses additional sensing information. The present work retains ordinary RGB input and investigates representations of its estimated landmarks.
+Wij gebruiken twee bestaande leermethoden, SVM en LightGBM \citep{ke2017}. Hun namen zijn vooral nodig om de proeven te kunnen herhalen. De instellingen staan in bijlage A.
+\drafttodo{PREP/SIZE}{Voeg bronnen toe die de gekozen fotobewerkingen en de proef met meer voorbeelden onderbouwen.}
 
-LightGBM learns boosted decision trees \citep{ke2017}. Its split-based decisions provide a plausible alternative for mixed hand measurements, while an RBF SVM separates examples through similarity in feature space. Comparing both tests whether a feature package's usefulness depends on the learner. The tested fixed profiles do not establish which algorithm would win after equally extensive optimization.
+\section{Hoe testen we dit?}
+\subsection{Oefenen en toetsen gescheiden houden}
+We gebruiken een bestaande verzameling van 78.000 foto's, de Kaggle ASL Alphabet-set. Bij 60.251 foto's accepteerde het programma precies \mbox{\'e\'en} gevonden hand. Alleen die foto's zijn gebruikt voor de uitgewerkte proef met handbeschrijvingen. De resultaten daarvan vertellen dus niet hoe goed het hele programma op alle foto's werkt.
 
-Interpretability also needs care. \citet{fisher2019} show that variable importance depends on the fitted model. Accordingly, this study distinguishes shuffling a feature group to test model reliance from removing it and retraining to test added value. Finally, repeatedly selecting models using the same evaluation can produce optimism \citep{cawley2010}. The experiments below are therefore reported as exploratory comparisons, with their scope separated from final-test claims.
+We verdelen de foto's voor deze proef in vijf groepen. Het programma oefent met vier groepen en wordt getoetst op de overgebleven groep. We herhalen dit totdat iedere groep aan de beurt is geweest. De verschillende aanpakken krijgen dezelfde toetsfoto's. Een bewerkte kopie mag niet bij de toets staan als het origineel bij het oefenen hoort.
 
-\section{Methods}
-\subsection{From Observations to Representations}
-The reference contains 820 Shin-style measurements: 190 normalized distances and 630 directions relative to the image axes. These are not explicit joint-bending angles, but the directions of adjacent segments already determine their interior angle. The hypothesis is that a different representation helps learning, not that Shin lacks hand-shape information. I used three additions:
-\begin{itemize}
-\item \textbf{Categories:} 70 one-hot inputs describe bending, spread, suspected crossing, thumb shape and contact, including unknown states.
-\item \textbf{Workbook scores:} 26 inputs measure agreement with the expected features of each candidate letter. Slash-separated workbook values are allowed alternatives. Every candidate score is computed without reading the image's true label.
-\item \textbf{Joint measurements:} 14 internal angles and a signed thumb-MCP deviation, giving 15 continuous inputs. MCP measurements are landmark-based proxies rather than clinical joint measurements.
-\end{itemize}
-A straight internal angle approaches $180^\circ$; bending reduces it. Categories compress measurements into labels, while continuous values retain finer variation. The original additions use estimated world landmarks, whereas Shin uses normalized image landmarks. A control recomputes the 15 measurements from Shin's exact coordinates: adding them gives 835 inputs; replacing the 630 directions gives 205 (190 distances + 15 measurements). No images are redetected. Most comparisons retain all reference inputs; the replacement control is explicitly separate.
+Voor de beoordeling tellen we eerst hoeveel letters goed zijn herkend. Daarnaast kijken we naar \emph{precisie}: als het programma tien keer H zegt en acht keer gelijk heeft, is de precisie voor H 80\%. Maar het kan daarnaast echte H's missen. De \emph{F1-score} houdt met beide soorten fouten rekening en ligt tussen 0 en 1; een hogere score is beter. Bij macro-precisie en macro-F1 telt iedere letter even zwaar mee. De technische afspraken staan in bijlage A.
+\drafttodo{TEAM}{Controleer dat de drie bijdragen dezelfde foto's en afspraken gebruiken, of leg de verschillen uit.}
 
-\subsection{Models and Checks}
-The main learner is an RBF SVM with $C=10$, \texttt{gamma=scale} and balanced classes. It balances separation against classification errors. LightGBM uses 100 trees, 31 leaves, learning rate 0.1 and minimum child size 20. We retain these project profiles across representation comparisons. Median imputation and standardization of angle inputs are learned only from the fitting partition. Baseline measurements and categorical/workbook inputs pass through unchanged. The appendix gives the objectives, formulas and exact schemas.
+\input{team_methods_pending.tex}
 
-To investigate contribution, I removed feature groups and retrained, and separately shuffled groups in held-out inputs of a fitted full-package model. Shuffling used five repeats and up to 100 images per letter per fold. Correlated features can compensate for one another, so these reliance measures are neither causal effects nor additive percentages of importance.
+\subsection{RQ3: Meer uitleg over de handvorm}
+We voegen beschrijvingen toe zoals ``vinger gebogen'', ``vingers uit elkaar'' en ``duim raakt wijsvinger''. Ook meten we hoe ver gewrichten gebogen zijn. Zo onderzoeken we of duidelijk benoemde eigenschappen het leren gemakkelijker maken. De meetregels en plek voor een toolfoto staan in bijlage C.
 
-Bounded weighting checks used five outer and three inner group folds, with inner samples capped at 150 images per letter. They do not remove selection effects from the wider exploratory sequence. Settings and detailed checks are in the appendix.
+De basisaanpak bevat al informatie over de handvorm. Het is dus mogelijk dat de extra beschrijvingen weinig nieuws toevoegen. Om dit te controleren, berekenen we gewrichtshoeken zowel met een aparte schatting van de hand in drie dimensies (3D) als met precies dezelfde punten die de basisaanpak gebruikt.
 
-\section{Experimental Results}
-\subsection{Dataset and Evaluation}
-Kaggle ASL Alphabet supplies 78,000 training images, 3,000 for each A--Z label. Only 60,251 images with exactly one accepted hand detection enter the feature comparisons: 77.24\% coverage. Consequently, those classification scores are conditional on landmark extraction. The supplied test set duplicates training images and was excluded. Historical landmark records do not retain confidence thresholds; the intended extraction settings cannot be independently confirmed. The mirror follow-up evaluates all 78,000 source attempts separately.
+\section{Resultaten}
+\input{team_results_pending.tex}
 
-Every main comparison uses the same accepted images and frozen five group folds. Adjacent image numbers are grouped into six filename blocks, distributed across the folds. Each image receives one prediction from a model that was not fitted on it. These groups are not verified people; possible similarity across blocks limits claims about new signers. Accuracy is pooled over all held-out predictions. Macro-F1 averages the 26 letter F1-scores, giving equal weight to each letter and accounting for false positives as well as missed examples. No untouched final classification test is available.
-
-\subsection{RQ1: Does the Broader Feature Package Help?}
-Table~\ref{tab:core-results} gives the matched results. For SVM, all 111 additions together reach 97.628\% accuracy, slightly below the 97.637\% reference. LightGBM improves from 97.097\% to 97.164\% with that package, but remains below the tested SVM configurations. Thus the package's effect depends on the learner, and it does not consistently improve the reference.
-
-\begin{table*}[t]
-\centering\caption{Pooled five-fold results on 60,251 accepted images. Every row retains the 820 reference inputs. ``All additions'' adds 70 categories, 26 workbook scores and 15 world-joint measurements. The final row instead derives joints from Shin's coordinates. These are exploratory results, not independent final-test scores.}
-\label{tab:core-results}
-\begin{tabular}{lrrrrr}\toprule
- & & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
-Representation & Inputs & Accuracy (\%) & Macro-F1 & Accuracy (\%) & Macro-F1\\\midrule
-\tableinput core_results.tex
-\bottomrule\end{tabular}
-\end{table*}
-
-Feature removal clarifies the SVM result. Removing the 70 categories from the full package improves accuracy to 97.744\%, the angles-plus-workbook row. Removing angles instead leaves categories and workbook scores and reaches 97.593\%. These comparisons support the continuous representation in this setting. They do not isolate categories alone without workbook scores, or prove that categorical descriptions are inherently unhelpful.
-
-\subsection{RQ2: Do Joint Measurements Add Value?}
-Adding the 15 world-joint measurements to the reference reaches 97.748\% SVM accuracy and 0.97524 macro-F1, versus 97.637\% and 0.97386. Workbook scores add no further benefit. For LightGBM, the world-joint addition reduces accuracy to 97.017\%. This is a small, learner-specific result.
-
-The coordinate control qualifies its interpretation. Adding same-coordinate joint measurements reaches 97.643\% and 0.97403 macro-F1 for SVM: 89 errors corrected and 85 correct predictions lost, net +4, not +67. LightGBM loses 34 correct predictions. Replacing directions with distances plus same-coordinate joints lowers accuracy to 94.511\% (SVM) and 93.942\% (LightGBM). The full control is in Appendix~K. It gives no convincing overall benefit from making bending explicit in Shin's coordinates; the earlier world-coordinate gain cannot be attributed to the angle formula alone.
-
-Grouped permutation gives complementary evidence. In the full-package SVM, shuffling joint measurements reduces macro-F1 by an average 0.570 percentage points, versus 0.049 for categories and 0.008 for workbook scores. This indicates greater reliance on the angles in that fitted model; it is not the amount by which adding them improves the reference. The removal and matched-addition results are needed for that claim. Broad feature weighting did not yield a convincing additional overall benefit under the bounded search.
-
-\subsection{RQ3: Who Benefits, and How Stable Are Differences?}
-The world-joint addition fixes 143 formerly incorrect images and loses 76 formerly correct ones: net +67 out of 60,251, or 0.1112 percentage points. It improves all five outer folds and six filename blocks, but the gain is small. A block-resampling sensitivity range of 0.0374--0.1947 percentage points is descriptive, not an independent-test confidence interval or significance result (Appendix~D). The same-coordinate addition instead improves three folds and worsens two (Appendix~K).
-
-\begin{figure*}[t]
-\centering\includegraphics[width=\linewidth]{figures/core_letter_effects.pdf}
-\caption{Change in correct true-letter images after adding world-joint measurements to the SVM reference. Green bars show gains and orange bars losses, summing to +67. This is the earlier world-coordinate comparison, not the same-coordinate control (+4). Full letter metrics and confusion matrices are in Appendices~A--B.}
-\label{fig:letter-effects}
-\end{figure*}
-
-Figure~\ref{fig:letter-effects} shows why the pooled gain needs qualification. M gains 31 correct images, while O loses seven. N loses two true-letter recoveries yet improves in F1, because false positives also change. The world-joint model still has 142 R$\rightarrow$U, 141 N$\rightarrow$M, 102 M$\rightarrow$N and 41 D$\rightarrow$O errors. Appendix~A gives every letter's precision, recall and F1.
-
+\subsection{RQ3: Extra beschrijvingen helpen weinig}
+Tabel~\ref{tab:kern} laat zien hoeveel foto's goed worden herkend met SVM. De basisaanpak herkent bijna 98 van de 100 letters goed op de foto's waarin een hand gevonden is. Het volledige pakket extra beschrijvingen levert vijf correcte voorspellingen minder op. Bij de andere leermethode, LightGBM, helpt dit pakket een beetje, maar blijven de resultaten lager dan bij de SVM-basisaanpak.
 \begin{table}[t]
-\centering\caption{Separate mirror follow-up: SVM on 78,000 held-out attempts, selecting one fixed view per source (half mirrored per letter/fold). Failed detections remain incorrect attempts. P denotes macro-precision.}
-\label{tab:mirror-main}
-\begin{tabular}{lrrr}\toprule
-Training & Acc. (\%) & P (\%) & Macro-F1\\\midrule
-\tableinput mirror_main_rows.tex
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\caption{Goed herkende foto's bij dezelfde toetsing. Iedere aanpak wordt op alle 60.251 foto's getoetst, zonder die toetsfoto's voor het oefenen te gebruiken.}
+\label{tab:kern}
+\begin{tabular}{p{.66\linewidth}r}\toprule
+Beschrijving van de hand & Aantal goed\\\midrule
+\tableinput plain_results_nl.tex
 \bottomrule\end{tabular}
 \end{table}
 
-\subsection{RGB Mirroring Follow-up}
-ASL permits left-handed fingerspelling \citep{vicarsleft}. Historically, MediaPipe labels 57,424 of 60,251 accepted images Right (95.31\%) and 2,827 Left (4.69\%); these are not human-verified hand labels. I redetected all 78,000 originals and their pixel mirrors with the same fixed detector. A new baseline uses accepted originals; its candidate additionally uses accepted mirrors of the same fitting sources. Each source retains weight one. Scaling and SVM gamma/class weights come from original fitting rows only. Derivatives inherit source folds.
+De hoeken uit de andere 3D-schatting leveren 67 extra correcte voorspellingen op. Er worden daarbij 143 oude fouten hersteld, maar ook 76 nieuwe gemaakt. Met hoeken uit dezelfde handpunten als de basisaanpak blijven slechts vier extra correcte voorspellingen over. We kunnen de winst dus niet alleen verklaren doordat het programma extra uitleg over buiging krijgt. De precieze scores en de verschillen per letter staan in bijlage B.
 
-Table~\ref{tab:mirror-main} reports the fixed random test mix (seed 20261106), shared by both models. SVM macro-precision changes from \MirrorMixPrecisionBase\% to \MirrorMixPrecisionAug\%, and macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug. On originals alone, the SVM loses 26 correct predictions net; LightGBM also improves on the mixture. Full original/mirror, per-letter and conditional results are in Appendix~L. This tests synthetic reflection robustness, not real left-handed signer performance or the value of adding hand features.
+\subsection{Extra proeven: spiegelen en G/H draaien}
+We hebben ook oefenfoto's gespiegeld om het programma met links/rechts-variatie te laten oefenen. Dat helpt sterk op onze kunstmatig gespiegelde toetsfoto's, maar kost op de oorspronkelijke foto's 26 goede voorspellingen. Dit is nog geen bewijs dat het ook bij echte linkshandige gebruikers beter werkt (bijlage D).
 
-\subsection{Standalone G/H Rotation}
-A matched SVM comparison adds only $180^\circ$ camera-$y$ turns to G/H fitting examples, with no mirrors, camera calibration or routing rule. It shares original-fit preprocessing, gamma, class weights and source folds. On the 60,251 unchanged originals, macro-precision changes from \GHRotPrecisionBase\% to \GHRotPrecisionAug\%, and macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug: \GHRotFixed\ errors corrected, \GHRotLost\ correct predictions lost, net \GHRotNet. This gives no overall benefit. Appendix~M details the recipe and limitations; real back-view robustness remains untested.
-
-\clearpage
-\section{Discussion}
-The interpretable feature package does not consistently improve the geometric reference. Its SVM result is slightly worse; the positive world-joint result is small and does not reproduce as a meaningful gain with same-coordinate joints. The evidence supports a bounded comparison of representations, not a general performance improvement.
-
-Augmentation addresses a different question from feature design. Mirroring changes balanced-presentation SVM macro-F1 from \MirrorMixFoneBase\ to \MirrorMixFoneAug. Standalone G/H rotation instead changes original-view macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug. The latter contains no mirror or camera-calibration data. These scores describe different evaluation populations and cannot be compared directly. No separately collected left-hand or back-view test cohort is available.
-
-Joint angles and categories largely re-express landmark geometry; categorical flexion also derives from thresholded angles. The control therefore addresses redundancy directly. Coordinate estimates, scaling and model geometry may contribute to the different outcomes; their individual effects are not isolated. Removing direction features also discards axis-relative orientation, which may distinguish letters. Poor replacement performance does not prove that joint calculations are wrong or that categories are intrinsically unhelpful.
-
-Several limitations bound the answer. The workbook and its relaxations were developed exploratorily, not nested inside all later evaluations. Multiple representations were inspected on the same folds, despite nested tuning within particular searches. The strongest observed result should therefore not be treated as an unbiased estimate of a selected final system. Fixed classifier profiles also limit conclusions about algorithm superiority. Filename-block grouping cannot establish signer-independent performance, and detection filtering excludes difficult images before classification.
-
-The source article reports 87.60\% ASL Alphabet accuracy, not a matching F1 score. Our filtering, split and training settings differ, so the local 97\% scores are neither an exact reproduction nor evidence of outperforming that article. Live examples further show that a strong conditional dataset score does not guarantee reliable use under different capture conditions. No evidence here establishes that back-of-hand views are systematically worse, or that the early U/V/R observations have been solved.
-
-The report and much of the software were AI-generated. AI-assisted code inspection, unit tests and reconciliation with stored predictions were used in an attempt to verify the implementation. These checks do not constitute independent human code review, linguistic review of the workbook or validation of estimated anatomy. The author should verify the interpretation and references before submission. Participants should consent to webcam collection; saved images remain local by default. Single-frame letter recognition should not be presented as full sign-language understanding or a replacement for qualified interpretation.
-
-\section{Conclusions}
-Interpretable hand descriptions give no consistent advantage over the Shin-based reference in this evaluation. The full package does not improve SVM accuracy. World-joint additions yield a small net gain of 67 images; same-coordinate additions yield only four, and replacing directions loses 1,883. The world result is specific to its representation and learner, with letter-level regressions and no independent final-test confirmation.
-
-The contribution is testing whether meaningful descriptions add value when geometry is available, while separating feature design from augmentation. The mirror follow-up improves its synthetic balanced presentation. The standalone G/H turn changes macro-F1 from \GHRotFoneBase\ to \GHRotFoneAug\ on original views, with net \GHRotNet\ correct images. Neither establishes recognition of new left-handed signers or real back-of-hand robustness. Those require prospective evaluations.
+In een aparte proef draaien we de beschrijving van G/H-handen een halve slag om de verticale as. Dat moet het andere aanzicht van de hand nabootsen. De proef herstelt vier fouten en maakt vijf nieuwe: vrijwel geen verschil. Een echte draaiing kan vingers verbergen; alleen handpunten draaien bootst dat niet na (bijlage E).
 
 \clearpage
+\section{Discussie en voorlopige conclusie}
+Extra uitleg over de handvorm maakt de herkenning in deze proeven niet steeds beter. De basisaanpak bevat al veel van die informatie. De kleine verbetering met andere 3D-punten vraagt daarom om een voorzichtige uitleg.
+
+De resultaten zijn nog geen eindtest. Tijdens de ontwikkeling is vaker naar dezelfde toetsgroepen gekeken; dat kan een te gunstig beeld geven \citep{cawley2010}. Bovendien weten we niet of de groepen echt verschillende mensen bevatten. Een goede score op deze foto's betekent dus niet vanzelf dat de webcam bij een nieuw persoon even goed werkt. Onze resultaten zijn ook niet rechtstreeks vergelijkbaar met die van Shin, omdat de selectie en verdeling van de foto's verschillen.
+
+Voor de gezamenlijke conclusie ontbreken nog twee bijdragen: vinden we door fotobewerking vaker bruikbare handpunten, en helpt oefenen met meer foto's? Een extra gevonden hand is pas bruikbaar als de punten goed liggen. En meer foto's helpen alleen aantoonbaar als we steeds met dezelfde toetsfoto's vergelijken.
+\drafttodo{TEAM}{Voeg de antwoorden op RQ1/RQ2 toe en beschrijf daarna wat de drie onderzoeken samen laten zien.}
+
+Tekst en software zijn mede met AI opgesteld; de auteurs blijven verantwoordelijk voor de inhoud. Webcamopnamen vereisen instemming en blijven lokaal.
+
+% Maximaal vijf pagina's hoofdtekst; referenties mogen op pagina zes doorlopen.
+% De literatuurlijst sluit aan en mag zo nodig op pagina zes komen.
 \bibliography{references}
 \bibliographystyle{icml2021}
 \end{document}

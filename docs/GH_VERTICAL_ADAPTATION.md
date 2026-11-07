@@ -1,6 +1,6 @@
 # G/H: turn the landmark geometry around the vertical axis
 
-This document describes the earlier **combined** mirror/rotation/calibration candidate. The later [standalone rotation experiment](GH_ROTATION_STANDALONE.md) contains no mirrors, calibration or routing rule and is now live button **G/H y180 only [9]**. Its results are reported separately in Appendix M.
+This document describes the earlier **combined** mirror/rotation/calibration candidate. The later [standalone rotation experiment](GH_ROTATION_STANDALONE.md) contains no mirrors, calibration or routing rule and is now live button **G/H y180 only [9]**. Its results are reported separately in Appendix E.
 
 For the described palm-facing training examples, a 180-degree turn around the **vertical camera y axis** changes both the pointing side on screen and the palm/back direction. Around the wrist, the landmark transformation is:
 

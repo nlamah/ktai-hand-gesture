@@ -1,0 +1,22 @@
+\section{Resultaten van de handbeschrijvingen}\label{app:features}
+Deze tabellen onderbouwen de aantallen en letterverschillen in de hoofdtekst. Alle varianten gebruiken de 60.251 geaccepteerde bronnen en de vaste folds uit bijlage A. Bij hoeken uit andere 3D-punten veranderen zowel de beschrijving als de coördinatenbron. De controle met dezelfde punten voorkomt dat dit verschil aan de hoekformule alleen wordt toegeschreven.
+
+\begin{table}[h]\centering\small
+\caption{Gepoolde classificatiescores. Acc. is nauwkeurigheid in procenten. De volledige toevoeging verbetert SVM niet; de kleine wereldgewrichtswinst keert niet overtuigend terug bij dezelfde coördinaten.}
+\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
+Variant & Acc. (\%) & Macro-F1 & Acc. (\%) & Macro-F1\\\midrule
+\tableinput appendix_feature_summary_nl.tex
+\bottomrule\end{tabular}\end{table}
+
+De SVM-basis heeft 58.827 correcte voorspellingen. Alle toevoegingen samen geven 58.822. Wereldgewrichten geven 58.894: 143 fouten hersteld en 76 goede voorspellingen verloren, netto +67. Dezelfde-coördinatenhoeken geven 58.831: 89 hersteld en 85 verloren, netto +4. Dit bewijst geen zelfstandige meerwaarde van categorieën alleen, omdat het volledige pakket ook werkboekscores en hoeken bevat.
+
+\begin{table}[h]\centering\small
+\caption{Alle letters voor SVM. P is precisie in procenten; F1 is een fractie. ``Wereld'' voegt metingen uit de andere 3D-punten toe, ``zelfde'' uit de basispunten. Het aantal geaccepteerde beelden N verschilt per letter.}
+\begin{tabular}{lrrrrrrr}\toprule
+ & & \multicolumn{2}{c}{Basis} & \multicolumn{2}{c}{+ Wereld} & \multicolumn{2}{c}{+ Zelfde}\\
+Letter & N & P (\%) & F1 & P (\%) & F1 & P (\%) & F1\\\midrule
+\tableinput appendix_feature_letters_nl.tex
+\bottomrule\end{tabular}\end{table}
+
+De basisrichtingen bevatten al informatie over buiging: voor genormaliseerde segmentrichtingen $u$ en $v$ is de interne hoek $\arccos(u^\top v)$. Hoeken en daarop gebaseerde categorieën voegen dus geen onafhankelijke sensor toe. Zij kunnen wel een andere leerbare representatie bieden. Variatie in coördinatenschattingen, schaling en modelgeometrie is hier niet afzonderlijk geïsoleerd. De resultaten rechtvaardigen geen algemene claim over nieuwe personen of webcamgebruik.

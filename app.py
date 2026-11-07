@@ -272,6 +272,7 @@ parser.add_argument(
     default=str(_ROOT / "config" / "thresholds.json"),
 )
 parser.add_argument("--model", default=str(DEFAULT_MODEL))
+parser.add_argument("--capture", help="Read-only feature review of an existing capture.json or capture folder.")
 args, _ = parser.parse_known_args()
 
 st.set_page_config(
@@ -279,6 +280,10 @@ st.set_page_config(
     page_icon=":material/back_hand:",
     layout="wide",
 )
+if args.capture:
+    from research.feature_review import show_review
+    show_review(args.capture,args.reference,args.thresholds,args.model)
+    st.stop()
 st.title("Check ASL features and recognize letters live")
 st.write(
     "Turn on the webcam to recognize letters. Optionally enter the letter you "
