@@ -1,3 +1,0 @@
-On originals, SVM corrects 157 errors and loses 293 correct predictions relative to no change: net -136. Fold nets are -51, -53, -28, -3, -1. Relative to mirror training, the net difference is -110. Normalization does not improve original-image classification.
-
-The separate mixture has 60,225 accepted detections. Its SVM macro-F1 changes from 0.62650 to 0.96047; mirror training gives 0.97421. This is a different test distribution. Excluding failed detections leaves precision unchanged here, because those attempts predict no letter and create no false positive. F1 changes as their false negatives are excluded. All-attempt scores remain available separately.

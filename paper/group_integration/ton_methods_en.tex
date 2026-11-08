@@ -1,8 +1,0 @@
-\subsection{Hand-shape descriptions (RQ3)}\label{sec:ton-methods}
-MediaPipe locates points on the hand, but the classifier needs numerical descriptions of their arrangement. Shin uses distances and directions between these landmarks. We ask whether explicit descriptions of finger shape add useful information, or can replace his directions.
-
-We compare four feature blocks. Distances (D) describe how far landmarks are apart; Shin's directions (S) describe how the lines between them are oriented relative to the image axes. Our categories (E) describe recognizable properties, such as a bent finger, fingers being spread, or thumb position. Joint measurements (J) instead retain numerical angles at finger joints rather than assigning bending categories.
-
-Keeping D and independently including or omitting S, E and J gives eight representations. We retrain both classifiers on each representation using the same fitting and test images. Comparing variants with and without E/J tests their added value; variants without S test whether they can replace Shin's directions. D/S use image landmarks, whereas E/J use estimated 3D world landmarks. A control also calculates J from Shin's image coordinates to examine this coordinate difference.
-
-After training, we shuffle one feature group between held-out images without refitting. A score drop indicates model dependence on that group, which differs from the benefit of adding it during training \citep{ton-sklearnpermutation}. Definitions, settings and brief orientation follow-ups are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
