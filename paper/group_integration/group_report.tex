@@ -80,18 +80,18 @@
 
 
 
-% Mijn idee is om te onderzoeken of we de inputafbeeldingen kunnen vereenvoudigen voordat we ze aan het model geven.
-% We gebruiken een convolution/filter om vooral de randen met hoog contrast over te houden, zodat de vorm van de hand centraal staat en achtergrond, kleur en andere details grotendeels verdwijnen.
-% Vervolgens trainen/testen we hetzelfde model op:
-% 1. de originele afbeeldingen;
-% 2. de vereenvoudigde edge-images.
-% Onderzoeksvraag: Does edge-based image preprocessing improve sign language alphabet recognition?
+% We investigate whether simplifying input images changes recognition.
+% A filter emphasizes high-contrast contours to emphasize hand shape.
+% Compare the same model on:
+% 1. original images;
+% 2. simplified edge images.
+% Research question: Does edge-based image preprocessing improve sign language alphabet recognition?
 
 
 \section{Brief Introduction}
 
 % BEGIN TON: shared introduction
-This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-zhang2020,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
+This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-mediapipedocs,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
 
 % END TON: shared introduction
 \leavevmode \\\\
@@ -137,7 +137,7 @@ Briefly provide an overview of previous research and studies that are relevant t
 
 \fi
 % BEGIN TON: related work
-Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-zhang2020}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-fisher2019}.
+Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-mediapipedocs}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-sklearnpermutation}.
 % END TON: related work
 
 \section{Methods}
@@ -158,7 +158,7 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
     	It uses the lowest value in that area. This allows light areas to become smaller and dark areas to expand.
 
     \subsubsection{Canny overlay}
-        Zoekt randen op basis van veranderingen in helderheid en voegt de gevonden randen toe aan de oorspronkelijke kleurenfoto. In jouw implementatie worden die randen lichter gemaakt.
+        Detects edges from changes in brightness and overlays them on the original colour image. The implementation brightens the detected edges.
 
 % \begin{figure}
 %     \centering
@@ -178,12 +178,12 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
 % BEGIN TON: methods
 
 \par\noindent ...\par\medskip
-\subsection{Hand-shape descriptions and orientation (RQ3)}\label{sec:ton-methods}
+\subsection{Hand-shape descriptions (RQ3)}\label{sec:ton-methods}
 We compare four building blocks: distances (D), Shin's directions between hand points (S), our own categories such as finger bending and spreading (E), and measured joint angles (J). Distances are always included; switching the other three blocks on or off gives eight combinations. Both SVM and LightGBM receive the same combinations and test images. E and J use estimated world points, whereas D and S use image points. A separate control calculates J from the same points as Shin.
 
 After training, we shuffle one feature group between held-out images and measure the loss in precision and F1. Labels and fitted models remain unchanged. These permutation tests use 13,000 fixed images and five shuffles per group. They measure model dependence, whereas retraining the eight combinations measures the effect of adding or removing information.
 
-Separate orientation checks compare mirror training, normalization to one hand orientation, and G/H rotation. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
+As brief practical follow-ups, we also tried left/right handling and G/H rotation. These are separate from the main feature comparison. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
 \par\noindent ...\par\medskip
 
 % END TON: methods
@@ -194,7 +194,7 @@ Separate orientation checks compare mirror training, normalization to one hand o
 Include a description of the data used, what it contains, train test splits, etc.
 \fi
 % BEGIN TON: datasets
-For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
+For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection from the ASL Alphabet dataset \citep{ton-asl_alphabet}; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
 % END TON: datasets
 \leavevmode 
         \\\\
@@ -254,10 +254,8 @@ Hand description & P & F1 & P & F1\\\midrule
 
 In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
 
-\paragraph{Additional orientation checks.}
-On original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\ref{app:ton-orientation}).
-
-For G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\ref{app:ton-live}).
+\paragraph{Brief practical explorations.}
+Alongside the feature study, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and right normalization help on artificial mirror tests but lose 26 and 136 correct predictions on originals. G/H rotation learns the offered artificial geometry, while two selected live G examples remain H. These small exploratory checks do not establish better recognition for new users; protocols, scores and examples are in Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}.
 % END TON: results
 
 \par\noindent ...\par\medskip
@@ -295,9 +293,9 @@ For G/H, adding 180-degree vertical-axis training rotations corrects four origin
 \paragraph{RQ3: interpretation and limitations.}
 Our categories do not consistently improve on Shin, and categories plus joint angles do not fully replace his directions under the tested settings. The small world-angle improvement depends on the learner and coordinate source. Permutation dependence should not be read as the gain from adding a feature.
 
-The G/H rotation learns artificial rotated geometry but does not resolve the observed live G/H confusion. A correct label on the original dataset is also not an independent assessment of ASL execution. Real hand-back views can yield different estimated hand points; rigid rotation preserves the original geometry and does not recreate those detection changes.
+The short left/right and G/H explorations illustrate limits of synthetic changes: improved artificial scores do not establish better live recognition. They are practical follow-ups, not additional independent validation of the main feature study. Rigid G/H rotation preserves geometry and does not recreate new detector errors under occlusion.
 
-The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test \citep{ton-cawley2010}. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
+The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
 % END TON: discussion
 
 \par\noindent ...\par\medskip

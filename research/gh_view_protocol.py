@@ -35,7 +35,7 @@ class GHViewSession(ProtocolSession):
     def __init__(self,directory,model_sha):
         self.directory=Path(directory)
         if (self.directory/'withdrawn.json').exists():
-            raise ValueError('Deze G/H-sessie is ingetrokken. Start een nieuwe opnameronde.')
+            raise ValueError('This G/H session was withdrawn. Start a new capture round.')
         self.plan=json.loads((self.directory/'session.json').read_text())
         if self.plan.get('schema')!=SCHEMA or self.plan.get('tasks')!=tasks(self.plan['participants'],self.plan['hands']):
             raise ValueError('Unknown or modified G/H viewpoint protocol.')

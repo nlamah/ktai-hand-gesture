@@ -1,51 +1,50 @@
-\section{Afzonderlijke rotatieproef voor G en H}\label{app:gh-rotation}
-\paragraph{Aanleiding en hypothese.}
-Bij de gebruikelijke ASL-uitvoering van G en H is de palm naar binnen gericht. \href{https://doi.org/10.3389/fpsyg.2022.953019}{Shield, Igel en Meier (2022)} beschrijven deze palmoriëntatie expliciet; \href{https://www.lifeprint.com/asl101/topics/feedback.htm}{Bill Vicars, ASL University} noemt ook een zijwaartse uitvoering. Voor een camera tegenover de gebaarder is dan vooral handrug of zijkant zichtbaar. De geselecteerde Kaggle-voorbeelden in figuur~\ref{fig:gh-training-rotation} tonen juist de palm. Shin e.a. (2021) gebruikten onder meer die dataset; onze daarvan afgeleide herkenner kan daardoor een afwijkend aanzicht leren. Camerastandpunt, handkeuze en alle G/H-labels zijn niet onafhankelijk gecontroleerd. We onderzoeken daarom een mogelijke mismatch tussen trainingsaanzicht en beoogd gebruik; dit toont geen fout in Shins leermethode aan.
+\section{Exploratory G/H rotation checks}\label{app:gh-rotation}
+\paragraph{Motivation and hypothesis.}
+For usual ASL G/H, the palm faces inward or sideways, as described by \href{https://www.lifeprint.com/asl101/topics/feedback.htm}{Bill Vicars, ASL University}. A camera facing the signer therefore sees mainly the back or side. The selected Kaggle examples in Figure~\ref{fig:gh-training-rotation} show the palm. Shin used this dataset, so a derived recognizer may learn a different view. Camera viewpoint, hand identity and all G/H labels have not been independently checked. This motivates a possible training/use mismatch, not a demonstrated fault in Shin's learning method.
 
-De herstelhypothese is dat gedraaide trainingsbeschrijvingen de herkenner ook het handrugaanzicht laten leren. Daarom voegen we uitsluitend $180^\circ$ camera-$y$-rotaties van G/H toe; de originelen blijven behouden. Geen spiegeltraining, webcamkalibratie of extra voorspelregel. Beide armen blijven 26-letter-SVM's met dezelfde bronnen, folds, oorspronkelijke preprocessing, numerieke gamma en klassegewichten.
+We add only $180^\circ$ camera-y G/H fitting rotations while retaining originals, without mirror training, webcam calibration or routing rules. Both arms are ordinary 26-class SVMs with shared sources, folds, original preprocessing, numeric gamma and class weights.
 
-De draaiing verandert de 210 paar-richtingen volgens $(d_x,d_y,d_z)\mapsto(-d_x,d_y,-d_z)$. Dit is een echte rotatie met determinant $+1$, anders dan horizontale spiegeling. Genormaliseerde afstanden en intrinsieke gewrichtsmetingen blijven gelijk. De bewerking is equivalent aan een polsgerichte draaiing van de beeldhandpunten, maar genereert geen RGB-aanzicht, verborgen vingers of nieuwe detectorfouten.
+The 210 pair directions change as $(d_x,d_y,d_z)\mapsto(-d_x,d_y,-d_z)$. This rotation has determinant $+1$, unlike reflection. Distances and intrinsic joint measurements remain equal. It is equivalent to wrist-centred image-landmark rotation, but creates no new RGB view, hidden surfaces or detector errors.
 
-De historische populatie telt 60.251 geaccepteerde bronnen, waaronder 2.430 G en 2.371 H. Iedere G/H-bron levert het origineel en één draaiing, gewogen met elk 0,5; andere bronnen behouden gewicht één. De volledige trainingsfit heeft 65.052 rijen. De oorspronkelijke toetsbeelden worden niet gedraaid. Een opnieuw getrainde referentie reproduceert alle historische out-of-fold voorspellingen exact.
+The fixed population has 60,251 accepted sources: 2,430 G and 2,371 H. G/H originals and one rotated copy weigh 0.5 each; other sources weigh one. The full fit has 65,052 rows. Ordinary held-out images remain unchanged. A freshly fitted reference exactly reproduces the stored out-of-fold predictions.
 
 \begin{table}[h]\centering\small
-\caption{Gepoolde resultaten op dezelfde 60.251 ongewijzigde toetsbeelden. P is macro-precisie over A--Z. De percentages zijn conditioneel op succesvolle historische handdetectie.}
+\caption{Pooled results on 60,251 unchanged accepted test sources. P is macro-precision over A--Z. Scores condition on accepted original detection.}
 \begin{tabular}{lrrrr}\toprule
 Training & Acc. (\%) & P (\%) & Macro-F1 & Correct\\\midrule
 \tableinput appendix_gh_summary_nl.tex
 \bottomrule\end{tabular}\end{table}
 
-Er worden vier fouten hersteld en vijf goede voorspellingen verloren: netto $-1$. De vijf folds hebben respectievelijk netto $+2$, $0$, $-1$, $-1$ en $-1$. Dit geeft geen algemene verbetering op de oorspronkelijke presentatie. Dezelfde toetsfamilie was al bij eerdere ontwikkeling betrokken; dit is geen bevestigende significantieclaim.
+Four errors are corrected and five correct predictions lost: net $-1$. Fold nets are $+2$, $0$, $-1$, $-1$, $-1$. There is no general improvement on the original view. These sources were inspected during development; no confirmatory significance claim is made.
 
 \begin{table}[h]\centering\small
-\caption{G/H-scores binnen de volledige 26-lettertaak; false positives uit andere letters tellen mee. Dit zijn geen scores van een binaire G/H-classifier.}
+\caption{G/H within the 26-letter task; false positives from other letters count. This is not a binary G/H classifier.}
 \begin{tabular}{llrrrr}\toprule
-Letter & Training & N & Precisie & Recall & F1\\\midrule
+Letter & Training & N & Precision & Recall & F1\\\midrule
 \tableinput appendix_gh_letters_nl.tex
 \bottomrule\end{tabular}\end{table}
 
-G en H hebben dezelfde recall, maar iets lagere precisie en F1 na rotatie. De oorspronkelijke toets meet mogelijke regressie op het oude aanzicht. De training leert twee geometrieën per G/H-label; de oorspronkelijke toets blijft ook palmgerichte voorbeelden als G/H beoordelen. Die labels worden niet onafhankelijk als correcte ASL-uitvoering bevestigd. Als het doel uitsluitend de gebruikelijke ASL-palmoriëntatie is, hoeft herkenning van een afwijkende palmgerichte uitvoering niet behouden te blijven. Een onafhankelijke handrugtoets voor die herstelhypothese ontbreekt nog. Hoek en as zijn gekozen na eerdere verkennende proeven, niet op een onaangeroerde eindtest.
+G/H recall stays equal while precision/F1 decline slightly. The original test checks regression on the dataset view, including palm-facing G/H. It does not independently validate ASL execution. Recognizing an atypical palm-facing execution need not be preserved if the goal is usual ASL orientation. An independently reviewed real hand-back test is still needed. Rotation angle/axis were chosen after exploratory work.
 
 \clearpage
-\subsection{Geroteerde landmarks van echte trainingsbeelden}
-Figuur~\ref{fig:gh-training-rotation} toont G1128 en H1198 uit de gebruikte trainingsverzameling. De 21 handpunten komen uit de opgeslagen detecties waarmee de trainingsfeatures zijn berekend. Links staat de foto met deze punten, in het midden het oorspronkelijke skelet en rechts hetzelfde skelet na de halve draai. Er is hiervoor geen nieuwe handdetectie uitgevoerd.
+\subsection{Rotated landmarks from real fitting sources}
+Figure~\ref{fig:gh-training-rotation} shows G1128/H1198 and the 21 stored points used for feature extraction. Left is the source photo; centre is the original skeleton; right is its half-turn. No redetection is performed.
 
-Punt 0 is de pols en vormt het draaipunt. Voor elk handpunt met beeldcoördinaten $(x_i,y_i,z_i)$ geldt:
+Wrist 0 is the pivot. For image point $(x_i,y_i,z_i)$:
 \[
 (x_i',y_i',z_i')=(2x_0-x_i,\;y_i,\;2z_0-z_i).
 \]
-De skeletten zijn getekend ten opzichte van de pols. De verticale stippellijn is de camera-$y$-as: $x$ en diepte $z$ wisselen van teken, $y$ blijft gelijk. Positieve $y$ loopt omlaag, zoals in de beeldcoördinaten. Alle vier skeletten gebruiken dezelfde schaal; het midden van ieder diagram volgt de hand. Dit zijn genormaliseerde beeldcoördinaten met geschatte diepte, geen metingen in meters.
+The dashed line is the camera-y axis. Wrist-relative x/depth z reverse sign; y is unchanged and points down. All skeletons share a scale and are centred on the hand. These are normalized image coordinates with estimated depth, not metres.
 
 \begin{figure}[h]\centering
 \includegraphics[width=\linewidth]{figures/gh_training_rotation.pdf}
-\caption{Twee echte trainingsvoorbeelden: bronfoto, oorspronkelijke landmarks en de equivalente $180^\circ$-rotatie om de verticale as door de pols. Oranje punten zijn de landmarks; de zwarte stip is de pols. De rechterkolom toont getransformeerde geometrie en bevat geen nieuw gerenderd camerabeeld.}
+\caption{Two actual fitting sources: source photograph, original points and equivalent $180^\circ$ vertical-axis rotation through the wrist. Orange marks landmarks; black marks the wrist. Right panels contain transformed geometry, not new rendered camera images.}
 \label{fig:gh-training-rotation}
 \end{figure}
 
-De training voegt de gedraaide featurebeschrijving toe naast het origineel. De direct uit de getekende rotatie herberekende Shin-features komen voor beide voorbeelden overeen met de gebruikte trainingsbewerking (absolute tolerantie $10^{-6}$). De 190 afstandswaarden en 15 gewrichtsmetingen blijven ongewijzigd. Bron-ID's, oorspronkelijke en gedraaide coördinaten en controles staan in \texttt{results/gh\_training\_rotation\_01/}.
+Recomputed Shin features match the actual augmentation for both examples within $10^{-6}$. The 190 distances and 15 joint measurements are unchanged. Source IDs, coordinates and checks are in \path{results/gh_training_rotation_01/}.
 
 \clearpage
 \input{appendix_occlusion_nl.tex}
-
 \clearpage
 \input{appendix_gh_live_nl.tex}

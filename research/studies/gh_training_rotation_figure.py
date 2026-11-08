@@ -113,11 +113,11 @@ def main():
         photo = fig.add_subplot(grid[row, 0])
         photo.imshow(crop)
         photo.axis('off')
-        photo.set_title(f'{letter} · {examples[row]["filename"]}\nTrainingsfoto + handpunten', fontsize=11)
+        photo.set_title(f'{letter} · {examples[row]["filename"]}\nTraining photograph + landmarks', fontsize=11)
         skeleton(fig.add_subplot(grid[row, 1], projection='3d'), original, spans,
-                 f'{letter} · oorspronkelijke landmarks')
+                 f'{letter} · original landmarks')
         skeleton(fig.add_subplot(grid[row, 2], projection='3d'), rotated, spans,
-                 f'{letter} · 180° om verticale y-as')
+                 f'{letter} · 180° around vertical y axis')
     fig.savefig(FIG, bbox_inches='tight')
     fig.savefig(OUT/'gh_training_rotation.png', dpi=200, bbox_inches='tight')
     plt.close(fig)

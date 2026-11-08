@@ -17,12 +17,12 @@ MODEL_CHOICES=(
 # comparison in Appendix E. Older exploratory variants remain in the archive.
 PRIMARY_KEYS=('reference','angles','GH_back','mirror_base','mirror','right_hand')
 MODEL_HELP={
-    'reference':'Shin-basis: afstanden en richtingen (820 inputs).',
-    'angles':'Dezelfde basis met 15 wereldgewrichtsmetingen (835 inputs).',
-    'GH_back':'Zelfde 835-inputreferentie, met extra G/H-trainingsbeschrijvingen die 180 graden om de verticale camera-as zijn gedraaid. Geen links/rechts-spiegeling.',
-    'mirror_base':'Controlemodel op opnieuw gedetecteerde oorspronkelijke beelden; vergelijk hiermee de spiegeltraining.',
-    'mirror':'Getraind met oorspronkelijke en horizontaal gespiegelde beelden, elk opnieuw gedetecteerd.',
-    'right_hand':'Detecties worden voor de featureberekening naar dezelfde rechterhandoriëntatie genormaliseerd.',
+    'reference':'Shin baseline: distances and directions (820 inputs).',
+    'angles':'The same baseline plus 15 world-joint measurements (835 inputs).',
+    'GH_back':'The same 835-input reference, with extra G/H training descriptions rotated 180 degrees around the vertical camera axis. No left/right mirroring.',
+    'mirror_base':'Matched reference on redetected original images; use this to assess mirror training.',
+    'mirror':'Trained on original and horizontally reflected images, each independently detected.',
+    'right_hand':'Detections are normalized to the same right-hand orientation before feature extraction.',
 }
 
 

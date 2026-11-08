@@ -1,13 +1,7 @@
 {
   "status": "passed",
-  "selection": "Only tables supporting the five referenced Dutch appendix sections",
+  "selection": "Only tables supporting the referenced appendix sections",
   "sources": {
-    "results/model_comparison/model_metrics.csv": "7fd34d5369adef8d550fc027dcfd15dd97bbe378959daab77e066ddec1a5358f",
-    "results/angles/metrics_svm.csv": "231e9abc4b09a5510e54f29e3d9b79b922fa2e97bb5d76e387828a750501e271",
-    "results/angles/metrics_lightgbm.csv": "4852c8ee626c5685c0deff0575ccfc4af8b1dba5112819c2db1b89f65f767eb9",
-    "results/direction_joint_01/metrics.csv": "73bcc3302418e72fc6a0405875f5001aaeba55c78b08b1deaa08779693d5a105",
-    "results/angles/per_letter_svm.csv": "4824a712a924c21cb1ad8ffb62308a4ead8bb6ec2938d106c061f52432eec4dc",
-    "results/direction_joint_01/per_letter.csv": "c89a127f38b1e7418142dd13cb4284dea88c16cfa8e2fd0fbfcc1cdf99e9f6eb",
     "results/mirror_01/metrics.csv": "3e6c3536e33ff13acba56c827a918fbe417b5c41099c41d8827aa3a21d23f9c7",
     "results/rotation_GH_y180_01/metrics.csv": "8031627abebd8056031312ac755b98017e6eaccdb2fcad9b8de3f6e54a9eec31",
     "results/rotation_GH_y180_01/per_letter.csv": "c72b6ae27f31f0b5ab2d969e0f533c4dd84a8b1a005d2cceba2f56dd86383bbd",
@@ -15,12 +9,10 @@
   },
   "mirror_scope": "accepted_only",
   "generated_rows": {
-    "feature_summary": 4,
-    "feature_letters": 26,
     "mirror": 6,
     "gh_summary": 2,
     "gh_letters": 4
   },
-  "script_sha256": "e77abe2c2eeed655cecdb8ee01eaa00c690b5b04cc1476faaefc23ff1fe26e9a",
+  "script_sha256": "c9c525f90b5a96971a895948cc9036a0fe0a8add7a1feb24255f6259e77e91c3",
   "note": "No training, tuning, new predictions or changes to frozen experiment evidence."
 }

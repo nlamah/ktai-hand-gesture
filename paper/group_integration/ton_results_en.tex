@@ -13,7 +13,5 @@ Hand description & P & F1 & P & F1\\\midrule
 
 In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
 
-\paragraph{Additional orientation checks.}
-On original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\ref{app:ton-orientation}).
-
-For G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\ref{app:ton-live}).
+\paragraph{Brief practical explorations.}
+Alongside the feature study, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and right normalization help on artificial mirror tests but lose 26 and 136 correct predictions on originals. G/H rotation learns the offered artificial geometry, while two selected live G examples remain H. These small exploratory checks do not establish better recognition for new users; protocols, scores and examples are in Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}.

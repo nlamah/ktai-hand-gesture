@@ -18,11 +18,11 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
     def test_app_renders_typed_letter_and_camera_toggle(self):
         app = AppTest.from_file(str(APP), default_timeout=30).run()
         self.assertEqual(len(app.exception), 0, str(app.exception))
-        self.assertTrue(any("features controleren" in item.value for item in app.title))
+        self.assertTrue(any("inspect features" in item.value for item in app.title))
         self.assertTrue(any(
-            item.label == "Bedoelde letter" for item in app.text_input
+            item.label == "Intended letter" for item in app.text_input
         ))
-        self.assertTrue(any(item.label == "Camera aan" for item in app.toggle))
+        self.assertTrue(any(item.label == "Camera on" for item in app.toggle))
 
     def test_current_models_and_archive_preserve_selection(self):
         app=AppTest.from_file(str(APP),default_timeout=30).run()
@@ -52,7 +52,7 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
             app.session_state['asl_live_feature_camera']={'frame':payload}
             app.run()
             self.assertFalse(app.exception,str(app.exception))
-            button=next(b for b in app.button if b.label=='Meetmoment bewaren')
+            button=next(b for b in app.button if b.label=='Save capture')
             self.assertFalse(button.disabled)
             button.click().run()
             self.assertFalse(app.exception,str(app.exception))
@@ -65,7 +65,7 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
             expected=np.asarray(Image.open(BytesIO(buffer.getvalue())).convert('RGB'))[:,:,::-1]
             np.testing.assert_array_equal(packet['model_frame'],expected)
             app.toggle(key='asl_live_camera_active').set_value(False).run()
-            self.assertTrue(next(b for b in app.button if b.label=='Meetmoment bewaren').disabled)
+            self.assertTrue(next(b for b in app.button if b.label=='Save capture').disabled)
 
     def test_webcam_component_uses_browser_media_and_component_v2_only(self):
         source = APP.read_text(encoding="utf-8")

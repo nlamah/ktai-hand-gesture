@@ -96,16 +96,16 @@
   "reference_sha256": "0b396e53d2b7a99147c5984c0c3c2144ce0054016c46b221e1fb9ee1dc7a71ef",
   "threshold_sha256": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd",
   "code_sha256": {
-    "research/feature_review.py": "715f889fc8310eb80e3a64e977ca9c26a002158368b1a13da9f603d22e304057",
-    "research/studies/appendix_visuals.py": "f6f0cadc0b6f07a054ef0674b9854331f967e66132cdc650d3df8f4e45e0bf78",
+    "research/feature_review.py": "3b19c9a179c094e070274e9e41343271ef24f720eacae1234a5751ff85f6d8d7",
+    "research/studies/appendix_visuals.py": "a115ec3e6b6b6985e192b5896a0dbcd255343d247d341de9ab6eb4f6b84ee1ed",
     "research/live.py": "420f09c2047341263b6f06a5bf345f861dcff41d99727d6d815f09f4922f570e",
     "research/workbook.py": "9ef50ee5b90b58b1780e1dd81a24cf7d84ca20e384eeffb27cc57bfd854c96b9"
   },
   "figures": {
-    "paper/figures/feature_review_G.pdf": "ec846f784edb87d2a45073ca4da93625127de9c4db45f9f12939e65e85dbd16d",
-    "paper/figures/mirror_examples.pdf": "7035a6368df8fd7145aca2d2e316e3d6c37562df3c4f8edb1359f547f0a54e9b",
-    "paper/figures/gh_webcam_examples.pdf": "e1c61fdf4cad59e8afd3e283987dbca31c7f2ffdce6e0e5a1d580aa2a2d9c020",
-    "paper/figures/feature_review_H.pdf": "7d293051f6f5167d0a258643f6f319614c9bbc3a24a16fdd517dbff3b6d0f124"
+    "paper/figures/feature_review_G.pdf": "cd0fccce8707295f2e7b89901066a279f6289e2e8e85e9b38a4b8f6e1928160b",
+    "paper/figures/mirror_examples.pdf": "29dc5627ea0510e9733a8d26a37d609309388bae703ba6be232d08f3a3e1c242",
+    "paper/figures/gh_webcam_examples.pdf": "b226675bb5a1bf55070bbbbc795b3d23ffed42a0a52aa28b9b8afeae9bb682fa",
+    "paper/figures/feature_review_H.pdf": "4887cead320444231d8ae24cb9755ab5b9225aef65c651bbbe45f542ae7ddd53"
   },
   "checks": "Capture image hashes, both mirror pixel hashes, current model replay and unchanged prediction across target-letter comparisons pass"
 }

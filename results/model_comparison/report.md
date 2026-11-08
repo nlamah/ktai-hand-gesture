@@ -76,7 +76,7 @@ The three groups are omitted individually; all other inputs remain. Removing a g
 
 Combine three kinds of evidence: gain over Shin, loss after shuffling, and loss after retraining without the group. High permutation importance alone does not establish added value over Shin. Evaluation uses six filename blocks, not verified people; it is development research. References and thresholds were selected earlier on the separate Roboflow set. There is no independent webcam or person test. Standard deviations over folds and repeats are not independent confidence intervals.
 
-Raw results: `model_metrics.csv`, `per_letter.csv`, `permutation_summary_r5_cap100.csv`, `permutation_letters_r5_cap100.csv`, `ablation.csv`, `ablation_letters.csv`, `oof_predictions.csv`. Model-specific files are retained. For current reproduction commands, see `REPRODUCE.md`, sections 4–5.
+Raw results: `model_metrics.csv`, `per_letter.csv`, `permutation_summary_r5_cap100.csv`, `permutation_letters_r5_cap100.csv`, `ablation.csv`, `ablation_letters.csv`, `oof_predictions.csv`. Model-specific files are retained. For current reproduction commands, see `README.md`, sections 4–5.
 
 ## Follow-up candidate: SVM without standalone categories
 

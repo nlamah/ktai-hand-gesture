@@ -11,30 +11,6 @@
   "rotation_determinant": 1,
   "models_fitted": 0,
   "detector_calls": 0,
-  "figure_sha256": "48a1714e909426d3cfd1811d30a398d23de0b212ace9148c103654c6aebd9ff7",
-  "provenance_sha256": "51134d8566baeba7ee9127a0cc86b36020d6ce1870062aff69358482093749d6",
-  "appendix_sha256": "ea89a9c5f879ec13b0c1e053ad6e3c460aec36a776be8f0fe83fc6f0672e9f46",
-  "appendix_pages": 14,
-  "training_figure_page": 10,
-  "independent_trigonometric_rotation_recomputed": true,
-  "visually_inspected_pages": [
-    10
-  ],
-  "other_unchanged_pages": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11
-  ],
-  "main_document_unchanged": true,
-  "tex_overfull_or_undefined_warnings": false,
-  "document_update_note": "Training-skeleton illustration retained unchanged. Rejected camera examples on former page 11 were removed.",
-  "current_document_verification": "results/gh_live_diagnostics_20261107/document_verification.json"
+  "figure_sha256": "24e530b110126c0100bc4f18ebdf817769015c53fbc5d9b8a1064436ae608225",
+  "provenance_sha256": "9a6fb15428f34c709bcb2ce23fa4607d3ed439d5ca311c127317ca01b75ba676"
 }

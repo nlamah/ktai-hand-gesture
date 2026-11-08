@@ -19,7 +19,7 @@ J & 15 & Fourteen internal angles and one signed thumb deviation from estimated 
 
 The eight representations are DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. DSEJ contains 905 inputs. E is derived from measured geometry, not from the correct letter. Original images are used without augmentation or right normalization in this factorial comparison. D/S/E/J were recomputed on 390 sources; all 19 one-hot groups were checked across the full cache.
 
-SVM uses an RBF kernel, $C=10$, \texttt{gamma=scale} and balanced classes. LightGBM uses 100 trees, 31 leaves, learning rate 0.1, minimum 20 examples per leaf and seed 42 \citep{ton-ke2017}. Only J receives median imputation and standardization fitted on the training fold. No representation-specific parameter search is performed. Macro-precision and macro-F1 average equally across A--Z, assigning zero to undefined letter scores.
+SVM uses an RBF kernel, $C=10$, \texttt{gamma=scale} and balanced classes. LightGBM uses 100 trees, 31 leaves, learning rate 0.1, minimum 20 examples per leaf and seed 42 \citep{ton-lightgbmdocs}. Only J receives median imputation and standardization fitted on the training fold. No representation-specific parameter search is performed. Macro-precision and macro-F1 average equally across A--Z, assigning zero to undefined letter scores.
 
 \begin{table}[h]\centering\small
 \caption{Paired changes relative to DS. Net is corrected minus newly introduced errors on the same 60,251 images.}
@@ -34,7 +34,7 @@ The same-coordinate J control uses Shin's image points without aspect correction
 
 \clearpage
 \subsection{Permutation procedure}
-Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 per fold and 13,000 unique sources in total. Five seeded row permutations move all columns in a feature group together, preserving valid one-hot encodings. Labels and trained models remain fixed. D/S/E/J blocks are tested across the eight variants; the 19 E checks are tested in DSE/DE without J, and E/J families in DSEJ/DEJ. The resulting 3,900 interventions retain precision and F1 drops. Spread over folds/repeats is descriptive, not an independent confidence interval. Related features can substitute for one another, and shuffling can create unusual combinations; importance is not a causal feature ranking \citep{ton-sklearnpermutation,ton-fisher2019}.
+Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 per fold and 13,000 unique sources in total. Five seeded row permutations move all columns in a feature group together, preserving valid one-hot encodings. Labels and trained models remain fixed. D/S/E/J blocks are tested across the eight variants; the 19 E checks are tested in DSE/DE without J, and E/J families in DSEJ/DEJ. The resulting 3,900 interventions retain precision and F1 drops. Spread over folds/repeats is descriptive, not an independent confidence interval. Related features can substitute for one another, and shuffling can create unusual combinations; importance is not a causal feature ranking \citep{ton-sklearnpermutation}.
 
 \begin{figure}[h]\centering
 \includegraphics[width=.95\linewidth]{figures/ton_category_importance_en.pdf}
@@ -71,8 +71,8 @@ MCP denotes the knuckle, PIP the middle joint, and DIP the end joint; the thumb 
 The workbook can allow several categories per letter. For ``no contact'', both near and far count as agreement. Unknown measurements are not confirmed agreement; blank reference fields are not scored. In the screenshot, index PIP is observed extended although partly bent/bent is expected, while index--middle is correctly observed not spread. The original screenshot is retained unchanged. The live tool also preserves the actual image, model hash, features and prediction for error analysis.
 
 \clearpage
-\section{Separate checks of hand orientation}\label{app:ton-orientation}
-These checks retain their own 835-input SVM reference (DSJ); they are not extra variants of the eight-way feature comparison. Historical source results remain separate.
+\section{Exploratory orientation follow-ups}\label{app:ton-orientation}
+These short practical explorations tried left/right handling and G/H orientation alongside the main feature study. They retain their own 835-input SVM reference (DSJ) and are not extra arms of the eight-way comparison or independent final validation. The detail below makes the attempted ideas reproducible.
 
 \subsection{RGB mirrors and detector-Right normalization}
 Original and horizontally mirrored RGB images are independently detected with IMAGE mode, at most two hands, and detection/presence thresholds 0.5. There are 60,251 accepted originals and 60,201 accepted mirrors. Mirror training adds accepted mirrors of fitting sources while retaining total weight one per source. Original-only preprocessing, numeric gamma and class weights are shared. Sources and their copies remain in the same fold.
@@ -92,12 +92,12 @@ Test presentation & Training/input & N & P & Macro-F1 & Correct\\\midrule
 On original images, normalization loses 136 correct predictions relative to no change, and mirror training loses 26. On the artificial mixture, normalization improves on no change but remains below mirror training. Detector labels are not independently verified; mirror pairs share pose, person and background. These results do not establish performance for unseen left-handed people. Evidence: \path{results/mirror_01/} and \path{results/handedness_01/}.
 
 \subsection{Why G/H rotation is a different hypothesis}
-For usual ASL G/H, the palm faces inward or sideways \citep{ton-shield2022,ton-vicarsfeedback}. Selected Kaggle training examples show the palm towards the camera. This motivates a possible training/use mismatch, not a demonstrated fault in Shin's learning method; all labels and camera viewpoints have not been independently checked.
+For usual ASL G/H, the palm faces inward or sideways \citep{ton-vicarsfeedback}. Selected Kaggle training examples show the palm towards the camera. This motivates a possible training/use mismatch, not a demonstrated fault in Shin's learning method; all labels and camera viewpoints have not been independently checked.
 
 A $180^\circ$ camera-$y$ rotation maps wrist-relative coordinates $(x,y,z)$ to $(-x,y,-z)$, with determinant $+1$. Horizontal reflection instead changes only $x$ and has determinant $-1$. A rotated G/H fitting copy and its original each weigh 0.5; other sources retain weight one. The 4,801 G/H sources yield 65,052 fitting rows in the full-data fit. The rotation preserves distances and intrinsic joint measurements; it produces no new RGB image or detector output.
 
 \clearpage
-\section{G/H: artificial geometry versus live observations}\label{app:ton-live}
+\section{Exploratory G/H checks: artificial versus live views}\label{app:ton-live}
 The first test retains all 60,251 accepted original images, including palm-facing G/H labels. The separate artificial control rotates only the 4,801 held-out G/H descriptions; other letters retain their original predictions. Models are not refitted for this test. Neither test independently validates ASL execution. Recognizing an atypical palm-facing G/H is not the intended live-use goal.
 
 \begin{table}[h]\centering\small

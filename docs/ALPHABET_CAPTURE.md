@@ -1,5 +1,7 @@
 # Alphabet capture: Shin reference versus joint angles
 
+Optional capture protocol, checked 8 November 2026. The current RQ3 experiment overview is in [RQ3/README.md](../RQ3/README.md). This evaluator compares DS and DSJ, not all eight representations.
+
 ## Start
 
 Close other camera apps. From the repository root:

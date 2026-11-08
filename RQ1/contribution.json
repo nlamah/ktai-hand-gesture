@@ -1,0 +1,8 @@
+{
+  "question": "Does targeted data augmentation reduce confusion between certain letters more effectively than general data augmentation?",
+  "status": "not_supplied",
+  "entry_point_to_supply": "RQ1/experiment.py:main",
+  "shared_baseline": "baseline.shin.combined_features (DS, 820 inputs)",
+  "outputs": "results/RQ1/; per-source test predictions, fold IDs, precision/F1 and settings",
+  "note": "Numbering follows the group paper. No results are assumed for the missing contribution."
+}

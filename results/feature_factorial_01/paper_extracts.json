@@ -10,17 +10,17 @@
     "permutation_summary.csv": "abb4c984270db9125aaa431d59f6960c53da3952ed186b3713c6ac8ba87c7824",
     "confusions.csv": "e34c4a3590db5e6fbfe1a810897fc5850b64a6235f5cc126d1e8adda6e8d177f"
   },
-  "reporter_sha256": "d32e87893ec4a767994da021bc514e450b15a0257e2d2e581d5e08017c8fb1b5",
+  "reporter_sha256": "9988b21cdb37c2dfdcfe599e426c54f3bbbc06ce0e93884b4358726dcfef8635",
   "generated_sha256": {
-    "paper/factorial_main_results_nl.tex": "e73c80451d4f6b61883c6e5934668c91365d55761c75fb262df1f85072d303dc",
-    "paper/factorial_controls_nl.tex": "15af2d84911af59f8870bf6924c69fd68656a69785a976591f16391ea8d4afd0",
-    "paper/factorial_main_permutation_nl.tex": "1a068a64b0b52daa3bf4887603eea482e7d667be8b7a67e72cbd38cf85398149",
-    "paper/factorial_summary_rows_nl.tex": "697dd04d31a27e5c0b4eecde4683fc9a8c590a6b51294415c9b99b9c10a55ae4",
-    "paper/factorial_main_rows_nl.tex": "7941418fe4b6e0f4c4e6308c79d7b262a9285b6506d094b01283a71ceb04cff6",
-    "paper/factorial_paired_rows_nl.tex": "24b8a3a42163c56c41ad74d5615d09460180706ae797501e44ec539c1c41b126",
-    "paper/figures/factorial_family_importance.pdf": "6b9fe7a3a7fab50312583c38f8c03efca14e92b1ab828d2ca2305db3d53120b8",
-    "paper/figures/factorial_block_importance.pdf": "9f3b1bd2357b4d404dd7a9c0c551d2b057688bed4f84b4e412ca64d963296896",
-    "paper/figures/factorial_category_importance.pdf": "ac49f2dbd9b1bea065474d1ca34fba769747765cc90ff892785808af9b8da03e"
+    "paper/factorial_main_results_nl.tex": "549378954e12db4ad3b4c8508a8ff6de770a4ec783b25c5b1eb9cb941627f337",
+    "paper/factorial_controls_nl.tex": "de570fd1c08257c44d70bf4be8886a685c872074da40d0bf023fe58ec679384f",
+    "paper/factorial_main_permutation_nl.tex": "39a597a30bd61c2e02e4be55a1578ab16cc12b40d54b1ffb1edc1867da1be65c",
+    "paper/factorial_summary_rows_nl.tex": "56f41c8eae27f0cb49cac6fec9accfc62dc2cf8b9c0b1f1697b97943eb56525f",
+    "paper/factorial_main_rows_nl.tex": "a3bbc7be571ff1a423a328c42a163199e818a44ecba2f75685e2a558a16f1acb",
+    "paper/factorial_paired_rows_nl.tex": "c444b7627791513ac5ac72261f7f012ea177e10ec5eb15aa89330f543bb7671b",
+    "paper/figures/factorial_family_importance.pdf": "236379ffc98c08fcda0e4e2e296c23f7f0ebfed35641e12d9248106d0cbbfdf7",
+    "paper/figures/factorial_block_importance.pdf": "d3de8efee80352b28a3170367f48da011e9c53867a0115d9b7c94510ff006dbe",
+    "paper/figures/factorial_category_importance.pdf": "1fd0f3470c4319c6dd84248db939b045adaee2367adce26723fbcc9d5d171f12"
   },
   "control_source_sha256": "d2ca2f3d70b22068eec48e545d219fae7d0d393762ca4f8eb2813a125e33bb96"
 }

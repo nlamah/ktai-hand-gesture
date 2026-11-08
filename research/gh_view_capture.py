@@ -1,4 +1,4 @@
-"""Large Dutch G/H instructions: 40 photos per person, one to three people."""
+"""Large English G/H instructions: 40 photos per person, one to three people."""
 import argparse
 from hashlib import sha256
 from pathlib import Path
@@ -25,8 +25,8 @@ def main():
     try:
         model_sha=sha256(args.model.read_bytes()).hexdigest()
         session=GHViewSession(args.resume,model_sha) if args.resume else GHViewSession.create(args.output,model_sha,args.participants,args.hands)
-        print(f'Sessie: {session.directory.resolve()}',flush=True)
-        print(f'Voortgang: {len(session.completed)}/{len(session.plan["tasks"])}',flush=True)
+        print(f'Session: {session.directory.resolve()}',flush=True)
+        print(f'Progress: {len(session.completed)}/{len(session.plan["tasks"])}',flush=True)
         print('P01: development. Other participants: reserved evaluation; do not adapt models to their results.',flush=True)
         if args.status:return
         run_camera(args.model,args.camera,session.directory,protocol_session=session)

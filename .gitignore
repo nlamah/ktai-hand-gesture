@@ -14,3 +14,4 @@ __pycache__/
 *.synctex.gz
 
 /captures/
+/reproduction_inputs.json

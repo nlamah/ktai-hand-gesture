@@ -7,20 +7,17 @@
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 \usepackage[accepted]{icml2021}
 \usepackage[T1]{fontenc}
-\IfFileExists{babel.sty}{\usepackage[dutch]{babel}}{%
-  \AtBeginDocument{\ifcsname l@dutch\endcsname
-    \language=\csname l@dutch\endcsname\lefthyphenmin=2\righthyphenmin=3\fi}}
 \hypersetup{hypertexnames=false}
 \newcommand{\drafttodo}[2]{\par\noindent\textbf{TODO [#1]:} #2\par}
 \makeatletter\let\tableinput\@@input\makeatother
 \makeatletter
-\renewcommand{\fnum@figure}{Figuur \thefigure}
-\renewcommand{\fnum@table}{Tabel \thetable}
+\renewcommand{\fnum@figure}{Figure \thefigure}
+\renewcommand{\fnum@table}{Table \thetable}
 \@addtoreset{figure}{section}
 \@addtoreset{table}{section}
-\renewcommand{\Notice@String}{Technische bijlage bij een gezamenlijk studieproject.}
+\renewcommand{\Notice@String}{Technical supplement to a joint study project.}
 \makeatother
-\icmltitlerunning{Technische bijlage: herkenning van het ASL-alfabet}
+\icmltitlerunning{Technical supplement: ASL alphabet recognition}
 \begin{document}
 \appendix
 \onecolumn

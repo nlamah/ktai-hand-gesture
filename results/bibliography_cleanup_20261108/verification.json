@@ -1,0 +1,174 @@
+{
+  "scope": "Six-source bibliography, English paper/tool/documentation, and exploratory framing for orientation checks; numerical experiments unchanged.",
+  "reference_count": 6,
+  "keys": [
+    "asl_alphabet",
+    "lightgbmdocs",
+    "mediapipedocs",
+    "shin2021",
+    "sklearnpermutation",
+    "vicarsfeedback"
+  ],
+  "removed_articles": [
+    "Zhang et al. 2020 (replaced by MediaPipe documentation)",
+    "Ke et al. 2017 (replaced by LightGBM documentation)",
+    "Fisher et al. 2019",
+    "Cawley and Talbot 2010",
+    "Shield et al. 2022"
+  ],
+  "removed_unused_entries": [
+    "Pugeault and Bowden 2011",
+    "Vicars left-handed signing"
+  ],
+  "added_dataset_citation": true,
+  "coauthor_blocks": [
+    {
+      "block": "intro",
+      "original_sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
+      "current_sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
+      "verbatim": true,
+      "translation_only": false,
+      "content_preserved": true
+    },
+    {
+      "block": "methods",
+      "original_sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412",
+      "current_sha256": "8814c059a180ca87a67b0a9741dcb6c29d73c27f22f5b998bad161994530e618",
+      "verbatim": false,
+      "translation_only": true,
+      "content_preserved": true
+    },
+    {
+      "block": "datasets",
+      "original_sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
+      "current_sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
+      "verbatim": true,
+      "translation_only": false,
+      "content_preserved": true
+    },
+    {
+      "block": "implementation",
+      "original_sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
+      "current_sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
+      "verbatim": true,
+      "translation_only": false,
+      "content_preserved": true
+    },
+    {
+      "block": "results",
+      "original_sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
+      "current_sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
+      "verbatim": true,
+      "translation_only": false,
+      "content_preserved": true
+    },
+    {
+      "block": "discussion",
+      "original_sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
+      "current_sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
+      "verbatim": true,
+      "translation_only": false,
+      "content_preserved": true
+    }
+  ],
+  "all_citations_resolved_in_source": true,
+  "inline_bibliography_matches_modular": true,
+  "modified_files": [
+    {
+      "path": "paper/references.bib",
+      "before_sha256": "aa7b6e21c4d2deda15293eb16da233bf8f9b2ef53309a2f6db7d28da7d0886b8",
+      "after_sha256": "429c0d3524f7dd757bef9597983cd90397f9a583a56368ec4ffc4856fc5693ec"
+    },
+    {
+      "path": "paper/group_integration/ton_references.bib",
+      "before_sha256": "fdef4e1d55e88f87638cdb1eee928673b6bb3d34f62052febe04671bc52524b1",
+      "after_sha256": "ff6058bd9cea04318bd27b212745437eb8ee956b7a665924863a07d4ae66141a"
+    },
+    {
+      "path": "paper/group_integration/group_report.tex",
+      "before_sha256": "8af7411f5b8f9f8053af7eeaa4f81645f086c877a2d3c12e9d71ea30f49038d5",
+      "after_sha256": "a2b098cbe255e708df3c38beb196b17a32a145fdc79bc6fb3e1292b05bff5a91"
+    },
+    {
+      "path": "paper/group_integration/group_report_paste_ready.tex",
+      "before_sha256": "bfb96f1e3d91afc2da25fca45426804ff18d1b2add7e687ae608fcb99d566f91",
+      "after_sha256": "83bf0a207ac0ab32bd9aca848ec65226ef5865140aa2249cad7335c8d008b341"
+    },
+    {
+      "path": "paper/group_integration/ton_related_en.tex",
+      "before_sha256": "c3cf8dc121c7e0d89bf328983126fcd005f976d3f71d4cb0010980760364e6fd",
+      "after_sha256": "3ad2f8a32fc5323bbf29654179fa6c8c56e4ac077a6b84f3f29a1c201342bf6d"
+    },
+    {
+      "path": "paper/group_integration/ton_discussion_en.tex",
+      "before_sha256": "f113189644ec0238719431b68ae05f87767b3bdd12fc4ac07639e9c2fb8538a2",
+      "after_sha256": "4a40b86c79864ee8acb732218694c1200c06485a81c8e16c09e2ff40c1dbb211"
+    },
+    {
+      "path": "paper/group_integration/ton_dataset_en.tex",
+      "before_sha256": "2cb990de7c5c7c3c0f071eb7acd6da89c9e603d418d3935512271e631592385e",
+      "after_sha256": "72c3a52b5870be2af6532966398f526075b4f84a4a044ae58826219f1bc1a9c2"
+    },
+    {
+      "path": "paper/group_integration/ton_appendix_en.tex",
+      "before_sha256": "33f4515c635714736c2b2b1f934be6fa4235796ff35284261a2ce2a43140ef7e",
+      "after_sha256": "0f3cf1032e820699ab3bc38ba2b5e1e132e8f8c08065714f3252bf9d21a3041d"
+    },
+    {
+      "path": "paper/report.tex",
+      "before_sha256": "cd76b2662abab8e1c31f5b6625ba480ce49a78e7b76972f578825a79e5507db9",
+      "after_sha256": "14b9edd8728199fca8657d018a2627dda2c5ae9a3b00e236781d43e9329f3ae5"
+    }
+  ],
+  "pdf_checks": {
+    "paper/report.pdf": {
+      "pages": 3,
+      "sha256": "071ee84cf2291f1d132a8d2a45aaf51b75696f223a9fbe8c64cf2251777c7801",
+      "undefined_citations": false,
+      "overfull_boxes": false,
+      "inherited_unresolved_group_labels": [],
+      "language": "English"
+    },
+    "paper/appendix.pdf": {
+      "pages": 14,
+      "sha256": "50ec3588d0fc6c36912267b0932f637a2bc52a1fa1359694b97c02f1a7d97087",
+      "undefined_citations": false,
+      "overfull_boxes": false,
+      "inherited_unresolved_group_labels": [],
+      "language": "English"
+    },
+    "paper/group_integration/group_report_preview.pdf": {
+      "pages": 11,
+      "sha256": "0e04aad7c18f3c7b92bd309cd0a3b2fa9ab18485e5031a9740f6e7698ac461a1",
+      "undefined_citations": false,
+      "overfull_boxes": false,
+      "inherited_unresolved_group_labels": [
+        "fig:N47_original",
+        "fig:preprocessing-config",
+        "fig:repeatablity"
+      ],
+      "language": "English"
+    },
+    "paper/group_integration/group_report_paste_ready_preview.pdf": {
+      "pages": 11,
+      "sha256": "25731d2dbe355157d03f9ca287f6e8852a5c0aacb08cbe3737ef6985a48cf070",
+      "undefined_citations": false,
+      "overfull_boxes": false,
+      "inherited_unresolved_group_labels": [
+        "fig:N47_original",
+        "fig:preprocessing-config",
+        "fig:repeatablity"
+      ],
+      "language": "English"
+    }
+  },
+  "english_modular_and_paste_ready_pages_pixel_identical": true,
+  "visual_review": "All current group pages and standalone/appendix layout reviewed; no clipping or overlap. Existing missing coauthor assets remain explicitly marked.",
+  "rendering": "Local PDFKit fallback; Poppler unavailable",
+  "tests": {
+    "count": 125,
+    "status": "passed"
+  },
+  "independent_baseline_and_feature_verification": "passed",
+  "orientation_scope": "Brief practical explorations alongside the main feature comparison"
+}

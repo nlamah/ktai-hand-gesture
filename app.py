@@ -35,18 +35,18 @@ _COMPONENT_HTML = """
     <div class="camera-stage">
       <video id="camera-video" autoplay playsinline muted></video>
       <div id="camera-placeholder" class="placeholder">
-        Zet de camera aan om te beginnen.
+        Turn on the camera to begin.
       </div>
     </div>
-    <div id="camera-status" class="camera-status">Camera staat uit.</div>
+    <div id="camera-status" class="camera-status">Camera is off.</div>
   </section>
   <section class="features-card">
     <div class="feature-heading">
       <div>
-        <div class="eyebrow">Verwachte handvorm</div>
+        <div class="eyebrow">Expected hand shape</div>
         <h2 id="target-letter">Letter —</h2>
       </div>
-      <div id="match-count" class="match-count">Wachten op beeld</div>
+      <div id="match-count" class="match-count">Waiting for a frame</div>
     </div>
     <div id="feature-list" class="feature-list"></div>
   </section>
@@ -208,10 +208,10 @@ export default function (component) {
     }
   }
 
-  cameraStatus.textContent = data?.message || (runtime.active ? "Camera starten…" : "Camera staat uit.")
+  cameraStatus.textContent = data?.message || (runtime.active ? "Starting camera…" : "Camera is off.")
   cameraStatus.dataset.tone = data?.tone || "neutral"
   targetLetter.textContent = data?.label ? `Letter ${data.label}` : "Letter —"
-  matchCount.textContent = data?.summary || "Wachten op beeld"
+  matchCount.textContent = data?.summary || "Waiting for a frame"
   placeholder.hidden = Boolean(runtime.active && runtime.stream)
   featureList.replaceChildren()
 
@@ -224,7 +224,7 @@ export default function (component) {
     name.textContent = item.title
     const values = document.createElement("div")
     values.className = "feature-values"
-    values.textContent = `Verwacht: ${item.expected} · Gemeten: ${item.actual}`
+    values.textContent = `Expected: ${item.expected} · Observed: ${item.actual}`
     row.append(name, values)
     featureList.append(row)
   }
@@ -285,7 +285,7 @@ parser.add_argument("--capture", help="Read-only feature review of an existing c
 args, _ = parser.parse_known_args()
 
 st.set_page_config(
-    page_title="ASL featurecontrole",
+    page_title="ASL feature inspection",
     page_icon=":material/back_hand:",
     layout="wide",
 )
@@ -293,16 +293,16 @@ if args.capture:
     from research.feature_review import show_review
     show_review(args.capture,args.reference,args.thresholds,args.model)
     st.stop()
-st.title("ASL: letters herkennen en features controleren")
-st.write("Kies een model, zet de camera aan en maak een handletter. Vul de bedoelde letter in om de handkenmerken te vergelijken.")
+st.title("ASL: recognize letters and inspect features")
+st.write("Choose a model, turn on the camera and form a letter. Enter the intended letter to compare hand features.")
 
 with st.sidebar:
-    st.subheader("Herkenningsmodel")
-    archive = st.toggle("Meer modellen uit eerdere proeven", value=False, key="asl_model_archive")
+    st.subheader("Recognition model")
+    archive = st.toggle("Additional experimental models", value=False, key="asl_model_archive")
     choices = list(visible_model_choices(archive))
     requested_path = Path(args.model).expanduser().resolve()
     if not any(path.resolve() == requested_path for _,_,path in choices):
-        choices.append(("custom", "Opgegeven model", requested_path))
+        choices.append(("custom", "Specified model", requested_path))
     labels = {key: f"{name} [{model_shortcut(key)}]" if key != "custom" else name for key,name,_ in choices}
     paths = {key: path for key,_,path in choices}
     default_key = next(key for key,_,path in choices if path.resolve() == requested_path)
@@ -310,23 +310,23 @@ with st.sidebar:
         st.session_state["asl_live_model_choice"] = default_key
     selected_model = st.selectbox("Model", list(paths), format_func=labels.get, key="asl_live_model_choice")
     model_path = paths[selected_model]
-    st.caption(MODEL_HELP.get(selected_model,"Eerdere verkennende variant; zie de modelmetadata voor de precieze bewerking."))
-    recognition_enabled = st.toggle("Letters herkennen", value=True, key="asl_live_recognition")
-    st.caption("Voor G/H: vergelijk World joints [2] met G/H y180 only [9]. De rotatie vindt tijdens het trainen plaats.")
+    st.caption(MODEL_HELP.get(selected_model,"Exploratory variant; see model metadata for its exact transformation."))
+    recognition_enabled = st.toggle("Recognize letters", value=True, key="asl_live_recognition")
+    st.caption("For G/H, compare World joints [2] with G/H y180 only [9]. Rotation is applied during training.")
 
-settings = st.expander("Werkboek en meetregels")
+settings = st.expander("Workbook and measurement rules")
 with settings:
-    st.caption("Groen: kenmerk past bij de bedoelde letter. Rood: afwijkend of niet gevonden. Grijs: niet beoordeeld. De gekozen doelletter stuurt de voorspelling niet.")
-    st.caption("Spreiding betekent ruimte tussen vingers, niet alleen uitwaaieren. Niet gespreid betekent niet automatisch dat vingers elkaar raken.")
-    uploaded_reference = st.file_uploader("Ander featurewerkboek (.xlsx)", type=["xlsx"])
+    st.caption("Green: matches the intended letter. Red: mismatch or missing measurement. Grey: not scored. The target letter does not affect recognition.")
+    st.caption("Spreading means a gap between fingers, not only divergent directions. Not spread does not necessarily mean touching.")
+    uploaded_reference = st.file_uploader("Alternative feature workbook (.xlsx)", type=["xlsx"])
 reference_path = Path(args.reference).expanduser()
 if uploaded_reference is not None:
     reference_contents = uploaded_reference.getvalue()
 elif reference_path.is_file():
     reference_contents = reference_path.read_bytes()
-    settings.caption(f"Werkboek: {reference_path.name}")
+    settings.caption(f"Workbook: {reference_path.name}")
 else:
-    st.info("Voeg een featurewerkboek toe om te beginnen.")
+    st.info("Upload a feature workbook to begin.")
     st.stop()
 
 try:
@@ -337,28 +337,28 @@ except (OSError, ValueError, json.JSONDecodeError) as error:
     st.stop()
 
 settings.caption(
-    f"Vingerbuiging: gebogen ≤ {parameters['finger_flexion']['bent_max_deg']:g}°; "
-    f"gestrekt ≥ {parameters['finger_flexion']['extended_min_deg']:g}°; daartussen gedeeltelijk gebogen. "
-    "Duim-MCP en werkboekregels zijn benaderingen; controleer de hand ook visueel."
+    f"Finger flexion: bent ≤ {parameters['finger_flexion']['bent_max_deg']:g}°; "
+    f"extended ≥ {parameters['finger_flexion']['extended_min_deg']:g}°; partly bent between these thresholds. "
+    "Thumb MCP and workbook rules are approximations; inspect the hand visually too."
 )
 model_available = model_path.is_file()
 if recognition_enabled and not model_available:
     st.info("Live model missing. Train it once with: python -m research.live_model")
-st.caption("Een gevonden hand krijgt altijd een letter. De alternatieven zijn geen zekerheidspercentages.")
+st.caption("An accepted hand always receives a letter. Alternatives are not confidence percentages.")
 
 input_col, camera_col = st.columns([1, 1], vertical_alignment="bottom")
 with input_col:
     typed_label = st.text_input(
-        "Bedoelde letter",
+        "Intended letter",
         max_chars=1,
-        placeholder="Bijvoorbeeld G",
+        placeholder="For example G",
         key="asl_live_target_letter",
     )
 label = typed_label.strip().upper()
 valid_label = len(label) == 1 and label in references
 with camera_col:
     camera_active = st.toggle(
-        "Camera aan",
+        "Camera on",
         value=False,
         disabled=not (valid_label or (recognition_enabled and model_available)),
         key="asl_live_camera_active",
@@ -408,9 +408,9 @@ if camera_active and recognition_enabled and model_available and detection is no
     except (OSError, ValueError, RuntimeError, ImportError, EOFError, TypeError, KeyError) as error:
         prediction_error = str(error)
 if recognition_enabled:
-    st.metric("Herkende letter", prediction["letter"] if prediction else "—")
+    st.metric("Recognized letter", prediction["letter"] if prediction else "—")
     if prediction:
-        st.caption("Alternatieven: " + ", ".join(prediction["alternatives"]))
+        st.caption("Alternatives: " + ", ".join(prediction["alternatives"]))
     if prediction_error:
         st.error(f"Letter recognition stopped: {prediction_error}")
 comparison_label = label if valid_label else prediction["letter"] if prediction else ""
@@ -420,15 +420,15 @@ features = (
     else []
 )
 if prediction and not valid_label:
-    st.caption("De featurekaartjes vergelijken nu met de voorspelde letter. Vul zelf de bedoelde letter in voor een onafhankelijke controle.")
+    st.caption("Feature cards currently compare against the predicted letter. Enter the intended letter for an independent comparison.")
 
 exact_frame = st.session_state.get(_FRAME_KEY)
 if _ROUND_KEY not in st.session_state:
-    st.session_state[_ROUND_KEY] = new_round("Browsercontrole")
+    st.session_state[_ROUND_KEY] = new_round("Browser inspection")
 can_save = bool(camera_active and valid_label and exact_frame is not None and detection is not None
                 and recognition_enabled and model_available and not detector_error and not prediction_error)
-if st.button("Meetmoment bewaren", icon=":material/photo_camera:", disabled=not can_save,
-             help="Bewaart het laatst geanalyseerde beeld met de bedoelde letter en het actieve model, ook als er geen hand gevonden is."):
+if st.button("Save capture", icon=":material/photo_camera:", disabled=not can_save,
+             help="Save the last analyzed frame, intended letter and active model, including failed detections."):
     bgr = exact_frame["bgr"]
     packet = {"frame":bgr,"model_frame":bgr,"detection":detection,"prediction":prediction,
               "captured_at_utc":exact_frame["captured_at_utc"],"camera":"browser",
@@ -439,30 +439,30 @@ if st.button("Meetmoment bewaren", icon=":material/photo_camera:", disabled=not 
         saved = save_capture(packet,label,bundle,model_path,sha256(model_path.read_bytes()).hexdigest(),
                              render_preview(bgr,prediction["letter"] if prediction else None),DEFAULT_CAPTURE_DIR)
     except (OSError, ValueError, RuntimeError) as error:
-        st.error(f"Bewaren mislukt: {error}")
+        st.error(f"Could not save: {error}")
     else:
-        st.success(f"Meetmoment bewaard: {saved}")
-st.caption("Bewaar zowel goede als foute pogingen. Los gekozen voorbeelden helpen bij foutanalyse; voor precisie/F1 gebruiken we een vooraf geplande opnameronde.")
+        st.success(f"Capture saved: {saved}")
+st.caption("Save correct and incorrect attempts. Selected examples support error analysis; precision/F1 requires a predefined collection protocol.")
 
 if detector_error:
     message = f"Feature check stopped: {detector_error}"
     tone = "error"
     summary = "Check stopped"
 elif not camera_active:
-    message = "Zet de camera aan om letters te herkennen of features te controleren."
+    message = "Turn on the camera to recognize letters or inspect features."
     tone = "neutral"
-    summary = "Camera staat uit"
+    summary = "Camera is off"
 elif detection is None:
-    message = "Wachten op het eerste camerabeeld…"
+    message = "Waiting for the first camera frame…"
     tone = "neutral"
-    summary = "Wachten op beeld"
+    summary = "Waiting for a frame"
 elif detection.get("status") != "ok":
     if detection.get("status") == "no_hand":
-        message = "Geen hand gevonden. Houd één hand in beeld."
+        message = "No hand detected. Keep one hand in view."
     else:
-        message = "Er moet precies één hand zichtbaar zijn."
+        message = "Exactly one hand must be visible."
     tone = "error"
-    summary = "Hand niet gevonden"
+    summary = "No hand detected"
 elif prediction_error:
     message = f"Letter recognition stopped: {prediction_error}"
     tone = "error"
@@ -472,14 +472,14 @@ else:
     scored = sum(row["status"] != "not_scored" for row in features)
     all_match = matches == scored and scored > 0
     message = (
-        f"Alle beoordeelde kenmerken van {comparison_label} komen overeen."
+        f"All scored features match {comparison_label}."
         if all_match
-        else f"{matches} van {scored} beoordeelde kenmerken van {comparison_label} komen overeen."
+        else f"{matches} of {scored} scored features match {comparison_label}."
     )
     if prediction:
-        message = f"Model herkent {prediction['letter']}. " + message
+        message = f"Model predicts {prediction['letter']}. " + message
     tone = "success" if all_match else "error"
-    summary = f"{matches}/{scored} overeenkomst"
+    summary = f"{matches}/{scored} match"
 
 _LIVE_COMPONENT(
     key=_COMPONENT_KEY,

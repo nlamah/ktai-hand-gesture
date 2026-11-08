@@ -1,60 +1,61 @@
 %%%%%%%% ICML 2021 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
 
-% Added bibliography: this generated file is owned by the inline version.
-% The original group references.bib and editable ton_references.bib stay separate.
 \begin{filecontents*}[overwrite]{ton_inline_refs.bib}
 @article{ton-shin2021,
- title={American Sign Language Alphabet Recognition by Extracting Feature from Hand Pose Estimation},
- author={Shin, Jungpil and Matsuoka, Akitaka and Hasan, Md Al Mehedi and Srizon, Azmain Yakin},
- journal={Sensors}, volume={21}, number={17}, pages={5856}, year={2021}, doi={10.3390/s21175856}, url={https://pmc.ncbi.nlm.nih.gov/articles/PMC8434249/}}
-@misc{ton-vicarsleft,
- author={Vicars, Bill},
- title={American Sign Language: Left-handed signing},
- year={n.d.},
- howpublished={ASL University},
- url={https://www.lifeprint.com/asl101/pages-layout/lefthandedsigners.htm},
- note={Accessed 6 November 2026}}
-@article{ton-zhang2020,
- title={{MediaPipe Hands}: On-device Real-time Hand Tracking},
- author={Zhang, Fan and Bazarevsky, Valentin and Vakunov, Andrey and Tkachenka, Andrei and Sung, George and Chang, Chuo-Ling and Grundmann, Matthias},
- journal={arXiv preprint arXiv:2006.10214},year={2020},url={https://arxiv.org/abs/2006.10214}}
-@inproceedings{ton-pugeault2011,
- title={Spelling It Out: Real-Time {ASL} Fingerspelling Recognition},author={Pugeault, Nicolas and Bowden, Richard},
- booktitle={IEEE International Conference on Computer Vision Workshops},pages={1114--1119},year={2011},doi={10.1109/ICCVW.2011.6130290}}
-@inproceedings{ton-ke2017,
- title={{LightGBM}: A Highly Efficient Gradient Boosting Decision Tree},author={Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
- booktitle={Advances in Neural Information Processing Systems},volume={30},year={2017}}
-@article{ton-fisher2019,
- title={All Models are Wrong, but Many are Useful: Learning a Variable's Importance by Studying an Entire Class of Prediction Models Simultaneously},
- author={Fisher, Aaron and Rudin, Cynthia and Dominici, Francesca},journal={Journal of Machine Learning Research},volume={20},number={177},pages={1--81},year={2019},url={https://jmlr.org/papers/v20/18-760.html}}
-@article{ton-cawley2010,
- title={On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation},
- author={Cawley, Gavin C. and Talbot, Nicola L. C.},journal={Journal of Machine Learning Research},volume={11},number={70},pages={2079--2107},year={2010},url={https://jmlr.org/papers/v11/cawley10a.html}}
+  title={American Sign Language Alphabet Recognition by Extracting Feature from Hand Pose Estimation},
+  author={Shin, Jungpil and Matsuoka, Akitaka and Hasan, Md Al Mehedi and Srizon, Azmain Yakin},
+  journal={Sensors},
+  volume={21},
+  number={17},
+  pages={5856},
+  year={2021},
+  doi={10.3390/s21175856},
+  url={https://doi.org/10.3390/s21175856}
+}
+
+@misc{ton-mediapipedocs,
+  author={{Google AI Edge}},
+  title={{MediaPipe} Hand Landmarker},
+  year={n.d.},
+  howpublished={Official documentation},
+  url={https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker},
+  note={Accessed 8 November 2026}
+}
+
+@misc{ton-asl_alphabet,
+  author={Nagaraj, Akash},
+  title={{ASL} Alphabet},
+  year={2018},
+  howpublished={Kaggle dataset},
+  url={https://www.kaggle.com/datasets/grassknoted/asl-alphabet},
+  note={Accessed 8 November 2026}
+}
+
 @misc{ton-sklearnpermutation,
- author={{scikit-learn developers}},
- title={Permutation feature importance},
- year={n.d.},
- howpublished={scikit-learn documentation},
- url={https://scikit-learn.org/stable/modules/permutation_importance.html},
- note={Accessed 7 November 2026}}
-@article{ton-shield2022,
-  author = {Shield, Aaron and Igel, Megan and Meier, Richard P.},
-  title = {Are palm reversals the pronoun reversals of sign language? Evidence from a fingerspelling task},
-  journal = {Frontiers in Psychology},
-  volume = {13},
-  pages = {953019},
-  year = {2022},
-  doi = {10.3389/fpsyg.2022.953019},
-  url = {https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2022.953019/full}
+  author={{scikit-learn developers}},
+  title={Permutation feature importance},
+  year={n.d.},
+  howpublished={Official scikit-learn documentation},
+  url={https://scikit-learn.org/stable/modules/permutation_importance.html},
+  note={Accessed 8 November 2026}
+}
+
+@misc{ton-lightgbmdocs,
+  author={{LightGBM developers}},
+  title={{LightGBM}: Parameters},
+  year={n.d.},
+  howpublished={Official documentation},
+  url={https://lightgbm.readthedocs.io/en/stable/Parameters.html},
+  note={Accessed 8 November 2026}
 }
 
 @misc{ton-vicarsfeedback,
-  author = {Vicars, William},
-  title = {{ASL} feedback: fingerspelled {G} and {H}},
-  howpublished = {{ASL University / Lifeprint}},
-  year = {n.d.},
-  url = {https://www.lifeprint.com/asl101/topics/feedback.htm},
-  note = {Accessed 7 November 2026}
+  author={Vicars, William},
+  title={{ASL} feedback: fingerspelled {G} and {H}},
+  year={n.d.},
+  howpublished={{ASL University / Lifeprint}},
+  url={https://www.lifeprint.com/asl101/topics/feedback.htm},
+  note={Accessed 8 November 2026}
 }
 \end{filecontents*}
 
@@ -96,7 +97,7 @@
 
 % END TON: line breaks for inherited long code path
 
-% All table rows are included directly in this paste-ready version.
+% Own table rows are embedded below.
 % END TON: font encoding
 
 
@@ -138,18 +139,18 @@
 
 
 
-% Mijn idee is om te onderzoeken of we de inputafbeeldingen kunnen vereenvoudigen voordat we ze aan het model geven.
-% We gebruiken een convolution/filter om vooral de randen met hoog contrast over te houden, zodat de vorm van de hand centraal staat en achtergrond, kleur en andere details grotendeels verdwijnen.
-% Vervolgens trainen/testen we hetzelfde model op:
-% 1. de originele afbeeldingen;
-% 2. de vereenvoudigde edge-images.
-% Onderzoeksvraag: Does edge-based image preprocessing improve sign language alphabet recognition?
+% We investigate whether simplifying input images changes recognition.
+% A filter emphasizes high-contrast contours to emphasize hand shape.
+% Compare the same model on:
+% 1. original images;
+% 2. simplified edge images.
+% Research question: Does edge-based image preprocessing improve sign language alphabet recognition?
 
 
 \section{Brief Introduction}
 
 % BEGIN TON: shared introduction
-This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-zhang2020,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
+This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-mediapipedocs,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
 
 % END TON: shared introduction
 \leavevmode \\\\
@@ -195,7 +196,7 @@ Briefly provide an overview of previous research and studies that are relevant t
 
 \fi
 % BEGIN TON: related work
-Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-zhang2020}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-fisher2019}.
+Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-mediapipedocs}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-sklearnpermutation}.
 % END TON: related work
 
 \section{Methods}
@@ -216,7 +217,7 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
     	It uses the lowest value in that area. This allows light areas to become smaller and dark areas to expand.
 
     \subsubsection{Canny overlay}
-        Zoekt randen op basis van veranderingen in helderheid en voegt de gevonden randen toe aan de oorspronkelijke kleurenfoto. In jouw implementatie worden die randen lichter gemaakt.
+        Detects edges from changes in brightness and overlays them on the original colour image. The implementation brightens the detected edges.
 
 % \begin{figure}
 %     \centering
@@ -236,12 +237,12 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
 % BEGIN TON: methods
 
 \par\noindent ...\par\medskip
-\subsection{Hand-shape descriptions and orientation (RQ3)}\label{sec:ton-methods}
+\subsection{Hand-shape descriptions (RQ3)}\label{sec:ton-methods}
 We compare four building blocks: distances (D), Shin's directions between hand points (S), our own categories such as finger bending and spreading (E), and measured joint angles (J). Distances are always included; switching the other three blocks on or off gives eight combinations. Both SVM and LightGBM receive the same combinations and test images. E and J use estimated world points, whereas D and S use image points. A separate control calculates J from the same points as Shin.
 
 After training, we shuffle one feature group between held-out images and measure the loss in precision and F1. Labels and fitted models remain unchanged. These permutation tests use 13,000 fixed images and five shuffles per group. They measure model dependence, whereas retraining the eight combinations measures the effect of adding or removing information.
 
-Separate orientation checks compare mirror training, normalization to one hand orientation, and G/H rotation. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
+As brief practical follow-ups, we also tried left/right handling and G/H rotation. These are separate from the main feature comparison. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
 \par\noindent ...\par\medskip
 
 % END TON: methods
@@ -252,7 +253,7 @@ Separate orientation checks compare mirror training, normalization to one hand o
 Include a description of the data used, what it contains, train test splits, etc.
 \fi
 % BEGIN TON: datasets
-For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
+For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection from the ASL Alphabet dataset \citep{ton-asl_alphabet}; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
 % END TON: datasets
 \leavevmode 
         \\\\
@@ -319,10 +320,8 @@ D + categories + joints (DEJ) & 94.97 & 0.9493 & 93.87 & 0.9379 \\
 
 In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
 
-\paragraph{Additional orientation checks.}
-On original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\ref{app:ton-orientation}).
-
-For G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\ref{app:ton-live}).
+\paragraph{Brief practical explorations.}
+Alongside the feature study, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and right normalization help on artificial mirror tests but lose 26 and 136 correct predictions on originals. G/H rotation learns the offered artificial geometry, while two selected live G examples remain H. These small exploratory checks do not establish better recognition for new users; protocols, scores and examples are in Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}.
 % END TON: results
 
 \par\noindent ...\par\medskip
@@ -360,9 +359,9 @@ For G/H, adding 180-degree vertical-axis training rotations corrects four origin
 \paragraph{RQ3: interpretation and limitations.}
 Our categories do not consistently improve on Shin, and categories plus joint angles do not fully replace his directions under the tested settings. The small world-angle improvement depends on the learner and coordinate source. Permutation dependence should not be read as the gain from adding a feature.
 
-The G/H rotation learns artificial rotated geometry but does not resolve the observed live G/H confusion. A correct label on the original dataset is also not an independent assessment of ASL execution. Real hand-back views can yield different estimated hand points; rigid rotation preserves the original geometry and does not recreate those detection changes.
+The short left/right and G/H explorations illustrate limits of synthetic changes: improved artificial scores do not establish better live recognition. They are practical follow-ups, not additional independent validation of the main feature study. Rigid G/H rotation preserves geometry and does not recreate new detector errors under occlusion.
 
-The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test \citep{ton-cawley2010}. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
+The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
 % END TON: discussion
 
 \par\noindent ...\par\medskip
@@ -424,7 +423,6 @@ The folds were inspected during development and are not verified people, so thes
 % BEGIN TON: technical appendix
 
 \par\noindent ...\par\medskip
-% BEGIN INLINED APPENDIX: no separate ton_appendix_en.tex required
 \clearpage
 \onecolumn
 \section{RQ3: feature definitions and evaluation}\label{app:ton-protocol}
@@ -446,7 +444,7 @@ J & 15 & Fourteen internal angles and one signed thumb deviation from estimated 
 
 The eight representations are DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. DSEJ contains 905 inputs. E is derived from measured geometry, not from the correct letter. Original images are used without augmentation or right normalization in this factorial comparison. D/S/E/J were recomputed on 390 sources; all 19 one-hot groups were checked across the full cache.
 
-SVM uses an RBF kernel, $C=10$, \texttt{gamma=scale} and balanced classes. LightGBM uses 100 trees, 31 leaves, learning rate 0.1, minimum 20 examples per leaf and seed 42 \citep{ton-ke2017}. Only J receives median imputation and standardization fitted on the training fold. No representation-specific parameter search is performed. Macro-precision and macro-F1 average equally across A--Z, assigning zero to undefined letter scores.
+SVM uses an RBF kernel, $C=10$, \texttt{gamma=scale} and balanced classes. LightGBM uses 100 trees, 31 leaves, learning rate 0.1, minimum 20 examples per leaf and seed 42 \citep{ton-lightgbmdocs}. Only J receives median imputation and standardization fitted on the training fold. No representation-specific parameter search is performed. Macro-precision and macro-F1 average equally across A--Z, assigning zero to undefined letter scores.
 
 \begin{table}[h]\centering\small
 \caption{Paired changes relative to DS. Net is corrected minus newly introduced errors on the same 60,251 images.}
@@ -468,7 +466,7 @@ The same-coordinate J control uses Shin's image points without aspect correction
 
 \clearpage
 \subsection{Permutation procedure}
-Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 per fold and 13,000 unique sources in total. Five seeded row permutations move all columns in a feature group together, preserving valid one-hot encodings. Labels and trained models remain fixed. D/S/E/J blocks are tested across the eight variants; the 19 E checks are tested in DSE/DE without J, and E/J families in DSEJ/DEJ. The resulting 3,900 interventions retain precision and F1 drops. Spread over folds/repeats is descriptive, not an independent confidence interval. Related features can substitute for one another, and shuffling can create unusual combinations; importance is not a causal feature ranking \citep{ton-sklearnpermutation,ton-fisher2019}.
+Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 per fold and 13,000 unique sources in total. Five seeded row permutations move all columns in a feature group together, preserving valid one-hot encodings. Labels and trained models remain fixed. D/S/E/J blocks are tested across the eight variants; the 19 E checks are tested in DSE/DE without J, and E/J families in DSEJ/DEJ. The resulting 3,900 interventions retain precision and F1 drops. Spread over folds/repeats is descriptive, not an independent confidence interval. Related features can substitute for one another, and shuffling can create unusual combinations; importance is not a causal feature ranking \citep{ton-sklearnpermutation}.
 
 \begin{figure}[h]\centering
 \IfFileExists{figures/ton_category_importance_en.pdf}{%
@@ -513,8 +511,8 @@ MCP denotes the knuckle, PIP the middle joint, and DIP the end joint; the thumb 
 The workbook can allow several categories per letter. For ``no contact'', both near and far count as agreement. Unknown measurements are not confirmed agreement; blank reference fields are not scored. In the screenshot, index PIP is observed extended although partly bent/bent is expected, while index--middle is correctly observed not spread. The original screenshot is retained unchanged. The live tool also preserves the actual image, model hash, features and prediction for error analysis.
 
 \clearpage
-\section{Separate checks of hand orientation}\label{app:ton-orientation}
-These checks retain their own 835-input SVM reference (DSJ); they are not extra variants of the eight-way feature comparison. Historical source results remain separate.
+\section{Exploratory orientation follow-ups}\label{app:ton-orientation}
+These short practical explorations tried left/right handling and G/H orientation alongside the main feature study. They retain their own 835-input SVM reference (DSJ) and are not extra arms of the eight-way comparison or independent final validation. The detail below makes the attempted ideas reproducible.
 
 \subsection{RGB mirrors and detector-Right normalization}
 Original and horizontally mirrored RGB images are independently detected with IMAGE mode, at most two hands, and detection/presence thresholds 0.5. There are 60,251 accepted originals and 60,201 accepted mirrors. Mirror training adds accepted mirrors of fitting sources while retaining total weight one per source. Original-only preprocessing, numeric gamma and class weights are shared. Sources and their copies remain in the same fold.
@@ -542,12 +540,12 @@ Fixed mixture & Right normalized & 60,225 & 96.076 & 0.96047 & 57,987 \\
 On original images, normalization loses 136 correct predictions relative to no change, and mirror training loses 26. On the artificial mixture, normalization improves on no change but remains below mirror training. Detector labels are not independently verified; mirror pairs share pose, person and background. These results do not establish performance for unseen left-handed people. Evidence: \path{results/mirror_01/} and \path{results/handedness_01/}.
 
 \subsection{Why G/H rotation is a different hypothesis}
-For usual ASL G/H, the palm faces inward or sideways \citep{ton-shield2022,ton-vicarsfeedback}. Selected Kaggle training examples show the palm towards the camera. This motivates a possible training/use mismatch, not a demonstrated fault in Shin's learning method; all labels and camera viewpoints have not been independently checked.
+For usual ASL G/H, the palm faces inward or sideways \citep{ton-vicarsfeedback}. Selected Kaggle training examples show the palm towards the camera. This motivates a possible training/use mismatch, not a demonstrated fault in Shin's learning method; all labels and camera viewpoints have not been independently checked.
 
 A $180^\circ$ camera-$y$ rotation maps wrist-relative coordinates $(x,y,z)$ to $(-x,y,-z)$, with determinant $+1$. Horizontal reflection instead changes only $x$ and has determinant $-1$. A rotated G/H fitting copy and its original each weigh 0.5; other sources retain weight one. The 4,801 G/H sources yield 65,052 fitting rows in the full-data fit. The rotation preserves distances and intrinsic joint measurements; it produces no new RGB image or detector output.
 
 \clearpage
-\section{G/H: artificial geometry versus live observations}\label{app:ton-live}
+\section{Exploratory G/H checks: artificial versus live views}\label{app:ton-live}
 The first test retains all 60,251 accepted original images, including palm-facing G/H labels. The separate artificial control rotates only the 4,801 held-out G/H descriptions; other letters retain their original predictions. Models are not refitted for this test. Neither test independently validates ASL execution. Recognizing an atypical palm-facing G/H is not the intended live-use goal.
 
 \begin{table}[h]\centering\small
@@ -585,8 +583,6 @@ The original stored landmarks, without redetection, are replayed through both fr
 The middle-finger DIP estimates in A/B are 161.7 and 164.7 degrees, compared with a G-training median of 113.2 (middle 50\%: 109.2--118.2). Signed thumb deviation is $-1.9$ and $2.7$ degrees versus median 35.9. These are estimated world-point measurements, not true 3D anatomy. Pose, viewpoint and detector error cannot be separated here, nor is one angle proven to cause the classifier error. A rigid rotation preserves the original joint geometry and does not recreate such new detection changes.
 
 The high artificial score therefore does not directly transfer to the live camera. Rotation training is not yet a demonstrated solution to the observed G/H confusion. This observation does not establish the general failure rate. Source IDs, paired outputs, measurements and hashes: \path{results/gh_live_diagnostics_20261107/}.
-
-% END INLINED APPENDIX
 % END TON: technical appendix
 
 \end{document}

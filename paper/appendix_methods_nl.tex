@@ -1,30 +1,30 @@
-\section{Data, varianten en evaluatie}\label{app:protocol}
-Deze bijlage beschrijft de featurestudie onder RQ3. De bijdragen over beeldvoorbewerking (RQ1) en trainingsomvang (RQ2) moeten nog worden aangeleverd.
+\section{Data, representations and evaluation}\label{app:protocol}
+This supplement supports RQ3. The shared numbering is RQ1 targeted/general augmentation, RQ2 detection recovery and RQ3 feature comparison. Executable RQ1/RQ2 contributions are still required.
 
-\subsection{Beelden en vaste toetsgroepen}
-Van de 78.000 A--Z-trainingsbeelden uit Kaggle ASL Alphabet zijn historisch 60.251 beelden met precies één geldige hand geaccepteerd (77,24\%). Alleen deze oorspronkelijke beelden tellen mee; detectiemislukkingen zijn uitgesloten. Meegeleverde testbeelden dupliceren trainingsbeelden en zijn niet onafhankelijk. De historische detectiedrempels zijn niet bewaard.
+\subsection{Images and fixed folds}
+Of 78,000 A--Z Kaggle ASL Alphabet training images, 60,251 original images have one accepted hand (77.24\%). Failed detections are excluded. Supplied test images duplicate training sources and are not independent. Detector thresholds for the original feature cache were not retained; equal image counts do not establish equivalence with the separately recorded RQ2 settings.
 
-De vijf vaste folds verdelen zes blokken van opeenvolgende bestandsnummers, geen geverifieerde personen of sessies. Alle varianten gebruiken dezelfde bron-ID's, labels en folds. Ieder beeld krijgt één out-of-fold voorspelling. De folds zijn vaker tijdens ontwikkeling bekeken: dit blijft verkennende validatie, geen onaangeroerde eindtest.
+Five fixed folds separate six blocks of consecutive file numbers, not verified participants or sessions. Every representation shares source IDs, labels and test folds. Each source receives one out-of-fold prediction. Folds were inspected during development; this is exploratory validation, not an untouched final test.
 
-\subsection{Vier bouwblokken, acht varianten}
+\subsection{Four blocks, eight representations}
 \begin{table}[h]\centering\small
-\caption{D blijft altijd aanwezig; S, E en J worden onafhankelijk aan- of uitgezet. De acht combinaties staan in bijlage B.}
+\caption{D is always retained; S, E and J are independently included or omitted. Appendix B compares the eight combinations.}
 \begin{tabular}{lrp{.72\linewidth}}\toprule
-Blok & Inputs & Betekenis\\\midrule
-D & 190 & Genormaliseerde afstanden tussen beeldhandpunten volgens Shin.\\
-S & 630 & Richtingscosinussen van 210 handpuntparen ten opzichte van de beeldassen; geen interne gewrichtshoeken.\\
-E & 70 & One-hot categorieën van de 19 eigen controles: buiging, spreiding, kruising, duimstand en contact (bijlage C).\\
-J & 15 & Veertien interne hoeken en één getekende duimafwijking uit geschatte 3D-wereldhandpunten. MCP-hoeken zijn geometrische benaderingen.\\\bottomrule
+Block & Inputs & Meaning\\\midrule
+D & 190 & Normalized image-landmark distances following Shin.\\
+S & 630 & Direction cosines for 210 landmark pairs relative to image axes; not internal joint angles.\\
+E & 70 & One-hot values for 19 own checks: flexion, spreading, crossing, thumb shape and contact (Appendix C).\\
+J & 15 & Fourteen internal angles and one signed thumb deviation from estimated world points. MCP measurements are geometric approximations.\\\bottomrule
 \end{tabular}\end{table}
 
-De volledige combinatie DSEJ heeft 905 inputs: 190 afstanden, 630 richtingswaarden, 70 categoriewaarden en 15 gewrichtsmetingen. E gebruikt gemeten categorieën en een vaste codevolgorde, niet de juiste letter. De acht varianten gebruiken oorspronkelijke beelden zonder augmentatie of rechtsnormalisatie. D/S/E/J zijn op 390 brongevallen exact opnieuw berekend; alle 19 one-hot groepen zijn voor alle beelden gecontroleerd.
+DSEJ has 905 inputs. E uses measured categories and a fixed column order, not the true letter. All eight representations use originals without augmentation or right normalization. D/S/E/J were recomputed on 390 sources; all 19 one-hot groups were checked across the full cache.
 
-\subsection{Training en rapportage}
-Acht varianten, twee leermethoden en vijf folds leveren 80 foldmodellen. SVM gebruikt RBF, $C=10$, \texttt{gamma=scale} en gebalanceerde klassen. LightGBM gebruikt 100 bomen, 31 bladeren, leersnelheid 0,1, minimaal 20 voorbeelden per blad en seed 42. Alleen J krijgt mediaanimputatie en standaardisering, geleerd op de trainingsfold; D/S/E blijven ongeschaald. Er is geen optimalisatie per variant. Modelgeometrie en het vaste profiel begrenzen daarom de interpretatie.
+\subsection{Fitting and reporting}
+Eight representations, two learners and five folds yield 80 fold models. SVM uses RBF, $C=10$, \texttt{gamma=scale} and balanced classes. LightGBM uses 100 trees, 31 leaves, learning rate 0.1, minimum 20 examples per leaf and seed 42. Only J is median-imputed and standardized using the training fold; D/S/E pass through unchanged. No representation-specific tuning is performed. Fixed model geometry limits the interpretation.
 
-Gepoolde macro-precisie en macro-F1 middelen ongewogen over A--Z; niet-gedefinieerde letterscores worden nul. Paarsgewijze analyse telt herstelde en verloren voorspellingen op dezelfde beelden. De eerdere controles met J uit beeldpunten delen de bronnen, folds en profielen, maar blijven afzonderlijk gerapporteerd. D/S komt uit beeldpunten; E/J uit wereldpunten. Bijlagen D--F behouden hun eigen protocol en 835-inputreferentie, tegenover DS met 820 inputs in deze hoofdproef.
+Pooled macro-precision and macro-F1 average A--Z equally; undefined letter scores are zero. Paired analysis counts corrected and newly introduced errors on the same sources. The separate image-coordinate J controls share sources, folds and profiles. D/S use image points; E/J use world points. Appendices D--F retain their own 835-input DSJ reference, distinct from DS with 820 inputs in the main comparison.
 
-Code en uitkomsten: \texttt{research/feature\_study.py} en \texttt{results/feature\_factorial\_01/}. Protocol, bronhashes, voorspellingen en verificatie controleren de berekening, niet de anatomie of ASL-labels.
+Code and evidence: \path{research/feature_study.py} and \path{results/feature_factorial_01/}. Protocols, source hashes, predictions and replay verify computation, not anatomy or linguistic ground truth.
 
-\subsection{Nog aan te vullen voor RQ1 en RQ2}
-RQ1 vraagt definitieve instellingen en visueel beoordeeld detectieherstel; het eerdere concept noemt $3\times3$-dilatatie, erosie en een Canny-overlay. RQ2 vraagt vaste toets-ID's, aantallen unieke bronnen per klasse, subset-ID's, seeds en herhalingen. Detector en modelprofiel blijven gelijk; preprocessing wordt binnen iedere trainingssubset geleerd. Kopieën tellen niet als nieuwe bronnen. Dit zijn nog geen resultaatclaims.
+\subsection{Outstanding RQ1/RQ2 material}
+RQ1 requires the targeted/general augmentation recipe, unique source counts, fixed test IDs, repeats and results. RQ2 requires executable recovery code and a visual assessment of recovered points, alongside its supplied dilation/erosion/Canny results. Keep detector/model settings controlled and fit preprocessing within training data. Derivatives are not new independent sources.

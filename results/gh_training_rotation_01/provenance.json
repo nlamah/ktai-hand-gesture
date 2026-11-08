@@ -905,12 +905,12 @@
     "data/asl_kaggle/manifest.json": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35"
   },
   "source_sha256": {
-    "research/studies/gh_training_rotation_figure.py": "b67816612a6141682183529847fee54ee079b477c85ab858bdb953094f57de85",
+    "research/studies/gh_training_rotation_figure.py": "4cc0ac7f2ae603a04f877d031af78fa12fbd7dcb9592755bb7b8f9b54eb95135",
     "research/gh_vertical.py": "e83c90c83efbb1355928db378fabf51c58c379ac9822d0d68c4a4ef81ef74440",
     "research/shin.py": "9a0078e4bf61888af11cbb0528b7bff6f0ff6821b07be5dec91417750fb6f819",
-    "research/feature_review.py": "715f889fc8310eb80e3a64e977ca9c26a002158368b1a13da9f603d22e304057"
+    "research/feature_review.py": "3b19c9a179c094e070274e9e41343271ef24f720eacae1234a5751ff85f6d8d7"
   },
-  "figure_sha256": "48a1714e909426d3cfd1811d30a398d23de0b212ace9148c103654c6aebd9ff7",
+  "figure_sha256": "24e530b110126c0100bc4f18ebdf817769015c53fbc5d9b8a1064436ae608225",
   "frozen_experiment_protocol_sha256": "cd5aed3a92ae37434f6c7c24f77b2d90c04f2c96ca59156cadad313e8da30631",
   "scope": "Actual cached training geometry with a verified equivalent visualization of feature augmentation. No RGB hand-back view generated, no re-detection and no refit."
 }

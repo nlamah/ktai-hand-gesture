@@ -169,7 +169,7 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
         print('Camera started. [1] Reference, [2] World joints, [9] G/H y180; [7/8/0] left/right controls. A: model archive. N: new round. L: landmarks. Space: save example (correct or incorrect). Q/Esc: close.', flush=True)
         while True:
             if protocol and (protocol.directory/'withdrawn.json').exists():
-                raise ValueError('Deze opnameronde is ingetrokken. Sluit het venster en start een nieuwe sessie.')
+                raise ValueError('This capture round was withdrawn. Close the window and start a new session.')
             if state.pop('round_request',False) and not protocol:
                 round_info=new_round(round_name,round_info['number']+1)
                 state['shown']=None;state['requested']=None

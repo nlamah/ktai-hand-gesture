@@ -83,11 +83,8 @@ Per-letter precision/recall/F1 are in `per_letter.csv`; all fold scores in `metr
 ## Reproduce and try live
 
 ```bash
-python -m research.studies.mirror_dataset --workers 4
-python -m research.studies.mirror_augmentation --stage cv
-python -m research.studies.mirror_augmentation --stage train
-python -m research.studies.report_mirror
-python -m research.studies.verify_mirror
+python -m RQ3 mirrors
+python -m RQ3 mirrors --action verify
 python -m research.live_camera --model models/asl_shin_angles_mirrored.joblib
 ```
 

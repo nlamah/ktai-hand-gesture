@@ -1,25 +1,25 @@
-\section{Spiegeltraining en links/rechts-variatie}\label{app:mirror}
-Deze proef onderbouwt de uitspraak over gespiegeld oefenen in de hoofdtekst. Alle 78.000 oorspronkelijke beelden en hun horizontale RGB-spiegelingen zijn afzonderlijk gedetecteerd: IMAGE-modus, maximaal twee handen, detectie- en aanwezigheidsdrempel 0,5. Er zijn 60.251 geldige originele detecties en 60.201 geldige spiegelingen. Handpunten en Left/Right-labels komen uit de eigen detectie van iedere presentatie; er worden geen anatomische puntindices verwisseld.
+\section{Exploratory left/right checks: mirror training}\label{app:mirror}
+All 78,000 original images and their horizontal RGB reflections were independently detected in IMAGE mode: at most two hands, detection/presence thresholds 0.5. There are 60,251 accepted originals and 60,201 accepted mirrors. Each presentation uses its own returned landmarks and hand label; anatomical indices are unchanged.
 
-De SVM-referentie traint op geldige originele bronnen; de kandidaat voegt geldige spiegelingen van dezelfde trainingsbronnen toe. Elke bron behoudt totaalgewicht één. Imputatie, schaling, numerieke gamma en oorspronkelijke klassegewichten worden gedeeld. Bron en spiegeling blijven in dezelfde fold. Dit is een nieuwe detectieproef met een eigen referentie. De classificatiescores sluiten mislukte detecties uit, zoals bij de featurestudie.
+The SVM reference fits accepted original sources; the candidate adds accepted mirrors of the same fitting sources. Each source retains total weight one. Imputation/scaling, numeric gamma and original class weights are shared. Source and derivative stay in the same fold. Primary classification scores exclude failed detections, as in the feature comparison.
 
-Het vaste toetsmengsel selecteert met seed 20261106 per letter/fold de helft van de bronnen voor spiegeling: 39.000 originele en 39.000 gespiegelde beelden. Selectie is onafhankelijk van detectiesucces. Na uitsluiting van mislukte detecties blijven 60.225 beelden over. Binnen elke presentatie krijgen beide modellen exact dezelfde geaccepteerde toetsbeelden. Het mengsel is een andere toetsverdeling dan uitsluitend oorspronkelijke foto's.
+Seed 20261106 selects half the sources per letter/fold for mirroring: 39,000 original and 39,000 mirrored presentations, before checking detection success. The fixed mixture has 60,225 accepted detections. Models share accepted sources within each presentation. The mixture is a different test distribution from originals alone.
 
 \begin{table}[h]\centering\small
-\caption{SVM-classificatie bij geldige handdetectie; mislukte detecties zijn uitgesloten. N geldig is de noemer per presentatie; P is macro-precisie. Alle-pogingenscores, inclusief detectiemislukkingen, blijven beschikbaar in de resultaatbestanden.}
+\caption{SVM classification conditional on accepted detection. N is the shared accepted-image denominator for each presentation; P is macro-precision. All-attempt scores remain in the result files.}
 \begin{tabular}{llrrrr}\toprule
-Toetsbeelden & Training & N geldig & P (\%) & Macro-F1 & Correct\\\midrule
+Test view & Training & N & P (\%) & Macro-F1 & Correct\\\midrule
 \tableinput appendix_mirror_nl.tex
 \bottomrule\end{tabular}\end{table}
 
-Op het mengsel zijn er netto 22.349 extra correcte pogingen. Op uitsluitend oorspronkelijke beelden zijn het er 26 minder. De winst betreft dus een specifieke synthetische presentatieverdeling. Spiegelparen delen persoon, pose en achtergrond; zij zijn geen onafhankelijke linkshandige deelnemers. Left/Right is bovendien een detectoruitvoer, geen geverifieerd menselijk label.
+On the mixture, mirror training gains 22,349 correct predictions; on originals it loses 26. Mirror pairs share person, pose and background and are not independent left-handed participants. Detector-Left/Right is not independently verified ground truth.
 
 \clearpage
-\subsection{Geselecteerde spiegelbeelden}
-De volgende voorbeelden tonen de oorspronkelijke foto en de apart gedetecteerde spiegeling. Dezelfde bron komt bij het voorspellen niet in de training van de betreffende fold voor.
+\subsection{Selected reflected examples}
+The original is left and its independently detected reflection right. Their source is excluded from fitting the corresponding fold.
 \begin{figure}[h]\centering
 \includegraphics[width=.86\linewidth]{figures/mirror_examples.pdf}
-\caption{Geselecteerde voorbeelden A1208 en H1198: origineel links, synthetische spiegeling rechts. Zonder spiegeltraining worden de spiegelingen M en U genoemd; met spiegeltraining A en H. De voorspellingen komen uit fold 5, waarin deze bronnen niet voor training zijn gebruikt. De figuur illustreert een bestaand resultaat, geen nieuwe onafhankelijke test.}
+\caption{Selected A1208 and H1198 examples. Without mirror training, reflections are M and U; with mirror training, A and H. Predictions are from fold 5, which excludes these sources from fitting. These are illustrations, not an independent test.}
 \end{figure}
 
-Per A/H is het eerste passende bron-ID gekozen met een geldige Right/Left-detectie, een correcte oorspronkelijke voorspelling, een fout spiegelbeeld zonder spiegeltraining en herstel daarmee. Deze selectie schat geen succespercentage. Spiegelen maakt een zichtbare handpalm geen handrug. Alle voorspellingen, detectie- en modelinstellingen staan in \texttt{results/mirror\_01/}; de beeldselectie en hashes in \texttt{results/appendix\_visuals\_01/}.
+For each A/H, selection takes the first matching source ID with valid Right/Left detections, a correct original, an incorrect reflection without mirror training and recovery with it. This estimates no success rate. Reflection does not turn a visible palm into a visible hand back. Predictions and settings: \path{results/mirror_01/}; selection/hashes: \path{results/appendix_visuals_01/}.

@@ -32,7 +32,7 @@ class GHViewProtocolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             session=GHViewSession.create(root,'fixture',2)
             self.assertEqual(session.metadata()['viewpoint_instruction_version'],'explicit-gh-pose-v3')
-            self.assertEqual(session.metadata()['guidance_display_version'],'large-nl-gh-guidance-v1')
+            self.assertEqual(session.metadata()['guidance_display_version'],'large-en-gh-guidance-v1')
             self.assertIn('do not force a fixed left/right',session.plan['instructions'])
             task=session.current
             folder=session.directory/'test';folder.mkdir()
@@ -53,8 +53,8 @@ class GHViewProtocolTests(unittest.TestCase):
                     task={'participant':'P01','letter':letter,'view':view,'requested_hand':hand,'repeat':1}
                     info=instructions(task)
                     self.assertEqual(info['letter'],letter)
-                    self.assertEqual(info['hand'],'LINKERHAND' if hand=='left' else 'RECHTERHAND')
-                    self.assertIn('duim',info['finger_shape'])
+                    self.assertEqual(info['hand'],'LEFT HAND' if hand=='left' else 'RIGHT HAND')
+                    self.assertIn('thumb',info['finger_shape'])
                     self.assertEqual(info['palm_normal_degrees'],{'handpalm':0,'schuin_palm':45,'schuin_handrug':135,'handrug':180}[view])
                     panel=render(preview,task,0,40)
                     self.assertEqual(panel.shape,(752,1160,3))
@@ -64,9 +64,9 @@ class GHViewProtocolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             session=GHViewSession.create(root,'fixture',1)
             (session.directory/'withdrawn.json').write_text('{"status":"withdrawn"}')
-            with self.assertRaisesRegex(ValueError,'ingetrokken'):
+            with self.assertRaisesRegex(ValueError,'withdrawn'):
                 GHViewSession(session.directory,'fixture')
-            with self.assertRaisesRegex(ValueError,'ingetrokken'):
+            with self.assertRaisesRegex(ValueError,'withdrawn'):
                 save_capture({},'G',{},Path('unused-model'),'fixture',None,session.directory)
             self.assertFalse(list(session.directory.glob('*/capture.json')))
 

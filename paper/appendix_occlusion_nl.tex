@@ -1,36 +1,33 @@
-\subsection{Verkenning van afdekking en onzekere handpunten}\label{app:gh-occlusion}
-\paragraph{Twee verschillende benaderingen.}
-Een skeletrotatie houdt alle 21 punten intact. Om afdekking te benaderen, bouwen we rond de bestaande punten een grof volumemodel: een ellipsoïde voor de palm en taps toelopende buisjes met ronde uiteinden voor de vingers. Een dieptebuffer bepaalt welk handdeel vooraan ligt. Vingerbreedte, palmdikte, kleur, licht en achtergrond zijn vaste aannames; er is geen anatomische passing of nieuwe foto. De geometrie gebruikt geen letterlabel. De aanname dat de bron de palmzijde toont, is evenmin voor alle bronnen gecontroleerd.
+\subsection{Occlusion and uncertain landmarks}\label{app:gh-occlusion}
+\paragraph{Two distinct approximations.}
+Rigid rotation retains all 21 points. To approximate occlusion, we build a coarse volume around source points: a palm ellipsoid and tapered rounded finger segments. A depth buffer determines the frontmost component. Width, thickness, colour, light and background are fixed assumptions, without anatomical fitting or a new photograph. Geometry uses no letter label. The assumption that every source shows a palm was not independently checked.
 
-Op 64 vooraf geselecteerde bronnen (32 G, 32 H) accepteert MediaPipe alle oorspronkelijke foto's. Zowel zonder als met halve draai wordt geen van de 64 renders als hand geaccepteerd: nul van 128 synthetische beelden. Detectie- en aanwezigheidsdrempel staan beide op 0,5. Deze renderroute levert dus geen nieuwe detectorlandmarks voor training op. We vervangen mislukte detecties niet door de bekende bronpunten.
+MediaPipe accepts all 64 predefined source photographs (32 G/32 H), but no render at either zero or 180 degrees: 0/128 synthetic images. Detection/presence thresholds are 0.5. This route supplies no new detector landmarks for fitting; failed detections are not replaced by known source points.
 
-\paragraph{Afzonderlijke robuustheidsproef.}
-We bewerken daarnaast de landmarks rechtstreeks. Van alle 4.801 G/H-bronnen draaien we de beeld- en wereldpunten om de pols. Bij PIP-, DIP-, IP- en duimpunten die volgens de dieptebuffer achter een \emph{ander} handdeel liggen, voegen we normaalverdeelde verstoring toe. De standaardafwijking per coördinaat is vooraf vastgezet op 2\% of 5\% van de pols--middelvingerknokkelafstand. Hetzelfde gelote patroon wordt op beide coördinatenbronnen toegepast, met hun eigen schaal. Niet geselecteerde punten, pols en vingerknokkels blijven exact op hun gedraaide plaats. Dit benadert onzekere puntposities; het is geen gemeten model van fouten die MediaPipe bij afdekking maakt. Ook zelfafdekking binnen één vinger wordt niet gemodelleerd.
+\paragraph{Separate robustness proxy.}
+All 4,801 G/H sources receive wrist-centred image/world rotations. Gaussian noise is added to PIP/DIP/IP/thumb points behind a different estimated hand component. Fixed standard deviations are 2\% or 5\% of wrist--middle-MCP length per coordinate. Both coordinate sources share the random pattern at their own scale. Other points, wrist and knuckles remain exactly rotated. This assumes point uncertainty, not a measured distribution of MediaPipe occlusion errors; within-finger self-occlusion is not modelled.
 
-Per bron gebruiken beide sterktes hetzelfde reproduceerbare ruispatroon. Alle 835 features worden herberekend; de nulverstoring reproduceert voor alle 4.801 bronnen de bestaande rotatie binnen $10^{-5}$. De oorspronkelijke G/H-rij en één bewerkte kopie wegen elk 0,5. Dezelfde vijf bronblokken, oorspronkelijke preprocessing, numerieke SVM-gamma en klassegewichten blijven behouden. Alleen trainingsbronnen leveren trainingskopieën; er worden geen webcamopnamen gebruikt.
+The strengths share a reproducible pattern per source. All 835 features are recomputed. Zero noise matches the existing rotation on every G/H source within $10^{-5}$. Original/copy weights remain 0.5. Folds, original preprocessing, numeric SVM gamma and class weights stay fixed. Only fitting sources produce fitting copies; no webcam captures enter training.
 
 \begin{table}[h]\centering\small
-\caption{Regressiecontrole op 60.251 oorspronkelijke, geaccepteerde toetsbeelden. P is macro-precisie (\%). Herstel/verlies is gepaard tegenover de oorspronkelijke training. Dit is geen handrugtoets.}
+\caption{Regression check on 60,251 original accepted tests. P is macro-precision (\%). Corrected/lost counts are paired against original training. This is not a real hand-back test.}
 \begin{tabular}{lrrrr}\toprule
-Training & P (\%) & Macro-F1 & Correct & Herstel/verlies\\\midrule
+Training & P (\%) & Macro-F1 & Correct & Corrected/lost\\\midrule
 \tableinput occlusion_results_nl.tex
-\bottomrule\end{tabular}
-\end{table}
-
+\bottomrule\end{tabular}\end{table}
 \input{occlusion_interpretation_nl.tex}
 
-\paragraph{Aanvullende kunstmatige toets.}
-In een afzonderlijke controle draaien we \emph{uitsluitend de G/H-toetslandmarks} van dezelfde bronblokken; de andere 24 letters blijven oorspronkelijk. De modellen worden niet opnieuw getraind. Deze toets maakt zichtbaar of de toegevoegde geometrie geleerd wordt, maar maakt van geschatte punten geen echte handrugdetectie.
+\paragraph{Additional artificial test.}
+Only held-out G/H landmarks are rotated; the other 24 letters remain unchanged. Models are not refitted. This tests whether the offered geometry is learned, not real hand-back detection.
 \input{occlusion_synthetic_nl.tex}
 
 \clearpage
-\subsection{Geschatte afdekking in beeld}
-De onderstaande beelden maken de geometrische aannames zichtbaar. De bronfoto's zijn dezelfde twee voorbeelden als in figuur~\ref{fig:gh-training-rotation}; de volumes zijn uit hun opgeslagen handpunten opgebouwd. Een rode cirkel geeft een positie achter een ander volumedeel aan. De plaats van zo'n punt blijft bekend uit de bron; een echte detector zou die plaats opnieuw moeten schatten.
-
+\subsection{Illustrating the occlusion assumptions}
+The source photographs match Figure~\ref{fig:gh-training-rotation}. Volumes use their stored points. Red circles mark positions behind a different component. Their location remains known from the source; a real detector would estimate it again.
 \begin{figure}[h]\centering
 \includegraphics[width=.77\linewidth]{figures/gh_occlusion_proxy.pdf}
-\caption{Twee vaste trainingsvoorbeelden en hun geschatte volumes. Rode cirkels markeren punten achter een ander volumedeel. Het zijn illustraties van de aannames; de gerenderde hand is geen nieuwe waarneming. MediaPipe vindt in deze renders geen hand.}
+\caption{Two fitting sources and approximate volumes. Red circles mark points behind a different hand component. These illustrate assumptions, not new observations; MediaPipe accepts none of these renders.}
 \label{fig:gh-occlusion-proxy}
 \end{figure}
 
-De protocollen, bronselectie, vijf folds, per-letterresultaten en voorspellingen staan met hashes in \path{results/gh_occlusion_01/}. De bestaande dataset is eerder tijdens ontwikkeling bekeken. Beide ruissterktes zijn verkennend; er wordt geen winnaar als nieuwe live-standaard gekozen. Voor de gewenste ASL-uitvoering blijft een onafhankelijk gecontroleerde handrugtoets nodig, waarbij detectiemislukkingen ook meetellen.
+Protocols, source selection, folds, letter metrics, predictions and hashes are in \path{results/gh_occlusion_01/}. Both strengths are exploratory; neither is selected as a new deployment default. The intended ASL execution still requires an independently reviewed hand-back evaluation including failed detections.

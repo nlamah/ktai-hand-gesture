@@ -58,12 +58,10 @@
       "view_visual": "palm zichtbaar"
     }
   ],
-  "figure_sha256": "6434e6dfb1717ab88de819bda0ab11f3cf6b520b532b1d2538364a2131b3c975",
+  "figure_sha256": "66019a714ae82e4c7060763053424df6952d3704620ab38b509571dc6cb64dfd",
   "csv_sha256": {
     "predictions.csv": "5bc259aba5ac514c5bc2a53f760945858e79805fce6410389df2a24ec7e45833",
     "training_angles.csv": "efb4005b8763ed6074bafe1f2cbfdbf89b5b68de8de304202a3fb3b8efe9603e"
   },
-  "TeX_table_rows_checked": 4,
-  "figure_current_sha256": "6434e6dfb1717ab88de819bda0ab11f3cf6b520b532b1d2538364a2131b3c975",
-  "figure_generated_table_sha256": "aeea5a2a5024a45622f05efb4c4d085b42a49f5982ee77610adffe43fe392834"
+  "figure_language": "English"
 }

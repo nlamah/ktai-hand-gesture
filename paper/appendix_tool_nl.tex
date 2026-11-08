@@ -1,19 +1,19 @@
-\section{Handkenmerken en controle in de tool}\label{app:feature-tool}
-De eigen handbeschrijvingen maken de handvorm expliciet: welke gewrichten zijn gebogen, welke vingers staan uit elkaar of over elkaar, waar ligt de duim en raakt de duimtop een vingertop? Het werkboek bevat hiervoor 19 controles: 13 voor buiging, twee voor spreiding, één voor kruising, één voor duimstand en twee voor contact. Dit zijn beschrijvingen van de gevonden handpunten; de modelinvoer kan per beschrijving meerdere getallen bevatten (bijlage A).
+\section{Hand features and tool inspection}\label{app:feature-tool}
+Own categories make hand shape explicit: bent joints, separated/crossed fingers, thumb position and thumb-tip proximity. The workbook defines 19 checks: 13 flexion, two spreading, one crossing, one thumb shape and two proximity checks. They describe estimated landmarks; one check may produce multiple model inputs (Appendix A).
 
 \begin{figure}[h]\centering
 \includegraphics[width=.98\linewidth,height=.64\textheight,keepaspectratio]{figures/feature_concepts_nl.pdf}
-\caption{Schematisch overzicht van de zelfbedachte handkenmerken. Gekleurde vingers markeren het besproken kenmerk. A: buiging per gewricht. B: wijs- en middelvinger naast of over elkaar. C--D: spreiding wordt voor twee verschillende vingerparen apart beoordeeld. E: het bedoelde onderscheid tussen de duim over en naast de palm. F: duimtopcontact, afzonderlijk met wijs- en middelvinger. De tekeningen verduidelijken de ideeën; het zijn geen gemeten handen of classificatieresultaten.}
+\caption{Conceptual own features. Highlighted fingers identify the check. A: flexion per joint. B: adjacent/crossed index and middle fingers. C--D: spreading for two separate finger pairs. E: the intended across/beside-palm thumb distinction. F: thumb-tip proximity to index/middle separately. Drawings explain concepts; they are not measured hands or classification results.}
 \label{fig:feature-concepts}
 \end{figure}
 
-\textbf{Vingers bij elkaar is niet hetzelfde als contact.} ``Niet gespreid'' betekent dat het vingerpaar niet aan de spreidingsregel voldoet. De vingers kunnen naast elkaar liggen, elkaar raken, gekruist of sterk gebogen zijn. Kruising heeft daarom een eigen regel; direct contact wordt alleen voor duimtop--wijsvingertop en duimtop--middelvingertop gecontroleerd.
+\textbf{Not spread does not imply contact.} A pair failing the spreading rule may be adjacent, touching, crossed or strongly bent. Crossing has a separate rule; direct proximity is checked only for thumb-tip--index-tip and thumb-tip--middle-tip.
 
-\textbf{De duimstand is een benadering van het idee.} ``Over de palm'' wordt in de software benaderd met de getekende afwijking bij de duimknokkel: \texttt{B-shaped} of \texttt{Not B-shaped}. Dit is geen rechtstreekse meting van hoeveel handpalm de duim bedekt. ``Niet B-vormig'' omvat meerdere mogelijke duimstanden.
+\textbf{Thumb shape approximates the intended concept.} Across-palm position is approximated by signed thumb-MCP deviation: \texttt{B-shaped} or \texttt{Not B-shaped}. It does not directly measure covered palm area; the latter category includes several thumb positions.
 
 \clearpage
-\subsection{De featuretool in gebruik}
-De gekozen doelletter bepaalt de verwachte kenmerken uit het werkboek, maar beïnvloedt de modelvoorspelling niet. De tool zet de gemeten categorieën naast die verwachtingen. De aangeleverde screenshot toont doelletter C en voorspelling C, met 15 van de 19 controles als overeenkomst. Een goede lettervoorspelling kan dus samengaan met afwijkingen bij enkele afzonderlijke kenmerken.
+\subsection{Using the feature tool}
+The target letter selects expected workbook categories but does not affect recognition. The tool compares measured and expected categories. The supplied screenshot shows intended C and predicted C, with 15/19 checks matching. Correct recognition can coexist with individual category mismatches.
 
 \begin{figure}[h]\centering
 \includegraphics[width=.98\linewidth]{figures/feature_tool_screenshot.png}
@@ -29,41 +29,41 @@ De gekozen doelletter bepaalt de verwachte kenmerken uit het werkboek, maar beï
 \fcolorbox{featureMismatch}{featureMismatchBackground}{%
 \begin{minipage}[t][2cm][t]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
 \raggedright\normalsize
-\textbf{Wijsvinger: PIP-gewricht}\par\medskip
-\textbf{Verwacht:} Deels gebogen / Gebogen\par\smallskip
-\textbf{Gemeten:} Gestrekt\par\smallskip
-\textcolor{featureMismatch}{\textbf{Afwijking}}
+\textbf{Index finger: PIP joint}\par\medskip
+\textbf{Expected:} Partly bent / Bent\par\smallskip
+\textbf{Observed:} Extended\par\smallskip
+\textcolor{featureMismatch}{\textbf{Mismatch}}
 \end{minipage}}\\[.3em]
-\small Wijsvinger-PIP: een afwijkende buigingscategorie.
+\small Index PIP: a flexion-category mismatch.
 \end{minipage}\hfill
 \begin{minipage}[t]{.46\linewidth}\centering
 \fcolorbox{featureMatch}{featureMatchBackground}{%
 \begin{minipage}[t][2cm][t]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
 \raggedright\normalsize
-\textbf{Spreiding: wijs--middelvinger}\par\medskip
-\textbf{Verwacht:} Niet gespreid\par\smallskip
-\textbf{Gemeten:} Niet gespreid\par\smallskip
-\textcolor{featureMatch}{\textbf{Overeenkomst}}
+\textbf{Spreading: index--middle}\par\medskip
+\textbf{Expected:} Not spread\par\smallskip
+\textbf{Observed:} Not spread\par\smallskip
+\textcolor{featureMatch}{\textbf{Match}}
 \end{minipage}}\\[.3em]
-\small Wijs--middel: geen spreiding, zoals verwacht.
+\small Index--middle: not spread, as expected.
 \end{minipage}
 \endgroup
-\caption{Eigen screenshot met twee opnieuw opgemaakte detailkaartjes. Hun inhoud is overgenomen en naar het Nederlands vertaald; de kaartjes zijn scherpe vectortekst. Groen: overeenkomst; rood: afwijking; grijs in de tool: niet beoordeeld. Dit zijn geen zekerheidsscores van de lettervoorspelling.}
+\caption{Original screenshot with two re-typeset detail cards showing the same expected/observed values as sharp vector text. Green: match; red: mismatch; grey: not scored. These are not letter-confidence scores.}
 \label{fig:feature-tool-screenshot}
 \end{figure}
 
-\subsection{Meetregels achter de categorieën}
-Een interne gewrichtshoek wordt gemeten tussen de twee segmenten rond een handpunt; een rechte vinger nadert $180^\circ$. MCP is de knokkel, PIP het middelste gewricht en DIP het eindgewricht; de duim heeft een IP. De 13 buigingscontroles zijn duim-IP plus MCP/PIP/DIP van de vier andere vingers. De duimknokkel krijgt de afzonderlijke vormregel uit paneel E. De metingen gebruiken geschatte 3D-wereldhandpunten.
+\subsection{Measurement rules}
+An internal angle is measured between the two segments around a joint; a straight joint approaches $180^\circ$. MCP is the knuckle, PIP the middle joint and DIP the end joint; the thumb has an IP. The 13 checks comprise thumb IP and MCP/PIP/DIP for the other four fingers. Thumb MCP uses the separate shape rule in panel E. Measurements use estimated world points.
 
 \begin{table}[h]\centering\small
-\caption{Belangrijkste regels uit \texttt{config/thresholds.json}. Dit zijn gekozen projectdrempels.}
+\caption{Main rules from \texttt{config/thresholds.json}. Thresholds are project choices.}
 \begin{tabular}{p{.19\linewidth}p{.72\linewidth}}\toprule
-Kenmerk & Meetregel\\\midrule
-Vingerbuiging & Gebogen bij hoogstens $130^\circ$, gestrekt vanaf $150^\circ$; daartussen deels gebogen. De duim-IP gebruikt $80^\circ$ en $155^\circ$.\\
-Spreiding & Apart voor wijs--middel en middel--ring: genormaliseerde ruimte minstens 0,25, diepteverschil hoogstens 0,6, richtingscosinus positief en PIP/DIP-hoeken minstens $120^\circ$. Uitwaaieren is toegestaan.\\
-Vermoede kruising & Wijs en middel wisselen lateraal van volgorde langs het vingerprofiel, bij diepteverschil hoogstens 0,7 en voldoende strekking. Alleen kruisende 2D-lijnen zijn onvoldoende.\\
-Duimstand & B-vormig bij een getekende palmgerichte duimafwijking groter dan $16^\circ$; anders niet B-vormig.\\
-Duimcontact & Vingertopafstand gedeeld door pols--middelvingerbasis. Contact bij ratio hoogstens 0,1; nabij tot en met 0,825; daarboven veraf. Beide contactparen worden apart gemeten.\\\bottomrule
+Feature & Rule\\\midrule
+Finger flexion & Bent at most $130^\circ$, extended from $150^\circ$, partly bent between. Thumb IP uses $80^\circ$ and $155^\circ$.\\
+Spreading & Index--middle and middle--ring separately: normalized gap at least 0.25, depth gap at most 0.6, positive direction cosine and PIP/DIP angles at least $120^\circ$. Divergent directions are allowed.\\
+Suspected crossing & Index/middle reverse lateral order along their profiles, depth gap at most 0.7 and sufficient extension. Crossing 2D lines alone is insufficient.\\
+Thumb shape & B-shaped when signed palm-directed deviation exceeds $16^\circ$; otherwise not B-shaped.\\
+Thumb proximity & Tip distance divided by wrist--middle-MCP length: contact at most 0.1, near up to 0.825, far above. Both thumb-tip pairs are measured separately.\\\bottomrule
 \end{tabular}\end{table}
 
-Het werkboek kan meerdere categorieën toelaten. Bij ``geen contact'' gelden nabij en veraf beide als overeenkomst. Onbekende metingen zijn geen bevestigde overeenkomst; lege referentievelden worden niet beoordeeld. Een groene controle bevestigt de ingestelde regel, niet automatisch de anatomie of ASL-uitvoering.
+The workbook may allow several categories. For no contact, both near and far count as matching. Unknown measurements are not confirmed agreement; blank references are not scored. Green confirms the chosen rule, not anatomy or ASL execution.

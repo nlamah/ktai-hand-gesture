@@ -6,129 +6,96 @@
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 \usepackage[accepted]{icml2021}
 \usepackage[T1]{fontenc}
-\IfFileExists{babel.sty}{\usepackage[dutch]{babel}}{%
-  % Tectonic kan de Nederlandse afbreekpatronen al in het formaat hebben.
-  \AtBeginDocument{\ifcsname l@dutch\endcsname
-    \language=\csname l@dutch\endcsname\lefthyphenmin=2\righthyphenmin=3\fi}}
 \hypersetup{hypertexnames=false}
 \newcommand{\drafttodo}[2]{\par\noindent\textbf{TODO [#1]:} #2\par}
 \makeatletter\let\tableinput\@@input\makeatother
 \makeatletter
 \patchcmd{\printAffiliationsAndNotice}{Correspondence to: \icmlcorrespondingauthor@text.}{}{}{}
-\patchcmd{\abstract}{Abstract}{Samenvatting}{}{}
-\renewcommand{\fnum@table}{Tabel \thetable}
-\renewcommand{\fnum@figure}{Figuur \thefigure}
-\renewcommand{\Notice@String}{Nederlandse werkversie van een gezamenlijk studieproject.}
+\renewcommand{\Notice@String}{Working version of a joint study project.}
 \makeatother
-\renewcommand{\refname}{Referenties}
-\renewcommand{\tablename}{Tabel}
-\renewcommand{\figurename}{Figuur}
-\icmltitlerunning{Herkenning van het ASL-alfabet}
+\icmltitlerunning{ASL alphabet recognition}
 \begin{document}
 \twocolumn[
-\icmltitle{Hoe kan een computer handgebaren voor letters herkennen?\\Fotobewerking, meer voorbeelden en uitleg over de handvorm}
+\icmltitle{How Can a Computer Recognize Hand Letters?\\Image Preprocessing, Augmentation and Hand-Shape Features}
 \begin{icmlauthorlist}
-\icmlauthor{TODO: drie namen en studentnummers}{ou}
+\icmlauthor{Ton Heijligers (852935308)}{ou}
+\icmlauthor{Youri de Waal (852843968)}{ou}
+\icmlauthor{Danny Linden (85261859)}{ou}
 \end{icmlauthorlist}
 \icmlaffiliation{ou}{Open Universiteit}
 \icmlcorrespondingauthor{}{}
-\icmlkeywords{ASL, handdetectie, trainingsdata, handkenmerken}
+\icmlkeywords{ASL, hand detection, augmentation, hand-shape features}
 \vskip 0.3in
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-Kan een computer op een foto zien welke letter iemand met de hand uitbeeldt? Wij onderzoeken drie mogelijke verbeteringen: foto's vooraf bewerken, het programma meer voorbeelden geven en de handvorm duidelijker beschrijven. Voor de eerste twee onderdelen moeten de resultaten nog worden toegevoegd. Het derde onderdeel vergelijkt acht combinaties van handbeschrijvingen op 60.251 foto's. Extra beschrijvingen, zoals ``de middelvinger is gebogen'', helpen niet steeds. Een kleine verbetering blijkt bovendien samen te hangen met de gebruikte handpunten. We weten nog niet of deze aanpak bij nieuwe mensen of met een gewone webcam beter werkt.
+Can a computer identify a letter shown by a hand in a photograph? We study targeted augmentation, a second detection attempt after image preprocessing, and explicit hand-shape descriptions. This standalone working paper develops the feature contribution; the complete group version includes the supplied detection-recovery text. Eight feature combinations are compared on 60,251 accepted images. Own categories do not consistently improve recognition. A small gain from world-joint measurements also depends on the coordinate source and learner. Synthetic orientation improvements do not establish better recognition for new users or a live camera.
 \end{abstract}
 
-\section{Wat willen we onderzoeken?}
-In het handalfabet van de Amerikaanse Gebarentaal (ASL) worden letters met de hand uitgebeeld. Wij onderzoeken losse foto's van de letters A tot en met Z. We onderzoeken daarmee geen gesprekken of de bewegingen die bij J en Z horen.
+\section{What do we investigate?}
+The American Sign Language (ASL) hand alphabet represents letters using hand shapes and movements. We study static A--Z images, not continuous signing or the movements of J and Z.
 
-Onze hoofdvraag is: \emph{Wat helpt een computer om de hand op een foto te vinden en de uitgebeelde letter goed te herkennen?} We verdelen dit in drie vragen:
+Our shared question is: \emph{Which changes help a computer locate a hand and recognize its letter?} The group paper uses three research questions:
 \begin{enumerate}
-\item \textbf{RQ1 -- Foto's bewerken:} Vindt het programma vaker een hand als we de foto eerst bewerken? En liggen de gevonden punten dan ook op de juiste plek?
-\item \textbf{RQ2 -- Meer voorbeelden:} Herkent het programma letters beter als het met meer verschillende foto's oefent?
-\item \textbf{RQ3 -- Handvorm beschrijven:} Helpen eigen handkenmerken en gewrichtshoeken, en kunnen ze de richtingsbeschrijving van Shin vervangen?
+\item \textbf{RQ1 -- Augmentation:} Does targeted augmentation reduce confusion more effectively than general augmentation?
+\item \textbf{RQ2 -- Detection recovery:} Can a $3\times3$ dilation filter recover visually plausible landmarks when MediaPipe initially detects no hand?
+\item \textbf{RQ3 -- Hand shape:} Can own hand-shape categories and joint measurements supplement or replace Shin's landmark directions?
 \end{enumerate}
-We testen deze mogelijkheden apart. Als een bewerkte foto meer handpunten oplevert, weten we bijvoorbeeld nog niet of het programma daardoor ook de juiste letter kiest.
+We test these changes separately. Accepting more hand detections does not automatically improve letter classification.
 
-\section{Hoe werkt de herkenning?}
-Het programma begint met het zoeken naar de hand. MediaPipe, bestaande software voor beeldherkenning, schat 21 punten bij onder meer de pols, knokkels en vingertoppen \citep{zhang2020}. Je kunt deze punten zien als stippen op een eenvoudig handskelet. Als een stip verkeerd ligt, kan ook de beschrijving van de hand verkeerd worden.
+\section{How does recognition work?}
+MediaPipe first estimates 21 points around the wrist, knuckles and fingertips \citep{mediapipedocs}. Think of them as dots on a simple hand skeleton. If a dot is misplaced, the hand description may also be wrong.
 
-Daarna beschrijven we de hand met afstanden en richtingen tussen de stippen. Deze basisaanpak komt van \citet{shin2021}. Een leerprogramma oefent met zulke beschrijvingen en de bijbehorende letters. Vervolgens testen we of het de letter kiest op foto's waarmee het niet heeft geoefend.
+We describe the points using distances and directions following \citet{shin2021}. A classifier learns from these descriptions and their letters, then predicts images excluded from its fitting data. We use SVM and LightGBM \citep{lightgbmdocs}; implementation settings are in Appendix A.
 
-Wij gebruiken twee bestaande leermethoden, SVM en LightGBM \citep{ke2017}. Hun namen zijn vooral nodig om de proeven te kunnen herhalen. De instellingen staan in bijlage A.
-\drafttodo{PREP/SIZE}{Voeg bronnen toe die de gekozen fotobewerkingen en de proef met meer voorbeelden onderbouwen.}
+\section{How do we test?}
+\subsection{Separate fitting and testing}
+The Kaggle ASL Alphabet dataset supplies 78,000 A--Z training images \citep{asl_alphabet}. Exactly one accepted hand was obtained for 60,251 images. Only those images enter the feature comparison, so its scores do not describe the complete recognition pipeline over every source image.
 
-\section{Hoe testen we dit?}
-\subsection{Oefenen en toetsen gescheiden houden}
-We gebruiken een bestaande verzameling van 78.000 foto's, de Kaggle ASL Alphabet-set. Bij 60.251 foto's accepteerde het programma precies \mbox{\'e\'en} gevonden hand. Alleen die foto's zijn gebruikt voor de uitgewerkte proef met handbeschrijvingen. De resultaten daarvan vertellen dus niet hoe goed het hele programma op alle foto's werkt.
+Five fixed folds separate blocks of consecutive file numbers. Each model fits four folds and predicts the remaining fold, until every image has one out-of-fold prediction. All feature variants share test sources. A source and its derivatives stay in the same fold. These blocks are not verified participants.
 
-We verdelen de foto's voor deze proef in vijf groepen. Het programma oefent met vier groepen en wordt getoetst op de overgebleven groep. We herhalen dit totdat iedere groep aan de beurt is geweest. De verschillende aanpakken krijgen dezelfde toetsfoto's. Een bewerkte kopie mag niet bij de toets staan als het origineel bij het oefenen hoort.
+Macro-precision averages letter precision equally across A--Z. Macro-F1 also accounts for missed true letters. F1 ranges from zero to one; higher is better. Technical definitions and settings are in Appendix A.
 
-Voor de beoordeling tellen we eerst hoeveel letters goed zijn herkend. Daarnaast kijken we naar \emph{precisie}: als het programma tien keer H zegt en acht keer gelijk heeft, is de precisie voor H 80\%. Maar het kan daarnaast echte H's missen. De \emph{F1-score} houdt met beide soorten fouten rekening en ligt tussen 0 en 1; een hogere score is beter. Bij macro-precisie en macro-F1 telt iedere letter even zwaar mee. De technische afspraken staan in bijlage A.
-\drafttodo{TEAM}{Controleer dat de drie bijdragen dezelfde foto's en afspraken gebruiken, of leg de verschillen uit.}
+\drafttodo{RQ1/RQ2}{Integrate the augmentation contribution and executable detection-recovery implementation. The group version already contains the supplied recovery results.}
 
-\input{team_methods_pending.tex}
+\subsection{RQ3: eight hand descriptions}
+We compare distances (D), Shin directions (S), own categories such as finger flexion/spreading (E), and joint measurements (J). D is always present; independently including or omitting S/E/J gives eight combinations. Both learners receive the same combinations and test images. Appendix C explains the categories and inspection tool.
 
-\subsection{RQ3: Acht combinaties van handbeschrijvingen}
-We beschrijven de hand op vier manieren: afstanden, richtingen tussen handpunten, eigen categorieën zoals ``vinger gebogen'' en gemeten gewrichtshoeken. Afstanden blijven steeds aanwezig. De andere drie onderdelen zetten we aan of uit: dat geeft acht combinaties. Beide leermethoden krijgen dezelfde combinaties en toetsfoto's. De meetregels en controletool staan in bijlage C.
+E and J use estimated world points; D and S use image points. A separate control derives J from exactly the same points as Shin. This distinguishes coordinate-source changes from a different description of the same points (Appendices A--B).
 
-De gewrichtshoeken en categorieën komen uit geschatte 3D-wereldpunten. Shin gebruikt beeldhandpunten. Een bestaande controle berekent daarom ook gewrichtshoeken uit precies dezelfde punten als Shin. Zo onderscheiden we een andere beschrijving van een andere coördinatenbron (bijlage A--B).
+After fitting, we shuffle a feature group across test images and measure precision/F1 losses \citep{sklearnpermutation}. Labels and fitted models remain unchanged. These tests use 13,000 fixed held-out images; the eight-way classification comparison uses all 60,251 accepted images.
 
-Na het trainen onderzoeken we welke informatie een model gebruikt. We husselen één kenmerk of groep kenmerken tussen toetsfoto's en meten hoeveel precisie en F1 verloren gaan (permutatietest; \citealp{sklearnpermutation}). De juiste letters blijven staan; het model wordt niet opnieuw getraind. Deze husseltests gebruiken 13.000 vaste toetsbeelden. De gewone vergelijking van de acht combinaties gebruikt alle 60.251 beelden.
-
-\section{Resultaten}
-\input{team_results_pending.tex}
-
-\subsection{RQ3: Welke combinatie werkt beter?}
-Tabel~\ref{tab:kern} vergelijkt de acht combinaties. Alle scores gelden voor foto's waarin een hand gevonden is. ``Wereldgewrichtshoeken'' zijn metingen aan de geschatte 3D-hand; ``eigen categorieën'' zijn de beschrijvingen uit onze controletool.
-\begin{table*}[t]
-\centering\small
-\caption{De acht combinaties op dezelfde 60.251 toetsbeelden. Alle varianten bevatten afstanden. P is macro-precisie in procenten; F1 is macro-F1. Ieder beeld wordt uitsluitend voorspeld door een model dat zonder dat beeld is getraind.}
-\label{tab:kern}
+\section{Results}
+\subsection{RQ3: which combination works better?}
+Table~\ref{tab:core} compares the eight descriptions. World-joint measurements describe an estimated 3D hand, rather than independently measured anatomy.
+\begin{table*}[t]\centering\small
+\caption{Eight representations on the same 60,251 held-out sources. All contain D. P is macro-precision (\%); F1 is macro-F1. Each source is predicted only by a model fitted without it.}
+\label{tab:core}
 \begin{tabular}{lrrrr}\toprule
  & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
-Beschrijving van de hand & P (\%) & F1 & P (\%) & F1\\\midrule
+Hand description & P (\%) & F1 & P (\%) & F1\\\midrule
 \tableinput factorial_main_rows_nl.tex
-\bottomrule\end{tabular}
-\end{table*}
-
+\bottomrule\end{tabular}\end{table*}
 \input{factorial_main_results_nl.tex}
-De bestaande controle met gewrichtshoeken uit dezelfde punten als Shin levert bij SVM slechts vier extra correcte voorspellingen op. De grotere winst met wereldpunten kan dus niet aan de hoekformule alleen worden toegeschreven.
+The same-coordinate angle control gains only four SVM predictions. The larger world-point gain therefore cannot be attributed to the angle formula alone.
 
-\subsection{Welke kenmerken gebruikt het model?}
+\subsection{Which information does the model use?}
 \input{factorial_main_permutation_nl.tex}
-Een kenmerk dat een model gebruikt, hoeft als toevoeging nog geen betere classificatie op te leveren; belangrijkheid is modelafhankelijk \citep{fisher2019}.
+A feature used by a fitted model need not improve a newly fitted model when added. Importance depends on the learner and other available features \citep{sklearnpermutation}.
 
-\subsection{Extra proeven met handoriëntatie}
-We hebben ook oefenfoto's gespiegeld om het programma met links/rechts-variatie te laten oefenen. Dat helpt sterk op onze kunstmatig gespiegelde toetsfoto's, maar kost op de oorspronkelijke foto's 26 goede voorspellingen. Dit is nog geen bewijs dat het ook bij echte linkshandige gebruikers beter werkt (bijlage D).
+\subsection{Brief practical explorations}
+Alongside the main feature comparison, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and hand normalization help on artificial mirrored tests but do not improve original-view classification. For G/H, usual ASL uses an inward or sideways palm \citep{vicarsfeedback}, unlike selected training views. Rotating training landmarks teaches the artificial geometry, but two selected live G examples remain H. These short exploratory follow-ups are not evidence of better recognition for new users. Appendices D--F give the attempted methods, scores and examples.
 
-\input{handedness_main_nl.tex}
+\section{Discussion and provisional conclusion}
+Own categories do not consistently improve Shin. Under these settings, categories and joint measurements also do not fully replace the directions. The small SVM world-joint gain does not recur with LightGBM, and coordinate source is a relevant alternative explanation. Retraining measures adding/removing information; permutation measures dependence of a fitted model, where related features may substitute for one another.
 
-Bij G en H is de palm gewoonlijk naar de gebaarder of opzij gericht \citep{shield2022,vicarsfeedback}. De bekeken trainingsfoto's uit de Kaggle-set die Shin gebruikte tonen juist de palm. Daarom voegen we naast de oorspronkelijke G/H-trainingsbeschrijvingen een halve draai om de verticale as toe.
+The brief left/right and G/H explorations show limits of synthetic changes: gains on artificial presentations do not establish real-user improvement. They are practical side checks, not independent validation of the feature comparison.
 
-Op ongewijzigde toetsfoto's herstellen we vier fouten en maken vijf nieuwe. Dat meet behoud op de dataset; palmgerichte G/H herkennen is niet ons gebruiksdoel. Een juiste datasetletter betekent niet vanzelf een juiste ASL-uitvoering.
+The folds were inspected during development and are not verified people, so this is exploratory validation, not an untouched final test. A high score here does not guarantee webcam performance for a new person. Scores also differ from Shin's evaluation because source selection and splitting differ.
 
-\input{occlusion_main_nl.tex}
+\drafttodo{TEAM}{Complete the shared interpretation once the augmentation contribution and recovery implementation/visual assessment are supplied.}
+Text and software were prepared with AI assistance; the authors remain responsible for content. Webcam images require consent and remain local.
 
-In vier vrij gekozen webcamvoorbeelden blijft de rotatievariant twee G's met zichtbare handrug als H herkennen; een H wordt wel hersteld. De geschatte handvorm verschilt van een zuiver gedraaid trainingsskelet (bijlage E). Dit is foutanalyse, geen nieuwe nauwkeurigheidsmeting.
-
-\section{Discussie en voorlopige conclusie}
-De eigen categorieën leveren hier geen overtuigende extra herkenningswinst bovenop Shin. In de geteste combinaties vervangen categorieën en gewrichtshoeken de richtingen ook niet volledig. De kleine wereldgewrichtswinst bij SVM keert niet terug bij LightGBM; bovendien speelt de coördinatenbron een rol. De trainingsvergelijkingen meten het effect van toevoegen of weglaten. De husseltests meten de afhankelijkheid van een eenmaal getraind model, waarbij samenhangende kenmerken elkaar kunnen vervangen.
-
-Handen vóór het leren en toetsen naar dezelfde stand spiegelen maakt de herkenning minder gevoelig voor kunstmatig gespiegelde beelden. Op oorspronkelijke foto's met gevonden handpunten verbetert dit de resultaten niet. Trainen met oorspronkelijke én gespiegelde foto's werkt op het gemengde toetsbestand beter. Voor een conclusie over nieuwe linkshandige gebruikers zijn nog onafhankelijke opnamen nodig.
-
-De rotatie helpt op kunstmatig gedraaide G/H-punten. De oorspronkelijke toets meet behoud op het oude aanzicht. De nieuwe praktijkvoorbeelden laten zien dat G met zichtbare handrug nog als H wordt herkend. De hoge kunstmatige score draagt dus niet vanzelf over naar de live-camera. Rotatietraining is daarmee nog geen aangetoonde oplossing voor deze live-verwarring; de vier vrij gekozen beelden bepalen niet hoe vaak dit probleem voorkomt.
-
-De resultaten zijn nog geen eindtest. Tijdens de ontwikkeling is vaker naar dezelfde toetsgroepen gekeken; dat kan een te gunstig beeld geven \citep{cawley2010}. Bovendien weten we niet of de groepen echt verschillende mensen bevatten. Een goede score op deze foto's betekent dus niet vanzelf dat de webcam bij een nieuw persoon even goed werkt. Onze resultaten zijn ook niet rechtstreeks vergelijkbaar met die van Shin, omdat de selectie en verdeling van de foto's verschillen.
-
-Voor de gezamenlijke conclusie ontbreken nog twee bijdragen: vinden we door fotobewerking vaker bruikbare handpunten, en helpt oefenen met meer foto's? Een extra gevonden hand is pas bruikbaar als de punten goed liggen. En meer foto's helpen alleen aantoonbaar als we steeds met dezelfde toetsfoto's vergelijken.
-\drafttodo{TEAM}{Voeg de antwoorden op RQ1/RQ2 toe en beschrijf daarna wat de drie onderzoeken samen laten zien.}
-
-Tekst en software zijn mede met AI opgesteld; de auteurs blijven verantwoordelijk voor de inhoud. Webcamopnamen vereisen instemming en blijven lokaal.
-
-% Maximaal vijf pagina's hoofdtekst; referenties mogen op pagina zes doorlopen.
-% De literatuurlijst sluit aan en mag zo nodig op pagina zes komen.
 \bibliography{references}
 \bibliographystyle{icml2021}
 \end{document}

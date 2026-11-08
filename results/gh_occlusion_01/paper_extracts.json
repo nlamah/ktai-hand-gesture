@@ -7,10 +7,10 @@
   ],
   "figure_scope": "Illustrative source-derived approximate volume, not a photographed dorsal hand or new detector landmarks",
   "generated": {
-    "paper/figures/gh_occlusion_proxy.pdf": "c44a144b7770e521a0a9b8861b6a3d456c2ab053886622cadfd41c8be8d874d6",
-    "paper/occlusion_interpretation_nl.tex": "a53964fb37ca112dcc1ee6d7a5d6c12d68df354b707d7a5d7d1afef7b654fafc",
-    "paper/occlusion_main_nl.tex": "eb736d58c405e256dedc0aec973366be60c2be079cf965f4584e81d75d15cc9f",
-    "paper/occlusion_results_nl.tex": "c8dd385a983d5b9a22f5033d3846953e29554034dbd3791b61c42aad3f116745",
-    "paper/occlusion_synthetic_nl.tex": "eb83127d01b6b4f5bd8c95caec00b2bc3f967b4e76dd1df99e9d6f821090baf5"
+    "paper/figures/gh_occlusion_proxy.pdf": "7034d2f610b8783a881b875972d749c39f0d32499f312f6bd315c0ef731f5442",
+    "paper/occlusion_interpretation_nl.tex": "85cd62f2b27e7b77779e476d14e1741e77b0acdb531df05f6dc33f1beedb8e71",
+    "paper/occlusion_main_nl.tex": "b52a6cb596d859e564781e043a834fe599c6269f439ea2223645968a5e60197e",
+    "paper/occlusion_results_nl.tex": "c5bd1a00ba12aa2a85d93a506d3453f1a0d412fe5039c449b0ae5b442628b196",
+    "paper/occlusion_synthetic_nl.tex": "bcf3b4946fd8412e89339c1fdda421b4620f1c612298260abfadfce2873b2039"
   }
 }

@@ -1,4 +1,4 @@
-"""Build the mirror experiment report, figures and paper tables from saved results."""
+"""Build the mirror experiment report and figures from saved results."""
 from collections import Counter
 from hashlib import sha256
 import json
@@ -69,47 +69,11 @@ def main():
               '## Main results: all attempted held-out sources', '',
               '| Learner | Presentation | Training | Accuracy | Macro-precision | Macro-recall | Macro-F1 |',
               '|---|---|---|---:|---:|---:|---:|']
-    detail_rows, conditional_rows, main_rows = [], [], []
     for model in ('svm', 'lightgbm'):
         for presentation, label in PRESENTATIONS:
             for arm in NAMES:
                 r = lookup[model, arm, presentation, 'all_attempts']
                 lines.append(f'| {model.upper()} | {label} | {NAMES[arm]} | {100*r.accuracy:.3f}% | {100*r.macro_precision:.3f}% | {100*r.macro_recall:.3f}% | {r.macro_f1:.6f} |')
-                detail_rows.append(f"{model.upper()} & {label} & {'Original' if arm == 'original_training' else '+ mirrors'} & "
-                    f"{100*r.accuracy:.3f} & {100*r.macro_precision:.3f} & {r.macro_f1:.5f} " + r'\\')
-                c = lookup[model, arm, presentation, 'accepted_only']
-                conditional_rows.append(f"{model.upper()} & {label} & {'Original' if arm == 'original_training' else '+ mirrors'} & "
-                    f"{c.images:,} & {100*c.macro_precision:.3f} & {c.macro_f1:.5f} " + r'\\')
-                if model == 'svm' and presentation == 'balanced_mix':
-                    main_rows.append(f"{'Original' if arm == 'original_training' else '+ RGB mirrors'} & "
-                        f"{100*r.accuracy:.3f} & {100*r.macro_precision:.3f} & {r.macro_f1:.5f} " + r'\\')
-    (PAPER/'mirror_main_rows.tex').write_text('\n'.join(main_rows)+'\n')
-    (PAPER/'mirror_detail_rows.tex').write_text('\n'.join(detail_rows)+'\n')
-    (PAPER/'mirror_conditional_rows.tex').write_text('\n'.join(conditional_rows)+'\n')
-    macros = {'MirrorOriginalAccepted': f"{summary['detection'][0]['accepted']:,}",
-        'MirrorFlippedAccepted': f"{summary['detection'][1]['accepted']:,}",
-        'MirrorPairedAccepted': f"{summary['both_views_accepted']:,}",
-        'MirrorMixedAccepted': f"{summary['balanced_accepted']:,}",
-        'MirrorMixedLeft': f"{summary['balanced_detected_Left']:,}",
-        'MirrorMixedRight': f"{summary['balanced_detected_Right']:,}",
-        'MirrorMixedLeftPercent': f"{100*summary['balanced_detected_Left']/summary['balanced_accepted']:.2f}",
-        'MirrorMixedRightPercent': f"{100*summary['balanced_detected_Right']/summary['balanced_accepted']:.2f}",
-        'MirrorMixOriginal': f"{summary['balanced_original']:,}",
-        'MirrorMixFlipped': f"{summary['balanced_mirrored']:,}"}
-    for presentation, prefix in [('original','MirrorOrig'),('mirrored_rgb','MirrorFlip'),('balanced_mix','MirrorMix')]:
-        for arm, suffix in [('original_training','Base'),('mirror_training','Aug')]:
-            r=lookup['svm',arm,presentation,'all_attempts']
-            macros[prefix+'Precision'+suffix]=f'{100*r.macro_precision:.3f}'
-            macros[prefix+'Fone'+suffix]=f'{r.macro_f1:.5f}'
-        change=next(r for r in summary['paired'] if r['model']=='svm' and r['presentation']==presentation and r['scope']=='all_attempts')
-        macros[prefix+'Net']=f"{change['net']:+,}"
-    for model,prefix in [('svm','MirrorSvm'),('lightgbm','MirrorLgb')]:
-        a=lookup[model,'original_training','balanced_mix','all_attempts']
-        b=lookup[model,'mirror_training','balanced_mix','all_attempts']
-        macros[prefix+'PrecisionDelta']=f'{100*(b.macro_precision-a.macro_precision):+.3f}'
-        macros[prefix+'FoneDelta']=f'{b.macro_f1-a.macro_f1:+.5f}'
-    slash = chr(92)
-    (PAPER/'mirror_numbers.tex').write_text('\n'.join(f'{slash}newcommand{{{slash}{k}}}{{{v}}}' for k,v in macros.items())+'\n')
     lines += ['', '## Paired changes', '']
     for model in ('svm', 'lightgbm'):
         for presentation, label in PRESENTATIONS:
@@ -150,11 +114,8 @@ def main():
         'Per-letter precision/recall/F1 are in `per_letter.csv`; all fold scores in `metrics.csv`; '
         'no-prediction columns are retained in confusion matrices. `handedness_metrics.csv` is a detector-labelled diagnostic, not a ground-truth left/right evaluation.', '',
         '## Reproduce and try live', '', '```bash',
-        'python -m research.studies.mirror_dataset --workers 4',
-        'python -m research.studies.mirror_augmentation --stage cv',
-        'python -m research.studies.mirror_augmentation --stage train',
-        'python -m research.studies.report_mirror',
-        'python -m research.studies.verify_mirror',
+        'python -m RQ3 mirrors',
+        'python -m RQ3 mirrors --action verify',
         'python -m research.live_camera --model models/asl_shin_angles_mirrored.joblib', '```', '',
         'The extraction stage resumes matching chunks; CV reuses fold models only under the saved protocol. '
         'Full-data training refuses to overwrite existing live bundles. The previous default live model remains available.', '']

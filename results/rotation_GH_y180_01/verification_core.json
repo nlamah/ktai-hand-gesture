@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "metric_rows": 12,
+  "paired_rows": 6,
+  "held_out_model_predictions_replayed": 260,
+  "pooled": [
+    {
+      "training": "original",
+      "images": 60251,
+      "correct": 58894,
+      "accuracy": 0.9774775522397968,
+      "macro_precision": 0.9753901627407898,
+      "macro_recall": 0.975226700588319,
+      "macro_f1": 0.9752439124601125
+    },
+    {
+      "training": "gh_y180",
+      "images": 60251,
+      "correct": 58893,
+      "accuracy": 0.9774609550048962,
+      "macro_precision": 0.9753873815191528,
+      "macro_recall": 0.9752065692673243,
+      "macro_f1": 0.9752330502840845
+    }
+  ],
+  "private_capture_replay": "not part of this audit; requires separately supplied local captures",
+  "training_data_changed": false
+}

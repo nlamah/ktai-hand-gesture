@@ -1,8 +1,8 @@
-\section{Acht varianten en de bijdrage van kenmerken}\label{app:features}
-De tabellen en husseltests onderbouwen RQ3. D zijn afstanden, S Shin-richtingen, E eigen categorieën en J wereldgewrichtsmetingen (bijlage A). Alle acht varianten gebruiken dezelfde 60.251 geaccepteerde beelden en dezelfde vijf folds.
+\section{Eight representations and feature dependence}\label{app:features}
+D denotes distances, S Shin directions, E own categories and J world-joint measurements (Appendix A). Every combination uses the same 60,251 accepted sources and five folds.
 
 \begin{table}[h]\centering\small
-\caption{Gepoolde classificatiescores. P is macro-precisie in procenten. J gebruikt wereldpunten; E bevat 70 categoriewaarden voor de 19 eigen controles.}
+\caption{Pooled classification. P is macro-precision (\%). E contains 70 category values for 19 checks; J uses estimated world points.}
 \begin{tabular}{lrrrrr}\toprule
  & & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
 Variant & Inputs & P (\%) & Macro-F1 & P (\%) & Macro-F1\\\midrule
@@ -10,51 +10,49 @@ Variant & Inputs & P (\%) & Macro-F1 & P (\%) & Macro-F1\\\midrule
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[h]\centering\small
-\caption{Herstel en verlies tegenover DS, op dezelfde beelden. Netto is herstel min verlies. Alle vier contexten van elke afzonderlijke toevoeging staan in \texttt{factor\_effects.csv}; de tabel vergelijkt iedere variant met dezelfde basis.}
+\caption{Paired changes relative to DS on identical images. Net is corrected minus lost. All four contexts of each addition are retained in \texttt{factor\_effects.csv}.}
 \begin{tabular}{lrrrrrr}\toprule
  & \multicolumn{3}{c}{SVM} & \multicolumn{3}{c}{LightGBM}\\
-Variant & Herstel & Verlies & Netto & Herstel & Verlies & Netto\\\midrule
+Variant & Corrected & Lost & Net & Corrected & Lost & Net\\\midrule
 \tableinput factorial_paired_rows_nl.tex
 \bottomrule\end{tabular}\end{table}
 
-\subsection{Controle op de coördinatenbron}
-D/S zijn berekend uit beeldhandpunten, E/J uit wereldhandpunten. De onderstaande controle gebruikt voor de gewrichtsmetingen precies dezelfde beeldpunten als Shin, zonder aspectcorrectie. Zij heeft dezelfde bronnen, folds en modelprofielen. De SVM-winst van DSJ met wereldpunten is netto +67, tegenover +4 met deze beeldpunten. De hoekformule alleen verklaart de wereldpuntwinst dus niet.
+\subsection{Coordinate-source control}
+D/S use image points; E/J use world points. The following control calculates J from exactly Shin's image points, without aspect correction, using shared sources/folds/profiles. World J gains 67 SVM predictions versus four for image J; the angle formula alone cannot explain the world-point gain.
 
 \begin{table}[h]\centering\small
-\caption{Controles met J uit beeldpunten; geen eigen categorieën toegevoegd. Dit zijn aanvullende controles, niet twee extra hoofdvarianten.}
+\caption{Image-coordinate J controls without E. These are additional controls, not extra factorial arms.}
 \begin{tabular}{lrrrr}\toprule
  & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
 Variant & P (\%) & Macro-F1 & P (\%) & Macro-F1\\\midrule
 \tableinput factorial_controls_nl.tex
 \bottomrule\end{tabular}\end{table}
 
-De tabellen vergelijken E en J afzonderlijk en samen, steeds met en zonder S. De uitkomsten gelden voor de vaste profielen en deze bronnen; een rangorde bewijst geen universeel beste featurebeschrijving.
+E/J are compared separately and together, with and without S. The ranking concerns these fixed profiles and sources, not universally optimal descriptions.
 
 \clearpage
-\subsection{Permutatietests na het trainen}
-Per fold zijn vooraf met seed 20261107 honderd toetsbeelden per letter gekozen: 2.600 per fold en 13.000 unieke beelden totaal. Alle modellen gebruiken dezelfde subset. Dit is een aparte, kleinere noemer dan de volledige classificatievergelijking. Per groep worden de waarden met vijf vaste rijpermutaties tussen toetsbeelden verwisseld. Labels blijven gelijk; het foldmodel wordt niet opnieuw getraind.
+\subsection{Permutation after fitting}
+Seed 20261107 selects 100 held-out images per letter/fold: 2,600 per fold and 13,000 unique sources. All models share this subset, distinct from the full classification denominator. Five seeded row permutations move a feature group's columns together. Labels and fitted models stay fixed.
 
 \begin{figure}[h]\centering
 \includegraphics[width=.96\linewidth,height=.31\textheight,keepaspectratio]{figures/factorial_block_importance.pdf}
-\caption{Grote featureblokken in iedere variant. Getallen zijn de gemiddelde daling van macro-F1 in procentpunten over vijf folds en vijf husselingen; één punt is 0,01 F1. -- betekent dat het blok ontbreekt. Een grote positieve daling duidt op afhankelijkheid van dat blok onder deze verstoring.}
+\caption{Present D/S/E/J blocks in each representation. Values are mean macro-F1 losses in percentage points over five folds and five shuffles; one point equals 0.01 F1. -- denotes an absent block. A positive loss indicates dependence under this perturbation.}
 \end{figure}
-
 \begin{figure}[h]\centering
 \includegraphics[width=.96\linewidth,height=.32\textheight,keepaspectratio]{figures/factorial_family_importance.pdf}
-\caption{Vijf categorische families (E) en vijf gewrichtsfamilies (J) wanneer beide aanwezig zijn. Elke familie wordt gezamenlijk gehusseld. S kan informatie uit de toevoegingen deels vervangen, en omgekeerd. Een negatieve daling wordt behouden: die husseling verbeterde de score gemiddeld.}
+\caption{Five E families and five J families when both blocks are present. Families are shuffled jointly. Related information may substitute across blocks. Negative losses are retained: those perturbations improved the mean score.}
 \end{figure}
 
-Alle kolommen binnen een groep volgen dezelfde rijpermutatie. Zo blijft een one-hot vector geldig. Fold/herhaling delen dezelfde volgorde over varianten en leermethoden. De SVM-uitvoering hergebruikt equivalente RBF-afstanden; oorspronkelijke voorspellingen en verstoorde gevallen worden tegen de gewone SVC-route gecontroleerd. Seeds en uitvoering staan in \texttt{protocol.json} en \texttt{execution\_backend.json}. De CSV bevat ook precisiedalingen en beschrijvende spreiding; dit is geen onafhankelijk betrouwbaarheidsinterval.
+Joint column permutation preserves one-hot validity. Fold/repeat orders are shared across variants and learners. The optimized SVM route reuses equivalent RBF distances and checks original/perturbed predictions against ordinary SVC. Seeds and execution are in \texttt{protocol.json} and \texttt{execution\_backend.json}. CSVs retain precision losses and descriptive spread, not an independent confidence interval.
 
 \clearpage
-\subsection{De 19 eigen controles afzonderlijk}
-De afzonderlijke categorieën worden in DSE en DE onderzocht, dus zonder J. Dat maakt zichtbaar welke eigen beschrijvingen het model gebruikt wanneer niet tegelijk de directe wereldgewrichtsmetingen aanwezig zijn. De familieproef op de vorige pagina laat de volledige combinaties mét J zien.
-
+\subsection{The 19 individual checks}
+Individual E checks are tested in DSE and DE, without J, so direct world-joint inputs do not simultaneously duplicate their angle information. The preceding family comparison covers full representations with J.
 \begin{figure}[h]\centering
 \includegraphics[width=.96\linewidth,height=.58\textheight,keepaspectratio]{figures/factorial_category_importance.pdf}
-\caption{Macro-F1-daling per eigen controle, steeds met alle bijbehorende categorie-kolommen samen verwisseld. DSE bevat de Shin-richtingen, DE niet. Gemiddelden zijn berekend op dezelfde 13.000 toetsbeelden en vijf husselingen per fold. De labels verwijzen naar de 19 controles die in bijlage C zijn geïllustreerd.}
+\caption{Macro-F1 loss per own check, jointly permuting all category columns. DSE includes Shin directions; DE omits them. Means use the same 13,000 held-out images and five shuffles per fold. Appendix C explains the checks.}
 \end{figure}
 
-Permutatie meet de afhankelijkheid van een getraind model onder verstoring. Zij meet niet hoeveel extra prestatie een nieuw getraind model door die feature krijgt: daarvoor dienen de acht trainingsvarianten. Samenhangende features kunnen elkaar vervangen, waardoor een nuttig kenmerk weinig afzonderlijke permutatiedaling geeft. Andersom kan een verstoorde groep een ongewone combinatie met andere groepen vormen. Deze resultaten zijn daarom geen causale ranglijst van intrinsiek belangrijke handkenmerken.
+Permutation measures dependence of a fitted model under perturbation, not the gain from adding a feature to a newly fitted model. The eight training variants answer that complementary question. Related features may substitute, yielding a small individual loss; shuffling may also create unusual combinations. This is not a causal ranking of intrinsically important hand features.
 
-Alle fold- en letterscores, verwarringsmatrices, paarsgewijze verschillen, husseluitkomsten en controles staan in \texttt{results/feature\_factorial\_01/}. De opgeslagen modellen worden op toetsgevallen gereplayed en de scores onafhankelijk herberekend. Dit verifieert de uitvoering, niet de handanatomie of generalisatie naar nieuwe personen.
+Full fold/letter metrics, confusions, paired comparisons, permutation outputs and replay are in \path{results/feature_factorial_01/}. Computational verification does not establish anatomy or generalization to new users.

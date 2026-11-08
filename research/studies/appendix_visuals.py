@@ -12,7 +12,7 @@ import pandas as pd
 from PIL import Image
 
 from research.data import atomic_json
-from research.feature_review import review_data, hand_crop, KEYS, NAMES, STATES, dutch
+from research.feature_review import review_data, hand_crop, KEYS, NAMES, STATES, english
 from research.live_model import DEFAULT_MODEL, load_bundle, predict_letter
 from research.mirroring import mirror_image, pixel_hash
 
@@ -34,14 +34,14 @@ def feature_panel(data,name):
     grid=fig.add_gridspec(1,2,width_ratios=[1,2.4])
     photo=fig.add_subplot(grid[0,0]);table=fig.add_subplot(grid[0,1]);photo.axis('off');table.axis('off')
     photo.imshow(data['crop'])
-    photo.set_title(f"Opgeslagen H-beeld\nModelvoorspelling: {data['prediction']['letter']}",fontsize=10)
+    photo.set_title(f"Saved H capture\nModel prediction: {data['prediction']['letter']}",fontsize=10)
     values=data['measurements']
-    photo.text(.5,-.10,f"Wijs-PIP {values['index_pip_angle_deg']:.1f}°\nMiddel-PIP {values['middle_pip_angle_deg']:.1f}°".replace('.',','),
+    photo.text(.5,-.10,f"Index PIP {values['index_pip_angle_deg']:.1f}°\nMiddle PIP {values['middle_pip_angle_deg']:.1f}°",
                ha='center',va='top',transform=photo.transAxes,fontsize=9)
     rows=[row for row in data['rows'] if row['key'] in KEYS]
-    cells=[[NAMES[row['key']],dutch(row['expected']),dutch(row['actual']),STATES[row['status']]] for row in rows]
+    cells=[[NAMES[row['key']],english(row['expected']),english(row['actual']),STATES[row['status']]] for row in rows]
     cells=[['\n'.join(textwrap.wrap(value,width)) for value,width in zip(row,[19,15,15,15])] for row in cells]
-    t=table.table(cellText=cells,colLabels=['Kenmerk','Verwacht','Gemeten','Controle'],
+    t=table.table(cellText=cells,colLabels=['Feature','Expected','Observed','Check'],
                   colWidths=[.31,.23,.23,.23],cellLoc='left',colLoc='left',bbox=[0,0,1,.96])
     t.auto_set_font_size(False);t.set_fontsize(10.5)
     for (r,c),cell in t.get_celld().items():
@@ -49,7 +49,7 @@ def feature_panel(data,name):
         if r==0:cell.set_facecolor('#e9eef2');cell.get_text().set_weight('bold')
         elif c==3:
             status=rows[r-1]['status'];cell.set_facecolor('#dbf0e0' if status=='match' else '#fbe0dd' if status=='mismatch' else '#eeeeee')
-    fig.suptitle(f"Rapportweergave featuretool: vergelijking met {data['target']}",fontsize=12,weight='bold')
+    fig.suptitle(f"Feature inspection: compare against {data['target']}",fontsize=12,weight='bold')
     save(fig,name)
 
 
@@ -116,11 +116,11 @@ def main():
     for j,(id_,letter) in enumerate(zip(ref_ids,('G','H'))):
         crop,_=hand_crop(images[id_],cached[id_]['image_landmarks'][0])
         axes[0,j].imshow(crop);axes[0,j].axis('off')
-        axes[0,j].set_title(f"Datasetlabel {letter} · {samples[id_]['filename']}\nUitsnede ter illustratie; geen cameratoets",fontsize=10)
+        axes[0,j].set_title(f"Dataset label {letter} · {samples[id_]['filename']}\nIllustrative crop; not a camera test",fontsize=10)
     for i,id_ in enumerate(CAPTURES):
         data=camera[id_];ax=axes[1+i//2,i%2];ax.imshow(data['crop']);ax.axis('off')
-        view='palmcontrole' if i==3 else 'handrug, ontwikkelbeeld'
-        ax.set_title(f"Beoogd {data['record']['expected_letter']} · {view}\nReferentie [2]: {data['prediction']['letter']} | G/H y180 [9]: {data['rotated']}",fontsize=10)
+        view='palm control' if i==3 else 'hand back, development example'
+        ax.set_title(f"Intended {data['record']['expected_letter']} · {view}\nReference [2]: {data['prediction']['letter']} | G/H y180 [9]: {data['rotated']}",fontsize=10)
     save(fig,'gh_webcam_examples')
     fig,axes=plt.subplots(2,2,figsize=(8,6.2),layout='constrained')
     for i,row in enumerate(selected):
@@ -128,9 +128,9 @@ def main():
         for view,im in enumerate((image,mirror_image(image))):
             crop,_=hand_crop(im,data['image_landmarks'][view]);ax=axes[i,view]
             ax.imshow(crop);ax.axis('off')
-            title=f"{samples[row['id']]['filename']} · " + ('origineel' if view==0 else 'synthetisch gespiegeld')
-            if view==0:subtitle=f"Detector: Right | referentie: {row['original']}"
-            else:subtitle=f"Detector: Left | referentie: {row['reflected_original_model']} | spiegeltraining: {row['reflected_mirror_model']}"
+            title=f"{samples[row['id']]['filename']} · " + ('original' if view==0 else 'synthetically mirrored')
+            if view==0:subtitle=f"Detector: Right | reference: {row['original']}"
+            else:subtitle=f"Detector: Left | reference: {row['reflected_original_model']} | mirror training: {row['reflected_mirror_model']}"
             ax.set_title(title+'\n'+subtitle,fontsize=10)
     save(fig,'mirror_examples')
     atomic_json(OUT/'mirror_selection.json',{'selection':'Lexicographically first ID per A/H satisfying accepted Right/Left, original reference correct, mirror reference wrong, mirror-trained prediction correct',

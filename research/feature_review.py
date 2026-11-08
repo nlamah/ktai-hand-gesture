@@ -16,20 +16,15 @@ CONNECTIONS=((0,1),(1,2),(2,3),(3,4),(0,5),(5,6),(6,7),(7,8),
              (15,16),(13,17),(0,17),(17,18),(18,19),(19,20))
 KEYS=('thumb_mcp_shape','flexion_index_pip','flexion_middle_pip','flexion_ring_pip',
       'flexion_pinky_pip','spread_index_middle','crossing_index_middle','thumb_tip_index_proximity')
-NAMES={'thumb_mcp_shape':'Duimvorm (MCP)','flexion_index_pip':'Wijsvinger (PIP)',
-       'flexion_middle_pip':'Middelvinger (PIP)','flexion_ring_pip':'Ringvinger (PIP)',
-       'flexion_pinky_pip':'Pink (PIP)','spread_index_middle':'Spreiding wijs/middel',
-       'crossing_index_middle':'Kruising wijs/middel','thumb_tip_index_proximity':'Duimtop bij wijsvinger'}
-WORDS={'Partly bent':'Deels gebogen','Extended':'Gestrekt','Bent':'Gebogen',
-       'Not B-shaped':'Niet B-vormig','B-shaped':'B-vormig','Not spread':'Niet gespreid',
-       'Spread':'Gespreid','Not crossed':'Niet gekruist','Crossed':'Gekruist',
-       'Near':'Nabij','Far':'Veraf','No':'Nee','Yes':'Ja','contact':'Contact',
-       'Unknown':'Onbekend'}
-STATES={'match':'Komt overeen','mismatch':'Afwijking','unknown':'Onbekend','not_scored':'Niet beoordeeld'}
+NAMES={'thumb_mcp_shape':'Thumb shape (MCP)','flexion_index_pip':'Index finger (PIP)',
+       'flexion_middle_pip':'Middle finger (PIP)','flexion_ring_pip':'Ring finger (PIP)',
+       'flexion_pinky_pip':'Little finger (PIP)','spread_index_middle':'Index/middle spreading',
+       'crossing_index_middle':'Index/middle crossing','thumb_tip_index_proximity':'Thumb tip near index'}
+STATES={'match':'Match','mismatch':'Mismatch','unknown':'Unknown','not_scored':'Not scored'}
 
 
-def dutch(value):
-    return ' / '.join(WORDS.get(part.strip(),part.strip()) for part in str(value).split('/'))
+def english(value):
+    return ' / '.join(part.strip() for part in str(value).split('/'))
 
 
 def hand_crop(image,landmarks,overlay=True):
@@ -75,28 +70,28 @@ def show_review(capture_path,reference_path,threshold_path,model_path):
     path=Path(capture_path);path=path if path.is_file() else path/'capture.json'
     try:
         record=json.loads(path.read_text())
-        st.title('Vingerkenmerken controleren')
-        st.caption('Opgeslagen beeld: dezelfde featurecontrole als in de live tool. Er wordt geen camera gestart of model getraind.')
-        target=st.text_input('Vergelijk met letter',value=record['expected_letter'],max_chars=1).strip().upper()
+        st.title('Inspect finger features')
+        st.caption('Saved capture: the same feature comparison as the live tool. No camera or model training is started.')
+        target=st.text_input('Compare with letter',value=record['expected_letter'],max_chars=1).strip().upper()
         data=review_data(capture_path,reference_path,threshold_path,model_path,target)
     except (OSError,ValueError,KeyError) as error:
-        st.error(f'Voorbeeld niet beschikbaar: {error}');return
+        st.error(f'Example unavailable: {error}');return
     left,right=st.columns([1,1.7],gap='large')
     with left:
-        st.image(data['crop'],width='stretch',alt='Uitsnede van de opgeslagen hand met de oorspronkelijke handpunten')
-        st.caption(f"Opgegeven letter: {record['expected_letter']} · modelvoorspelling: {data['prediction']['letter']}")
-        st.caption('Uitsnede met handpunten; de voorspelling gebruikt de opgeslagen geometrie van het volledige beeld.')
+        st.image(data['crop'],width='stretch',alt='Saved hand crop with original landmarks')
+        st.caption(f"Intended letter: {record['expected_letter']} · model prediction: {data['prediction']['letter']}")
+        st.caption('Landmark overlay for display; prediction uses the saved full-frame geometry.')
     with right:
-        st.subheader(f'Controle tegen {target}')
+        st.subheader(f'Compare against {target}')
         selected=[row for row in data['rows'] if row['key'] in KEYS]
-        table=[{'Kenmerk':NAMES[row['key']],'Verwacht':dutch(row['expected']),
-                'Gemeten':dutch(row['actual']),'Controle':STATES[row['status']]} for row in selected]
-        st.table(table,hide_index=True,alt='Verwachte en gemeten kernkenmerken met overeenkomst of afwijking')
+        table=[{'Feature':NAMES[row['key']],'Expected':english(row['expected']),
+                'Observed':english(row['actual']),'Check':STATES[row['status']]} for row in selected]
+        st.table(table,hide_index=True,alt='Expected and observed core features with match/mismatch')
         p=data['parameters']['finger_flexion']
-        st.caption(f"Vingerbuiging: gebogen ≤ {p['bent_max_deg']:g}°, gestrekt ≥ {p['extended_min_deg']:g}°; daartussen deels gebogen.")
-        st.caption('PIP is het middelste vingergewricht. Een overeenkomst toetst de gekozen referentie, niet de anatomische juistheid van de handpunten.')
+        st.caption(f"Finger flexion: bent ≤ {p['bent_max_deg']:g}°, extended ≥ {p['extended_min_deg']:g}°; partly bent between the thresholds.")
+        st.caption('PIP is the middle finger joint. A match checks the selected reference, not anatomical landmark accuracy.')
         angles=data['measurements']
-        st.write(f"Wijsvinger-PIP: {angles['index_pip_angle_deg']:.1f}° · Middelvinger-PIP: {angles['middle_pip_angle_deg']:.1f}°")
-    with st.expander('Alle kenmerken'):
-        st.table([{'Kenmerk':r['title'],'Verwacht':dutch(r['expected']),'Gemeten':dutch(r['actual']),
-                   'Controle':STATES[r['status']]} for r in data['rows']],hide_index=True,alt='Alle referentiekenmerken van de opgeslagen hand')
+        st.write(f"Index PIP: {angles['index_pip_angle_deg']:.1f}° · Middle PIP: {angles['middle_pip_angle_deg']:.1f}°")
+    with st.expander('All features'):
+        st.table([{'Feature':r['title'],'Expected':english(r['expected']),'Observed':english(r['actual']),
+                   'Check':STATES[r['status']]} for r in data['rows']],hide_index=True,alt='All reference features for the saved hand')

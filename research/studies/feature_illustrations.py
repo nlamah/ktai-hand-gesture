@@ -87,28 +87,28 @@ def main():
     FIG.mkdir(exist_ok=True);OUT.mkdir(parents=True,exist_ok=True)
     plt.rcParams.update({'font.family':'DejaVu Sans','pdf.fonttype':42})
     fig,axes=plt.subplots(3,2,figsize=(9,9),layout='constrained')
-    ax=axes[0,0];panel(ax,'A. Buiging per gewricht')
-    for x,state in [(33,'Gestrekt'),(94,'Deels gebogen'),(155,'Gebogen')]:
-        points = ([(x,33),(x,51),(x,70),(x,88)] if state=='Gestrekt' else
-                  [(x,33),(x,51),(x+9,66),(x+18,73)] if state=='Deels gebogen' else
+    ax=axes[0,0];panel(ax,'A. Flexion per joint')
+    for x,state in [(33,'Extended'),(94,'Partly bent'),(155,'Bent')]:
+        points = ([(x,33),(x,51),(x,70),(x,88)] if state=='Extended' else
+                  [(x,33),(x,51),(x+9,66),(x+18,73)] if state=='Partly bent' else
                   [(x,33),(x,51),(x+17,55),(x+18,40)])
         stroke(ax,points,TEAL,8)
         xs,ys=zip(*points[:-1]);ax.scatter(xs,ys,s=28,facecolors='white',edgecolors=TEAL,zorder=5)
-        ax.text(x,10,state.replace('Deels gebogen','Deels\ngebogen'),ha='center',va='bottom',fontsize=10.3,color=INK)
+        ax.text(x,10,state.replace('Partly bent','Partly\nbent'),ha='center',va='bottom',fontsize=10.3,color=INK)
     for y,name in [(33,'MCP'),(51,'PIP'),(70,'DIP')]:ax.text(7,y,name,ha='left',va='center',fontsize=8.4,color=INK)
-    pair(axes[0,1],'B. Vingers naast of over elkaar','closed','crossed',
-         'Naast elkaar','Vermoede kruising')
-    pair(axes[1,0],'C. Spreiding: wijs- en middelvinger','closed','spread_index',
-         'Niet gespreid','Gespreid')
-    pair(axes[1,1],'D. Spreiding: middel- en ringvinger','closed','spread_ring',
-         'Niet gespreid','Gespreid',highlight=('middle','ring'))
-    pair(axes[2,0],'E. Idee achter de duimstand','closed','closed',
-         'Over de palm','Naast de palm',highlight=('thumb',),thumb_modes=('across','out'))
-    pair(axes[2,1],'F. Contact van de duimtop','contact','no_contact',
-         'Contact','Geen contact',highlight=('thumb','index'))
+    pair(axes[0,1],'B. Adjacent or crossed fingers','closed','crossed',
+         'Adjacent','Suspected crossing')
+    pair(axes[1,0],'C. Spreading: index and middle','closed','spread_index',
+         'Not spread','Spread')
+    pair(axes[1,1],'D. Spreading: middle and ring','closed','spread_ring',
+         'Not spread','Spread',highlight=('middle','ring'))
+    pair(axes[2,0],'E. Intended thumb-position concept','closed','closed',
+         'Across the palm','Beside the palm',highlight=('thumb',),thumb_modes=('across','out'))
+    pair(axes[2,1],'F. Thumb-tip contact','contact','no_contact',
+         'Contact','No contact',highlight=('thumb','index'))
     path=FIG/'feature_concepts_nl.pdf'
-    fig.savefig(path,bbox_inches='tight',metadata={'Title':'Schematische uitleg van de eigen handkenmerken',
-                                                'Author':'Projectillustraties uit code; geen meetdata'})
+    fig.savefig(path,bbox_inches='tight',metadata={'Title':'Conceptual own hand-shape features',
+                                                'Author':'Code-generated illustrations; not measured data'})
     plt.close(fig)
     screenshot=FIG/'feature_tool_screenshot.png'
     atomic_json(OUT/'provenance.json',{

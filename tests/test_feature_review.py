@@ -29,12 +29,12 @@ class FeatureReviewTests(unittest.TestCase):
         with patch('sys.argv',['app.py','--capture',str(CAPTURE)]):
             app=AppTest.from_file(str(ROOT/'app.py'),default_timeout=30).run()
         self.assertEqual(len(app.exception),0,str(app.exception))
-        self.assertEqual(app.title[0].value,'Vingerkenmerken controleren')
-        self.assertFalse(any(t.label=='Webcam on' for t in app.toggle))
+        self.assertEqual(app.title[0].value,'Inspect finger features')
+        self.assertFalse(any(t.label=='Camera on' for t in app.toggle))
         app.text_input[0].set_value('G')
         with patch('sys.argv',['app.py','--capture',str(CAPTURE)]):app.run()
         self.assertEqual(len(app.exception),0,str(app.exception))
-        self.assertTrue(any('Controle tegen G' in s.value for s in app.subheader))
+        self.assertTrue(any('Compare against G' in s.value for s in app.subheader))
 
 
 if __name__=='__main__':unittest.main()

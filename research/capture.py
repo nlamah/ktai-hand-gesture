@@ -40,7 +40,7 @@ def save_capture(packet, expected, bundle, model_path, model_sha256, preview, ou
         raise ValueError('Annotation differs from the planned protocol letter.')
     output = Path(output)
     if (output / 'withdrawn.json').exists():
-        raise ValueError('Deze opnameronde is ingetrokken. Start een nieuwe sessie.')
+        raise ValueError('This capture round was withdrawn. Start a new session.')
     output.mkdir(parents=True, exist_ok=True)
     capture_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ') + '_' + uuid4().hex[:8]
     detection = {**packet['detection'], 'image_size':[packet['model_frame'].shape[1],packet['model_frame'].shape[0]]}
