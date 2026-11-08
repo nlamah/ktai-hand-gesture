@@ -1,5 +1,5 @@
 \paragraph{RQ3: feature comparison.}
-Table~\ref{tab:ton-features} compares all eight descriptions. With Shin as the SVM baseline, our categories lose 22 correct predictions; world-joint angles gain 67, and both additions together lose three. The same-coordinate angle control gains only four. The larger world-angle gain therefore cannot be attributed to the angle formula alone. The small SVM improvement does not recur with LightGBM.
+Against Shin's SVM baseline (Table~\ref{tab:ton-features}), our categories lose 22 correct predictions; world-joint measurements gain 67; both together lose three. Using Shin's coordinates, joint measurements gain only four. The world-coordinate gain therefore cannot be attributed to the angle formula alone and does not recur with LightGBM.
 
 \begin{table*}[t]\centering\small
 \caption{RQ3: pooled classification on 60,251 accepted original images. D: distances; S: directions; E: own categories; J: world-joint measurements. P is macro-precision (\%). All variants contain D.}
@@ -11,7 +11,4 @@ Hand description & P & F1 & P & F1\\\midrule
 \bottomrule\end{tabular}
 \end{table*}
 
-In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
-
-\paragraph{Brief practical explorations.}
-Alongside the feature study, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and right normalization help on artificial mirror tests but lose 26 and 136 correct predictions on originals. G/H rotation learns the offered artificial geometry, while two selected live G examples remain H. These small exploratory checks do not establish better recognition for new users; protocols, scores and examples are in Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}.
+Permutation results and feature examples are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-tool}. Brief left/right and G/H explorations improve artificial test scores without establishing better live recognition: two selected live G examples still become H (Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}).

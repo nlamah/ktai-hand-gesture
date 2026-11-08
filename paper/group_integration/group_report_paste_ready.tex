@@ -74,9 +74,7 @@
 % please comment out the following usepackage line and replace
 % \usepackage{icml2021} with \usepackage[nohyperref]{icml2021} above.
 \usepackage{hyperref}
-% BEGIN TON: portable type encoding
 \hypersetup{hypertexnames=false}
-% END TON: portable type encoding
 
 \IfFileExists{caption.sty}{\usepackage{caption}}{}
 \IfFileExists{subcaption.sty}{\usepackage{subcaption}}{}
@@ -86,19 +84,15 @@
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
 \usepackage[accepted]{icml2021}
-% BEGIN TON: font encoding
 \usepackage[T1]{fontenc}
-% BEGIN TON: line breaks for inherited long code path
 \let\tonOriginalTexttt\texttt
 \renewrobustcmd{\texttt}[1]{%
 \ifstrequal{#1}{experiments/hand\_detection\_recovery/plot\_results.py}%
 {\tonOriginalTexttt{experiments/\allowbreak hand\_detection\_recovery/\allowbreak plot\_results.py}}%
 {\tonOriginalTexttt{#1}}}
 
-% END TON: line breaks for inherited long code path
 
-% Own table rows are embedded below.
-% END TON: font encoding
+\makeatletter\let\tonTableInput\@@input\makeatother
 
 
 % The Impact of Edge Detection on Sign Language Alphabet Recognition
@@ -133,26 +127,21 @@
     
 \end{abstract}
 \fi
-% BEGIN TON: local preview notice
 \InputIfFileExists{ton_preview_notice.tex}{}{}
-% END TON: local preview notice
 
 
 
-% We investigate whether simplifying input images changes recognition.
-% A filter emphasizes high-contrast contours to emphasize hand shape.
-% Compare the same model on:
-% 1. original images;
-% 2. simplified edge images.
-% Research question: Does edge-based image preprocessing improve sign language alphabet recognition?
+% Mijn idee is om te onderzoeken of we de inputafbeeldingen kunnen vereenvoudigen voordat we ze aan het model geven.
+% We gebruiken een convolution/filter om vooral de randen met hoog contrast over te houden, zodat de vorm van de hand centraal staat en achtergrond, kleur en andere details grotendeels verdwijnen.
+% Vervolgens trainen/testen we hetzelfde model op:
+% 1. de originele afbeeldingen;
+% 2. de vereenvoudigde edge-images.
+% Onderzoeksvraag: Does edge-based image preprocessing improve sign language alphabet recognition?
 
 
 \section{Brief Introduction}
 
-% BEGIN TON: shared introduction
-This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-mediapipedocs,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
-
-% END TON: shared introduction
+We study ASL letter recognition from photographs through three changes: targeted data collection, detection recovery and hand-shape features. MediaPipe estimates 21 hand landmarks for classification \citep{ton-mediapipedocs,ton-shin2021}. Detection coverage and classification quality are evaluated separately. We use static A--Z images, without modelling the movements of J and Z.
 \leavevmode \\\\
 ...
 \\\
@@ -167,24 +156,9 @@ We investigate a single application of morphological dilation using a square \(3
 %   Because there are more than 17.000 images, we focussing on a specific image \ref{fig:N47_original} \nameref{fig:N47_original}.
 
 
-% \begin{figure}
-% \centering
-%     \begin{minipage}{.25\textwidth}
-%       \centering
-%       \includegraphics[width=.8\linewidth]{figures/N47_original.png}
-%       \captionof{figure}{N: Failure}
-%       \label{fig:N47_original}
-%     \end{minipage}%
-%     \begin{minipage}{.25\textwidth}
-%       \centering
-%       \includegraphics[width=.8\linewidth]{figures/N48.jpg}
-%       \captionof{figure}{N: recognized}
-%       \label{fig:test2}
-%     \end{minipage}
-% \end{figure}
 
 \begin{enumerate}
-    \item Does targeted data augmentation reduce confusion between certain letters more effectively than general data augmentation?
+    \item Does targeted data collection reduce confusion between certain letters more effectively than general data collection?
     \item To what extent does applying a \(3 \times 3\) dilation filter recover visually plausible hand landmarks in ASL Alphabet training images for which MediaPipe initially detects \textit{no\_hand}?
     \item Do explicit hand-shape categories and joint angles improve on, or replace, Shin's landmark directions?
 \end{enumerate}
@@ -195,9 +169,7 @@ Briefly provide an overview of previous research and studies that are relevant t
 
 
 \fi
-% BEGIN TON: related work
-Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-mediapipedocs}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-sklearnpermutation}.
-% END TON: related work
+Shin et al. classify ASL letters using distances and directions between hand landmarks \citep{ton-shin2021}. We test whether finger-shape categories and joint angles add useful information. MediaPipe supplies image and estimated 3D world landmarks \citep{ton-mediapipedocs}.
 
 \section{Methods}
 \iffalse
@@ -206,6 +178,14 @@ Provide diagrams to help in the discussion. Figure \ref{fig:one-col-figure} and 
 
 
 \fi
+\subsection{Targeted training data (RQ1)}
+We investigate whether additional training images reduce confusion between selected ASL letters. The original Kaggle predictions identify M/N and R/U as frequently confused pairs.
+
+For the first experiment, the baseline is an existing 26-class SVM using 820 combined distance and direction features from Shin et al. (2021). A second model is retrained with the same configuration and original training data, supplemented by 60 new webcam recordings; 15 each of M, N, R and U.
+
+To investigate whether the change in confusion can be attributed to additional samples for 1 letter alone, a third SVM classifier is trained, using the original development dataset, but supplemented with ONLY the 15 previously collected images for the letter N. All of the classifier parameters and 820-dimensional Shin feature representation remain unchanged. 
+
+The N-only model is compared against the baseline and the previously retrained M/N/R/U model on the same 60 recorded test images. During this experiment, particular attention is given to the directional N-to-M and M-to-N confusion rates to determine whether improvements in N recognition introduce additional errors for M.
 \subsection{Image Preprocessing}
 
 For RQ2, image preprocessing is applied as a second attempt to obtain hand landmarks from images for which MediaPipe initially returns no hand detection. Three transformations are compared: dilation, erosion and a Canny-edge overlay. Each transformation modifies the original image independently, after which the same hand detector is applied again. This comparison measures whether changing the input image allows the detector to recover a previously missed hand.
@@ -217,14 +197,8 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
     	It uses the lowest value in that area. This allows light areas to become smaller and dark areas to expand.
 
     \subsubsection{Canny overlay}
-        Detects edges from changes in brightness and overlays them on the original colour image. The implementation brightens the detected edges.
+        Zoekt randen op basis van veranderingen in helderheid en voegt de gevonden randen toe aan de oorspronkelijke kleurenfoto. In jouw implementatie worden die randen lichter gemaakt.
 
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=\linewidth]{figures/example_plot.png}
-%     \caption{One-column figure that explains the steps or framework of your method / model.}
-%     \label{fig:one-col-figure}
-% \end{figure}
 
 % \begin{figure*}
 %     \centering
@@ -234,27 +208,66 @@ For RQ2, image preprocessing is applied as a second attempt to obtain hand landm
 % \end{figure*}
 
 
-% BEGIN TON: methods
-
 \par\noindent ...\par\medskip
 \subsection{Hand-shape descriptions (RQ3)}\label{sec:ton-methods}
-We compare four building blocks: distances (D), Shin's directions between hand points (S), our own categories such as finger bending and spreading (E), and measured joint angles (J). Distances are always included; switching the other three blocks on or off gives eight combinations. Both SVM and LightGBM receive the same combinations and test images. E and J use estimated world points, whereas D and S use image points. A separate control calculates J from the same points as Shin.
+We combine distances (D), Shin's directions (S), our finger-shape categories (E: bending, spreading and related checks), and joint measurements (J). Keeping D and switching S/E/J on or off gives eight representations. D/S use image landmarks; E/J use estimated world landmarks. A control calculates J from Shin's image coordinates.
 
-After training, we shuffle one feature group between held-out images and measure the loss in precision and F1. Labels and fitted models remain unchanged. These permutation tests use 13,000 fixed images and five shuffles per group. They measure model dependence, whereas retraining the eight combinations measures the effect of adding or removing information.
-
-As brief practical follow-ups, we also tried left/right handling and G/H rotation. These are separate from the main feature comparison. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
+Retraining tests the benefit of each representation. Separately, shuffling feature groups in held-out images measures a fitted model's dependence on them \citep{ton-sklearnpermutation}. Definitions, settings and practical orientation follow-ups are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
 \par\noindent ...\par\medskip
 
-% END TON: methods
-
 \section{Experimental Results}
+\subsection{Reducing letter confusion (RQ1)}
+The Kaggle cross-validation results showed 119 M-to-N and 148 N-to-M errors, as well as 202 R-to-U and 40 U-to-R errors. These observations motivated the selection of M/N and R/U for targeted data collection.
+
+On the seperately recorded test set, accuracy increased from 65.00\% to 78.33\% after retraining.
+\begin{table}[ht]
+\centering
+\caption{RQ1: Paired evaluation on 60 test images.
+Mutual confusion rates use 30 images per pair.}
+\label{tab:rq1_results}
+\begin{tabular}{lcc}
+\toprule
+Metric & Baseline & Retrained \\
+\midrule
+Accuracy & 65.00\% & 78.33\% \\
+Macro-F1 & 0.6061 & 0.7758 \\
+M/N confusion & 43.33\% & 23.33\% \\
+R/U confusion & 26.67\% & 20.00\% \\
+Correct predictions & 39/60 & 47/60 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+N-to-M errors decreased from 12 to 6, while R-to-U errors decreased from 8 to 6. The opposite error directions remained unchanged.
+
+To investigate whether the reduction in M/N confusion could be attributed to additional N-examples alone, a third SVM was trained using the original dataset, but supplemented with ONLY 15 new N-images. All classifier settings and the 820-dimensional feature representation remained unchanged.
+
+This N-only model was evaluated on the same 60 previously recorded test images as the baseline and four-letter extension.
+
+\begin{table}[ht]
+\centering
+\caption{N-only comparison of training
+conditions on the same 60 images.}
+\label{tab:n_only}
+\begin{tabular}{lccc}
+\toprule
+Metric & Base & N-only & MNRU \\
+\midrule
+Accuracy (\%) & 65.0 & 73.3 & 78.3 \\
+M $\rightarrow$ N & 1 & 2 & 1 \\
+N $\rightarrow$ M & 12 & 6 & 6 \\
+R $\rightarrow$ U & 8 & 8 & 6 \\
+M/N confusion (\%) & 43.3 & 26.7 & 23.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Adding only N-examples reduced N-to-M misclassifications from 12 to 6. However, M-to-N errors increased from 1 to 2, indicating a possible trade-off between recognition of the two letters. Dispite this increase, overall M/N confusion decreased from 43.3\% to 26.7\%. The four-letter extension achieved a slightly lower M/N confusion rate of 23.3\%.
     \subsection{Datasets}
         \iffalse
 Include a description of the data used, what it contains, train test splits, etc.
 \fi
-% BEGIN TON: datasets
-For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection from the ASL Alphabet dataset \citep{ton-asl_alphabet}; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
-% END TON: datasets
+RQ3 uses the 60,251 accepted original single-hand images \citep{ton-asl_alphabet}, excluding missing and recovered detections. Five fixed folds of file-number blocks give each image one held-out prediction for every representation; they are not verified participant splits. Scores measure classification after accepted detection.
 \leavevmode 
         \\\\
         ...
@@ -267,9 +280,7 @@ For RQ3, classification uses only the 60,251 original images with an accepted si
         Image N47 (Figure~\ref{fig:N47_original}) is used as a development example to inspect the effect of dilation. The complete evaluation includes N47 and images inspected during earlier development. It therefore describes the results on the full dataset, including previously examined images.
         
     \subsection{Implementation Details}
-% BEGIN TON: implementation
-The feature comparison trains eight representations with two learners across five folds: 80 models. Model settings remain fixed across representations. Only J is imputed and standardized, using the training fold. We report macro-precision and macro-F1 over A--Z, giving each letter equal weight. A paired comparison counts corrected and newly introduced errors on the same images. Appendix~\ref{app:ton-protocol} gives the settings, feature dimensions and reproducible result paths.
-% END TON: implementation
+We train 80 models: eight representations, SVM/LightGBM and five folds, with fixed settings. We report macro-precision and macro-F1 across A--Z and paired corrected/new errors. Appendix~\ref{app:ton-protocol} details preprocessing and permutation tests.
 \leavevmode 
         \\\\
         ...
@@ -297,9 +308,8 @@ The feature comparison trains eight representations with two learners across fiv
         Include plots and visualizations such as Figure \ref{fig:one-col-figure}.
 
 \fi
-% BEGIN TON: results
 \paragraph{RQ3: feature comparison.}
-Table~\ref{tab:ton-features} compares all eight descriptions. With Shin as the SVM baseline, our categories lose 22 correct predictions; world-joint angles gain 67, and both additions together lose three. The same-coordinate angle control gains only four. The larger world-angle gain therefore cannot be attributed to the angle formula alone. The small SVM improvement does not recur with LightGBM.
+Against Shin's SVM baseline (Table~\ref{tab:ton-features}), our categories lose 22 correct predictions; world-joint measurements gain 67; both together lose three. Using Shin's coordinates, joint measurements gain only four. The world-coordinate gain therefore cannot be attributed to the angle formula alone and does not recur with LightGBM.
 
 \begin{table*}[t]\centering\small
 \caption{RQ3: pooled classification on 60,251 accepted original images. D: distances; S: directions; E: own categories; J: world-joint measurements. P is macro-precision (\%). All variants contain D.}
@@ -318,11 +328,7 @@ D + categories + joints (DEJ) & 94.97 & 0.9493 & 93.87 & 0.9379 \\
 \bottomrule\end{tabular}
 \end{table*}
 
-In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
-
-\paragraph{Brief practical explorations.}
-Alongside the feature study, we briefly tried ideas for left/right handling and G/H camera views. Mirror training and right normalization help on artificial mirror tests but lose 26 and 136 correct predictions on originals. G/H rotation learns the offered artificial geometry, while two selected live G examples remain H. These small exploratory checks do not establish better recognition for new users; protocols, scores and examples are in Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}.
-% END TON: results
+Permutation results and feature examples are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-tool}. Brief left/right and G/H explorations improve artificial test scores without establishing better live recognition: two selected live G examples still become H (Appendix~\ref{app:ton-orientation}--\ref{app:ton-live}).
 
 \par\noindent ...\par\medskip
         In the baseline run, 60,251 of the 78,000 A-Z training images passed the single-hand acceptance criteria. MediaPipe returned \textit{no\_hand} detection for 17,598 images (22.56\%) and multiple hands for 151 images (0.19\%). The complete per-image detection results are available in \texttt{baseline.csv} in the digital supplement for the \texttt{test\_all} run.
@@ -355,14 +361,15 @@ Alongside the feature study, we briefly tried ideas for left/right handling and 
         Additionally, you can include a separate discussion section in which you summarize the results, indicate possible limitations of your work, and provide suggestions for future research.
 
 \fi
-% BEGIN TON: discussion
+\paragraph{RQ1: interpretation and limitations.}
+The results suggest that additional training examples can improve recognition of selected frequently confused letters. In particular, recognition of N improved considerably without reducing recognition of M on the evaluated images. 
+
+However, the additional training and test images were collected from the same person. Although the sessions were separate, this does not establish generalization. Also, only four of the 26 ASL letters were evaluated. Other potential effects on unevaluated letters remain unknown. The findings should be interpreted as a small-scale, single-participant evaluation rather than a general performance guarantee.
+\par\noindent ...\par\medskip
 \paragraph{RQ3: interpretation and limitations.}
-Our categories do not consistently improve on Shin, and categories plus joint angles do not fully replace his directions under the tested settings. The small world-angle improvement depends on the learner and coordinate source. Permutation dependence should not be read as the gain from adding a feature.
+Our categories do not consistently improve on Shin or, with joint angles, replace his directions. World-angle gains depend on learner and coordinates. Feature shuffling measures model dependence, not the benefit of adding features.
 
-The short left/right and G/H explorations illustrate limits of synthetic changes: improved artificial scores do not establish better live recognition. They are practical follow-ups, not additional independent validation of the main feature study. Rigid G/H rotation preserves geometry and does not recreate new detector errors under occlusion.
-
-The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
-% END TON: discussion
+The folds were inspected during development and do not separate verified participants: results are exploratory. Synthetic orientation gains also do not establish better live recognition; rotation cannot recreate detector errors from hidden fingers.
 
 \par\noindent ...\par\medskip
         Dilation produced the highest technical recovery rate of the three evaluated variants. The higher combined recovery rate shows that the other variants also recovered images that dilation did not recover. However, the combined result requires trying all three variants and accepting an image when at least one attempt succeeds.
@@ -401,14 +408,22 @@ The folds were inspected during development and are not verified people, so thes
 \bibliographystyle{icml2021}
 
 
+\clearpage
+\onecolumn
 \appendix
 \section{Appendices}
 
 
 
+\begingroup
+\let\verbatim\relax
+\let\endverbatim\relax
+\lstnewenvironment{verbatim}{\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false}}{}
 \input{code-snippets/settings-all-run}
-
+\input{code-snippets/n47-example}
+\clearpage
 \input{code-snippets/repeatability}
+\endgroup
 
 %\input{appendices/rq1}
 
@@ -420,7 +435,6 @@ The folds were inspected during development and are not verified people, so thes
 
 
 
-% BEGIN TON: technical appendix
 
 \par\noindent ...\par\medskip
 \clearpage
@@ -469,27 +483,21 @@ The same-coordinate J control uses Shin's image points without aspect correction
 Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 per fold and 13,000 unique sources in total. Five seeded row permutations move all columns in a feature group together, preserving valid one-hot encodings. Labels and trained models remain fixed. D/S/E/J blocks are tested across the eight variants; the 19 E checks are tested in DSE/DE without J, and E/J families in DSEJ/DEJ. The resulting 3,900 interventions retain precision and F1 drops. Spread over folds/repeats is descriptive, not an independent confidence interval. Related features can substitute for one another, and shuffling can create unusual combinations; importance is not a causal feature ranking \citep{ton-sklearnpermutation}.
 
 \begin{figure}[h]\centering
-\IfFileExists{figures/ton_category_importance_en.pdf}{%
-\includegraphics[width=.95\linewidth]{figures/ton_category_importance_en.pdf}%
-}{%
-\fbox{\parbox{.90\linewidth}{\raggedright\textbf{Figure not uploaded yet.}\par\smallskip\path{figures/ton_category_importance_en.pdf}\par\smallskip Upload this original figure into the \texttt{figures} folder.}}%
-}
+\includegraphics[width=.95\linewidth]{figures/ton_category_importance_en.pdf}
 \caption{The 19 own checks, with all one-hot columns of a check shuffled together. Values are mean macro-F1 losses in percentage points over five folds and five shuffles. DSE contains Shin's directions; DE omits them. J is absent in both. Negative losses are retained.}
 \label{fig:ton-permutation}
 \end{figure}
 
-Code and evidence: \path{research/feature_study.py}, \path{results/feature_factorial_01/}. The protocol, 80 fold models, predictions, paired changes, controls, permutation outputs and verification preserve all values underlying the main table. The optional optimized SVM replay checks its outputs against ordinary SVC predictions; it does not alter the experiment.
+In DSE, thumb IP flexion has the largest mean F1 loss among E checks for SVM (0.08 percentage points); middle--ring spreading is largest for LightGBM (0.03). These describe fitted-model dependence, not a guaranteed gain from adding a check.
+
+Reproduce with \texttt{python -m RQ3 features} and \texttt{python -m RQ3 coordinate\_control}; commands and output directories are defined in \path{RQ3/workflows.py}. Feature definitions are in \path{research/feature_study.py}; evidence is in \path{results/feature_factorial_01/}. The protocol, 80 fold models, predictions, paired changes, controls, permutation outputs and verification preserve all values underlying the main table. The optional optimized SVM replay checks its outputs against ordinary SVC predictions; it does not alter the experiment.
 
 \clearpage
 \section{Own hand features and the inspection tool}\label{app:ton-tool}
 The 19 checks comprise 13 flexion checks, two spreading checks, one crossing check, one thumb-shape check and two thumb-tip proximity checks. Multiple categories produce 70 one-hot inputs. They describe estimated landmarks, not independently verified anatomy.
 
 \begin{figure}[h]\centering
-\IfFileExists{figures/ton_feature_tool_screenshot.png}{%
-\includegraphics[width=.98\linewidth]{figures/ton_feature_tool_screenshot.png}%
-}{%
-\fbox{\parbox{.90\linewidth}{\raggedright\textbf{Figure not uploaded yet.}\par\smallskip\path{figures/ton_feature_tool_screenshot.png}\par\smallskip Upload this original figure into the \texttt{figures} folder.}}%
-}
+\includegraphics[width=.98\linewidth]{figures/ton_feature_tool_screenshot.png}
 \caption{User-supplied feature-tool screenshot. Intended and predicted letter are both C, while only 15 of 19 workbook checks match. The target letter selects expected categories; it does not enter the classifier. Green/red cards indicate agreement with the chosen rules, not confidence in the predicted letter.}
 \label{fig:ton-tool}
 \end{figure}
@@ -571,11 +579,7 @@ A separate proxy rotates image/world landmarks and adds reproducible Gaussian co
 The original stored landmarks, without redetection, are replayed through both frozen deployment models. All four are accepted detections; model hashes, stored input vectors and recorded predictions are checked. Both hand-back G examples remain H after rotation training. An H changes from Z to H, and a G with the palm visible remains G. Intended letters are user annotations and views are described visually, not expert ASL ground truth. The examples are selected error analysis, not a frequency or accuracy estimate.
 
 \begin{figure}[h]\centering
-\IfFileExists{figures/ton_live_examples_en.pdf}{%
-\includegraphics[width=.74\linewidth]{figures/ton_live_examples_en.pdf}%
-}{%
-\fbox{\parbox{.90\linewidth}{\raggedright\textbf{Figure not uploaded yet.}\par\smallskip\path{figures/ton_live_examples_en.pdf}\par\smallskip Upload this original figure into the \texttt{figures} folder.}}%
-}
+\includegraphics[width=.74\linewidth]{figures/ton_live_examples_en.pdf}
 \caption{All four new live examples with stored landmarks. A/B: intended G remains H; C: H is recovered; D: G is recognized with the palm visible. ``Reference'' and ``Rotation'' are model outputs. No image is used for training.}
 \label{fig:ton-live}
 \end{figure}
@@ -583,7 +587,6 @@ The original stored landmarks, without redetection, are replayed through both fr
 The middle-finger DIP estimates in A/B are 161.7 and 164.7 degrees, compared with a G-training median of 113.2 (middle 50\%: 109.2--118.2). Signed thumb deviation is $-1.9$ and $2.7$ degrees versus median 35.9. These are estimated world-point measurements, not true 3D anatomy. Pose, viewpoint and detector error cannot be separated here, nor is one angle proven to cause the classifier error. A rigid rotation preserves the original joint geometry and does not recreate such new detection changes.
 
 The high artificial score therefore does not directly transfer to the live camera. Rotation training is not yet a demonstrated solution to the observed G/H confusion. This observation does not establish the general failure rate. Source IDs, paired outputs, measurements and hashes: \path{results/gh_live_diagnostics_20261107/}.
-% END TON: technical appendix
 
 \end{document}
 

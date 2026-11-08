@@ -46,3 +46,9 @@ The three group figures are supplied under `paper/group_integration/figures/`.
 - `results/gh_live_diagnostics_20261107/`: four current free examples, model replay and hashes.
 
 Not spread does not imply contact. Thumb across/beside the palm is approximated by signed thumb-MCP deviation. The geometric rules are not independently validated anatomy. Regenerating photographic figures requires the specific raw images or private captures.
+
+## Current group document
+
+The shortened group body fits five pages, with references continuing onto page 6. Its three RQ3 figures retain the verified 76 permutation values, unchanged original feature-tool screenshot and the same four annotated live examples. No new accuracy claim is inferred from selected photos.
+
+The N47 original/dilated/overlay illustration is supplied through `code-snippets/n47-example.tex`, preserving the existing caption and resolving the body reference. The recovery-rate figure and both original coauthor code snippets are retained. Unused template images and the duplicate recovery figure are removed from the current Overleaf project. All active figure paths resolve.

@@ -1,6 +1,6 @@
 # RQ3: hand-shape features and joint measurements
 
-This guide describes Ton's contribution. Installation, the input bundle and the shared baseline are covered in the main [README](../README.md). Numbering follows the group paper: RQ1 augmentation, RQ2 detection recovery, RQ3 feature comparison.
+This guide describes Ton's contribution. Installation, the input bundle and the shared baseline are covered in the main [README](../README.md). Numbering follows the group paper: RQ1 targeted data collection, RQ2 detection recovery, RQ3 feature comparison.
 
 ## Question and main comparison
 

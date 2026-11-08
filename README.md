@@ -7,7 +7,7 @@ The numbering follows the supplied **group paper**:
 | Component | Research | Implementation status |
 |---|---|---|
 | Shared baseline | Shin distances and directions: **DS, 820 inputs** | [baseline/](baseline/), available |
-| RQ1 | Targeted versus general data augmentation | [RQ1/](RQ1/), contribution not supplied |
+| RQ1 | Targeted versus general data collection | [RQ1/](RQ1/), methods/results supplied; executable code missing |
 | RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2/](RQ2/), paper text supplied; executable code missing |
 | RQ3 | Own hand-shape features and joint measurements, with/without Shin directions | [RQ3 guide](RQ3/README.md), implemented; includes brief practical explorations |
 
@@ -190,9 +190,9 @@ Select a model, enable **Camera on**, optionally enter the intended letter and u
 
 ## 7. Paper and evidence
 
-Use the integrated English [paste-ready source](paper/group_integration/group_report_paste_ready.tex). Its [PDF preview](paper/group_integration/group_report_paste_ready_preview.pdf) explicitly marks missing coauthor assets. The [transfer package](paper/group_integration_ton.zip) contains the contribution and figures. Source-preservation checks and integration notes are in `paper/group_integration/` and `results/group_integration_20261107/`. The contribution uses six references; the bibliography check is in `results/bibliography_cleanup_20261108/verification.json`.
+The current group contribution is in [group_report.tex](paper/group_integration/group_report.tex), with an equivalent [paste-ready version](paper/group_integration/group_report_paste_ready.tex). The [transfer package](paper/group_integration_ton.zip) includes the supplied group figures, bibliography and code appendices. The shortened body fits five pages; references continue onto page 6. See the [integration steps](docs/GROUP_INTEGRATION.md) before updating a newer group main. The own contribution uses six references.
 
-The complete group paper still needs the original RQ2 figure, code appendices, group bibliography, RQ1 contribution and shared abstract. Local previews use labelled placeholders for missing assets.
+The original group illustration and code appendices are now included, and the N47 reference resolves. Executable RQ1/RQ2 code, raw experiment inputs and the shared abstract still need to be supplied. Existing coauthor prose and code remain unchanged.
 
 The standalone [working paper](paper/report.pdf) and [technical supplement](paper/appendix.pdf) can be built with Tectonic:
 

@@ -1,54 +1,71 @@
 {
-  "status": "passed",
+  "status": "passed; complete group assets included",
   "variant": "paste-ready main with all own TeX inputs inlined",
-  "main_tex_sha256": "987d23381a2ba77e74e4869b81f89468efefb16938a825c0e71b286b2b67fdd8",
+  "main_tex_sha256": "aee089481feab8cb5060ea108d9162409a6570ed5fb09bc839437bf89a669214",
   "inlined_table_sources_sha256": {
     "ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
     "ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
     "ton_orientation_rows_en.tex": "377127c35aa4b068071b88914c450dd9711e1428552d362c5f65828d6db198ec",
     "ton_gh_rows_en.tex": "cfa7dc4729a8fb05a60aa33f71183119ff66621a88718879da355e580ad674d0"
   },
-  "inlined_appendix_sha256": "7da1803d18fe9a9ad509aa8f2e79885af65a986d0a68789507f4dc6064529026",
+  "inlined_appendix_sha256": "f8aef6ba6aae9be879883124a3d014719ac4f2cf6437ef872210ce1b251ca5d1",
   "embedded_bibliography_sha256": "ff6058bd9cea04318bd27b212745437eb8ee956b7a665924863a07d4ae66141a",
   "coauthor_blocks_verbatim": [
-    "intro",
-    "datasets",
-    "implementation",
-    "results",
-    "discussion"
+    "RQ1_methods",
+    "RQ1_results",
+    "RQ1_discussion",
+    "RQ2_intro",
+    "RQ2_datasets",
+    "RQ2_implementation",
+    "RQ2_results",
+    "RQ2_discussion"
   ],
   "coauthor_inputs_preserved": true,
-  "own_figures_optional_with_explicit_placeholders": [
-    "figures/ton_category_importance_en.pdf",
-    "figures/ton_feature_tool_screenshot.png",
-    "figures/ton_live_examples_en.pdf"
-  ],
+  "own_figures_optional_with_explicit_placeholders": [],
   "original_group_assets_not_reconstructed": true,
   "compilation_cases": {
     "with_figures": {
-      "pages": 11,
+      "pages": 14,
       "all_pages_pixel_identical_between_current_modular_and_paste_versions": true
-    },
-    "without_added_files": {
-      "status": "Previously verified optional-figure fallback; unchanged fallback mechanism."
     }
   },
   "generated_bibliography": "ton_inline_refs.bib; generated from inline content, separate from existing editable bibliographies",
-  "preview_pdf_sha256": "25731d2dbe355157d03f9ca287f6e8852a5c0aacb08cbe3737ef6985a48cf070",
-  "inherited_unresolved_labels": [
-    "fig:N47_original",
-    "fig:preprocessing-config",
-    "fig:repeatablity"
-  ],
+  "preview_pdf_sha256": "003389bc6c12536d4035d2e5750e6a0e852f52461524921fb97181d94bc45eab",
+  "inherited_unresolved_labels": [],
   "new_unresolved_labels": false,
   "expected_group_inputs_still_required": [
     "code-snippets/settings-all-run.tex",
     "code-snippets/repeatability.tex",
+    "code-snippets/n47-example.tex",
     "figures/recovery_by_variant.pdf"
   ],
-  "overfull_boxes": false,
-  "coauthor_translation_only_changes": [
-    "Canny-overlay prose"
+  "overfull_boxes": {
+    "horizontal": 0,
+    "vertical": 1,
+    "maximum_vertical_overflow_pt": 1.46712,
+    "visual_check": "No clipping or overlap"
+  },
+  "coauthor_translation_only_changes": [],
+  "language": "Own contribution English; supplied coauthor prose unchanged",
+  "named_boundary_comments_removed": true,
+  "inlined_prose_sources_sha256": {
+    "ton_discussion_en.tex": "b032619e1d978df94f6e682d283ddfb6ef09db3f7937d712570a41fc139d72d6",
+    "ton_related_en.tex": "5d5f6c0ae9ab8a142d87db4949bdcc29714e8191292587f234fe6d567cac8d32",
+    "ton_methods_en.tex": "5aead46bf16ed702e9b66783311dda81f647bb8fe217c94f497baa2b92b6ba79",
+    "ton_results_en.tex": "a87366c0c6793536a62552a049352abfd52fac298058d174408278a254b35cb1",
+    "ton_dataset_en.tex": "df2ac9f977c59ae463b751bd74dde84008c43d2ef0a2f8e1b917c33f81b5a890",
+    "ton_implementation_en.tex": "1c2d9b64d6fe2fd8474a43d0c32579969b385bd88c5078a7b95c2ef7f157f8b9"
+  },
+  "coauthor_printed_blocks_unchanged": [
+    "RQ1_methods",
+    "RQ1_results",
+    "RQ1_discussion",
+    "RQ2_intro",
+    "RQ2_methods",
+    "RQ2_datasets",
+    "RQ2_implementation",
+    "RQ2_results",
+    "RQ2_discussion"
   ],
-  "language": "English"
+  "group_inputs_included": true
 }

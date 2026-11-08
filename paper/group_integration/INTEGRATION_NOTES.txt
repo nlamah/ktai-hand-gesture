@@ -1,17 +1,11 @@
-Group paper integration
+Current group paper
 
-Use group_report.tex for the modular source, or paste group_report_paste_ready.tex into main.tex in the existing group project.
+Compile group_report.tex with the supplied group figures, bibliography and code-snippets. group_report_paste_ready.tex is an equivalent alternative with the own contribution embedded; choose one main.
 
-The contribution adds RQ3 related work, methods, data selection, implementation, results, discussion and a technical appendix. Added blocks are marked BEGIN TON / END TON and separated by the existing dots. The shared introduction and RQ3 placeholder were filled.
+The own introduction and RQ3 main text are shortened. Body text fits pages 1–5; references continue onto page 6. Detailed feature definitions, all numerical tables, permutation interpretation and brief practical orientation follow-ups remain in the appendix.
 
-The coauthor contribution is retained. Its remaining Dutch Canny description has been translated into English without changing the method or numerical results. The original source remains available as the comparison input for preservation checks, not as a second paper to submit.
+RQ1/RQ2 prose, numbers and the two original code-snippet files are preserved. Only inactive template-figure comments were removed. The existing N47 illustration is included in appendix A to resolve its original reference. Code wrapping changes appearance only.
 
-For the modular version, supply ton_appendix_en.tex, ton_*_rows_en.tex, ton_references.bib and figures/ton_*. The ICML/algorithm styles are included. Keep the original group references.bib, recovery figure and code snippets.
+The three RQ3 figures were checked against the published values and original selected captures. No experiment, model, photo annotation or table value was changed. Only unused example images and duplicate images were removed. No preview placeholders are required.
 
-The paste-ready version embeds the contribution's tables, appendix and six-source bibliography. Its own figures are optional for compilation: missing ones produce explicit placeholders. Existing coauthor inputs remain required.
-
-Missing group assets: figures/recovery_by_variant.pdf, code-snippets/settings-all-run.tex, code-snippets/repeatability.tex and the original group bibliography. Previews use labelled placeholders only; no experimental results are reconstructed. The inherited N47/settings/repeatability labels need their original targets in the complete project.
-
-Still to complete: shared abstract, RQ1 contribution, RQ2 code and visual landmark assessment, and final page balance. Numbering follows the group source: RQ1 augmentation, RQ2 recovery, RQ3 features.
-
-The contribution cites six sources: Shin; MediaPipe documentation; Kaggle ASL Alphabet; scikit-learn permutation documentation; LightGBM parameter documentation; and Vicars for G/H orientation. Research scores, models, source IDs and fold assignments are unchanged by translation.
+See GROUP_INTEGRATION.md (docs/GROUP_INTEGRATION.md in the repository) for upload instructions. The local Overleaf project's main is main.tex in /Users/tonheijligers/Documents/Github/6aba6ebfe26cf023a6c2efc0. No commit or push is performed automatically.

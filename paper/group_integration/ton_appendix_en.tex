@@ -42,7 +42,9 @@ Within each fold, seed 20261107 selects 100 held-out images per letter: 2,600 pe
 \label{fig:ton-permutation}
 \end{figure}
 
-Code and evidence: \path{research/feature_study.py}, \path{results/feature_factorial_01/}. The protocol, 80 fold models, predictions, paired changes, controls, permutation outputs and verification preserve all values underlying the main table. The optional optimized SVM replay checks its outputs against ordinary SVC predictions; it does not alter the experiment.
+In DSE, thumb IP flexion has the largest mean F1 loss among E checks for SVM (0.08 percentage points); middle--ring spreading is largest for LightGBM (0.03). These describe fitted-model dependence, not a guaranteed gain from adding a check.
+
+Reproduce with \texttt{python -m RQ3 features} and \texttt{python -m RQ3 coordinate\_control}; commands and output directories are defined in \path{RQ3/workflows.py}. Feature definitions are in \path{research/feature_study.py}; evidence is in \path{results/feature_factorial_01/}. The protocol, 80 fold models, predictions, paired changes, controls, permutation outputs and verification preserve all values underlying the main table. The optional optimized SVM replay checks its outputs against ordinary SVC predictions; it does not alter the experiment.
 
 \clearpage
 \section{Own hand features and the inspection tool}\label{app:ton-tool}

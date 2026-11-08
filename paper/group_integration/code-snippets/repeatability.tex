@@ -1,0 +1,63 @@
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.95\linewidth}
+\begin{verbatim}
+{
+  "reference": "ktai-hand-gesture\\experiments\\hand_detection_recovery\\runs\\test_all",
+  "repeat": "ktai-hand-gesture\\experiments\\hand_detection_recovery\\runs\\test_all_repeat",
+  "settings_equal": true,
+  "changed_settings": [],
+  "baseline": {
+    "reference_records": 78000,
+    "repeat_records": 78000,
+    "different_records": 0
+  },
+  "processed": {
+    "reference_records": 52794,
+    "repeat_records": 52794,
+    "different_records": 0
+  },
+  "retry": {
+    "reference_records": 17598,
+    "repeat_records": 17598,
+    "different_records": 0
+  },
+  "summary": {
+    "reference_records": 4,
+    "repeat_records": 4,
+    "different_records": 0
+  },
+  "landmarks": {
+    "reference_records": 52794,
+    "repeat_records": 52794,
+    "records_with_coordinates": 6969,
+    "different_coordinate_records": 0,
+    "different_metadata_records": 0,
+    "maximum_absolute_coordinate_difference": 0.0
+  },
+  "all_compared_outputs_equal": true,
+  "evidence_sha256": {
+    "reference": {
+      "settings.json": "748dbe1997f11e793ef067d48342281f3a768e403a26d301f44cdc9b790a6e07",
+      "baseline.csv": "2844e86d3309cc6ce6ca2915000f71b0a850e9ef8f17e42210a2b8dc766cd4c3",
+      "processed.csv": "87805980df2d78ae7a2144120f01ba4a14542fc3b50a0ada4545947e8d790595",
+      "per_image.csv": "79da23909a82dab478037b5f3c516a79c0d6591c0806f810f996ea18227e11e4",
+      "summary.csv": "4c312ec4f3e4bb884c6e15f86dcef997815fa66f9642dda124b1d62c2315d556",
+      "retry_landmarks.jsonl": "84e1273caba566c398ee1c833d5a0f7eb4ea087d2d87be459c2379c2c4457394"
+    },
+    "repeat": {
+      "settings.json": "748dbe1997f11e793ef067d48342281f3a768e403a26d301f44cdc9b790a6e07",
+      "baseline.csv": "2844e86d3309cc6ce6ca2915000f71b0a850e9ef8f17e42210a2b8dc766cd4c3",
+      "processed.csv": "55c8c232a27aedac7344fec9b11eef80f76c4e2ee764f45b2c8aa5d6d98ae1f8",
+      "per_image.csv": "79da23909a82dab478037b5f3c516a79c0d6591c0806f810f996ea18227e11e4",
+      "summary.csv": "4c312ec4f3e4bb884c6e15f86dcef997815fa66f9642dda124b1d62c2315d556",
+      "retry_landmarks.jsonl": "41513daca93729e615f589fc20c04def71e610176dfd8dc135cb782cd695f502"
+    }
+  },
+  "scope": "Two executions on the same workstation. Baseline coordinates were not exported; coordinate comparison covers retry detections. Absolute output paths are excluded from content comparisons."
+}
+\end{verbatim}
+\end{minipage}
+\caption{Configuration of the image preprocessing pipeline}
+\label{fig:repeatablity}
+\end{figure}

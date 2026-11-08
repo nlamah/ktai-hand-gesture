@@ -1,71 +1,84 @@
 {
-  "source_attachment": "/Users/tonheijligers/.codex/attachments/30356e58-b872-42c4-9afe-90514bd7a8f2/Pasted text.txt",
-  "source_sha256": "4420a861cc38e5c9fee787ae8f7899ced1022a015192145343602f79d1b09ea7",
-  "original_copy_sha256": "4420a861cc38e5c9fee787ae8f7899ced1022a015192145343602f79d1b09ea7",
-  "merged_tex_sha256": "bf1c4d85e76ad9e8c1da479ec06459f69ffa98125b4be1f77639a51eddf03df9",
-  "reversible_edit_check": false,
+  "source_attachment": "/Users/tonheijligers/.codex/attachments/a0afc92a-6948-4029-9478-0d256b04fc5d/Pasted text.txt",
+  "source_sha256": "b3ae776ff8b346a38e8227346da6b1d6c53ef8803d2f9a4785e845edd43b3821",
+  "source_copy_sha256": "cf4d7f6067379b6114bbc09b6e237bb447ddd48d46d767e8f89fed288c0b2962",
+  "source_copy_processing": "Named boundary comments removed only.",
   "coauthor_blocks": [
     {
-      "block": "intro",
-      "original_sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
-      "current_sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
+      "block": "RQ1_methods",
+      "printed_text_unchanged": true,
       "verbatim": true,
-      "translation_only": false,
-      "content_preserved": true
+      "source_sha256": "64e7f931593b4cae6fe6f425a204c34ac0aa44297d90fa566b73430f7ec07496"
     },
     {
-      "block": "methods",
-      "original_sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412",
-      "current_sha256": "8814c059a180ca87a67b0a9741dcb6c29d73c27f22f5b998bad161994530e618",
+      "block": "RQ1_results",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "9f0a0f60e2528a4b7417226f41b7f1556ded7f9488028f83479a06c95cc8b355"
+    },
+    {
+      "block": "RQ1_discussion",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "185664249fff9bac558bfdad1938e0030bc6f35f8c50599f16f6d440a00944cf"
+    },
+    {
+      "block": "RQ2_intro",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "c823a8221a2a6597021a3a756ec99375e61bfb50c56beefd4ecb199bc2b1a0e7"
+    },
+    {
+      "block": "RQ2_methods",
+      "printed_text_unchanged": true,
       "verbatim": false,
-      "translation_only": true,
-      "content_preserved": true
+      "source_sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412"
     },
     {
-      "block": "datasets",
-      "original_sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
-      "current_sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
+      "block": "RQ2_datasets",
+      "printed_text_unchanged": true,
       "verbatim": true,
-      "translation_only": false,
-      "content_preserved": true
+      "source_sha256": "89d3f828bdb2ec9204e145d71b31c5fe4f094132c8ed84644d454dde5e5e6b9a"
     },
     {
-      "block": "implementation",
-      "original_sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
-      "current_sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
+      "block": "RQ2_implementation",
+      "printed_text_unchanged": true,
       "verbatim": true,
-      "translation_only": false,
-      "content_preserved": true
+      "source_sha256": "21cc8d0cea322b48cb2ef069cc36a78bad3c9c09bc03dcb9a3f50633f5903b24"
     },
     {
-      "block": "results",
-      "original_sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
-      "current_sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
+      "block": "RQ2_results",
+      "printed_text_unchanged": true,
       "verbatim": true,
-      "translation_only": false,
-      "content_preserved": true
+      "source_sha256": "f29924c0e4a0cb2778a18d7ccc68e80f6552fbeb12d8de1a6da0735a69c2cef5"
     },
     {
-      "block": "discussion",
-      "original_sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
-      "current_sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
+      "block": "RQ2_discussion",
+      "printed_text_unchanged": true,
       "verbatim": true,
-      "translation_only": false,
-      "content_preserved": true
+      "source_sha256": "4a6b632337fc7a46ed533b0f1a65ce14c434ea6aaa2d2e5433097d9a08df8b8f"
     }
   ],
   "RQ1_and_RQ2_verbatim": false,
-  "all_new_prose_language": "English",
-  "own_RQ": "RQ3",
-  "original_group_research_question_numbering_preserved": true,
-  "own_blocks_marked": "BEGIN TON / END TON; dots retained or added",
-  "template_only_suppression": "Original generic prompts, abstract instruction, citation tutorial and example table retained under iffalse; not printed",
-  "technical_changes": "Disable legacy subfigure conflict; optional availability guards for unused packages; T1 encoding; add noncolliding prefixed bibliography; own appendix input",
-  "missing_group_assets": [
-    "figures/recovery_by_variant.pdf",
-    "code-snippets/settings-all-run.tex",
-    "code-snippets/repeatability.tex"
+  "coauthor_code_inputs_preserved": [
+    "\\input{code-snippets/settings-all-run}",
+    "\\input{code-snippets/repeatability}"
   ],
+  "research_questions_unchanged": true,
+  "author_list_unchanged": true,
+  "named_boundary_comments_removed": true,
+  "updated_own_blocks": [
+    "related work",
+    "methods",
+    "datasets",
+    "implementation",
+    "results",
+    "discussion"
+  ],
+  "shared_introduction_edit": "Own introduction updated to targeted additional data collection and the current six-source bibliography.",
+  "numeric_experiments_retrained": false,
+  "merged_tex_sha256": "06d5b1df997784140939de4921dd1ba4cd361a7067ab657b24fdfd6e354c6a63",
+  "paste_ready_tex_sha256": "aee089481feab8cb5060ea108d9162409a6570ed5fb09bc839437bf89a669214",
   "numeric_sources": {
     "results/feature_factorial_01/metrics.csv": "02e02c97abad2a33784d67ad6394f6bbb9538bad05ce15b709632c6b3cb8403b",
     "results/feature_factorial_01/paired_changes.csv": "c7b826ca9b1f525f3c1899f5cd5953e5e9f89bac9686c1d7d0b58e07fc6ea64d",
@@ -75,8 +88,21 @@
     "results/gh_live_diagnostics_20261107/predictions.csv": "5bc259aba5ac514c5bc2a53f760945858e79805fce6410389df2a24ec7e45833"
   },
   "coauthor_numeric_results_unchanged": true,
-  "translation_only_changes": [
-    "Dutch Canny-overlay explanation translated to English at user request."
+  "all_new_prose_language": "English",
+  "own_RQ": "RQ3",
+  "missing_group_assets": [],
+  "translation_only_changes": [],
+  "preservation_check": "All nine coauthor text blocks are unchanged after ignoring comments; the only nonverbatim block has unused template-figure comments removed. Both original code snippets and references.bib are byte-identical to the supplied local Overleaf project.",
+  "own_blocks_marked": "No named boundary comments; dotted separators retained.",
+  "coauthor_printed_text_unchanged": true,
+  "coauthor_code_files_unchanged": true,
+  "group_assets_supplied": true,
+  "unused_images_removed": [
+    "figures/N48.jpg",
+    "figures/example_plot.png",
+    "figures/example_pipeline.png",
+    "recovery_by_variant.pdf",
+    "icml_numpapers.eps"
   ],
-  "preservation_check": "Original coauthor blocks match exactly after the single declared prose translation."
+  "existing_N47_caption_preserved": true
 }
