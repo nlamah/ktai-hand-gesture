@@ -78,7 +78,7 @@
   "shared_introduction_edit": "Own introduction updated to targeted additional data collection and the current six-source bibliography.",
   "numeric_experiments_retrained": false,
   "merged_tex_sha256": "06d5b1df997784140939de4921dd1ba4cd361a7067ab657b24fdfd6e354c6a63",
-  "paste_ready_tex_sha256": "aee089481feab8cb5060ea108d9162409a6570ed5fb09bc839437bf89a669214",
+  "paste_ready_tex_sha256": "8b1eb4bbce325ac5c7c71d07297b105ec33900c708ddecca9a1cb120dee09e8d",
   "numeric_sources": {
     "results/feature_factorial_01/metrics.csv": "02e02c97abad2a33784d67ad6394f6bbb9538bad05ce15b709632c6b3cb8403b",
     "results/feature_factorial_01/paired_changes.csv": "c7b826ca9b1f525f3c1899f5cd5953e5e9f89bac9686c1d7d0b58e07fc6ea64d",
@@ -104,5 +104,6 @@
     "recovery_by_variant.pdf",
     "icml_numpapers.eps"
   ],
-  "existing_N47_caption_preserved": true
+  "existing_N47_caption_preserved": true,
+  "methods_context": "Section 3.3 explains landmark-to-feature conversion, all four blocks, the eight retraining variants, coordinate control and post-training permutation; other prose, scientific results and coauthor files unchanged."
 }

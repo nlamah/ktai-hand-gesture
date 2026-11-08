@@ -1,7 +1,7 @@
 {
   "status": "passed; complete group assets included",
   "variant": "paste-ready main with all own TeX inputs inlined",
-  "main_tex_sha256": "aee089481feab8cb5060ea108d9162409a6570ed5fb09bc839437bf89a669214",
+  "main_tex_sha256": "8b1eb4bbce325ac5c7c71d07297b105ec33900c708ddecca9a1cb120dee09e8d",
   "inlined_table_sources_sha256": {
     "ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
     "ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
@@ -30,7 +30,7 @@
     }
   },
   "generated_bibliography": "ton_inline_refs.bib; generated from inline content, separate from existing editable bibliographies",
-  "preview_pdf_sha256": "003389bc6c12536d4035d2e5750e6a0e852f52461524921fb97181d94bc45eab",
+  "preview_pdf_sha256": "e33bd3b1ddd5d0e978d3f2e3030a69a861716fd4c5f58bd2447b293845bb72bf",
   "inherited_unresolved_labels": [],
   "new_unresolved_labels": false,
   "expected_group_inputs_still_required": [
@@ -41,9 +41,7 @@
   ],
   "overfull_boxes": {
     "horizontal": 0,
-    "vertical": 1,
-    "maximum_vertical_overflow_pt": 1.46712,
-    "visual_check": "No clipping or overlap"
+    "vertical": 0
   },
   "coauthor_translation_only_changes": [],
   "language": "Own contribution English; supplied coauthor prose unchanged",
@@ -51,7 +49,7 @@
   "inlined_prose_sources_sha256": {
     "ton_discussion_en.tex": "b032619e1d978df94f6e682d283ddfb6ef09db3f7937d712570a41fc139d72d6",
     "ton_related_en.tex": "5d5f6c0ae9ab8a142d87db4949bdcc29714e8191292587f234fe6d567cac8d32",
-    "ton_methods_en.tex": "5aead46bf16ed702e9b66783311dda81f647bb8fe217c94f497baa2b92b6ba79",
+    "ton_methods_en.tex": "e0fead0b0c883f0a3521d4c3010af2ab42292515ab5e119b66bd0bc640d1d06d",
     "ton_results_en.tex": "a87366c0c6793536a62552a049352abfd52fac298058d174408278a254b35cb1",
     "ton_dataset_en.tex": "df2ac9f977c59ae463b751bd74dde84008c43d2ef0a2f8e1b917c33f81b5a890",
     "ton_implementation_en.tex": "1c2d9b64d6fe2fd8474a43d0c32579969b385bd88c5078a7b95c2ef7f157f8b9"

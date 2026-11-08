@@ -145,33 +145,29 @@
     },
     "paper/group_integration/group_report_preview.pdf": {
       "pages": 14,
-      "sha256": "b7555c1de4638be4b91a4c03843c6caba0b2633663325b4c0eee52d7f392f4d2",
+      "sha256": "fc13da9895537dcfd9a0fe4cba397f25f705dc78c3f4dca1bb178c66ab124ba9",
       "undefined_citations": false,
       "overfull_boxes": {
         "horizontal": 0,
-        "vertical": 1,
-        "maximum_vertical_overflow_pt": 1.46712,
-        "visual_check": "No clipping or overlap"
+        "vertical": 0
       },
       "inherited_unresolved_group_labels": [],
       "language": "Own contribution English; supplied coauthor prose unchanged"
     },
     "paper/group_integration/group_report_paste_ready_preview.pdf": {
       "pages": 14,
-      "sha256": "003389bc6c12536d4035d2e5750e6a0e852f52461524921fb97181d94bc45eab",
+      "sha256": "e33bd3b1ddd5d0e978d3f2e3030a69a861716fd4c5f58bd2447b293845bb72bf",
       "undefined_citations": false,
       "overfull_boxes": {
         "horizontal": 0,
-        "vertical": 1,
-        "maximum_vertical_overflow_pt": 1.46712,
-        "visual_check": "No clipping or overlap"
+        "vertical": 0
       },
       "inherited_unresolved_group_labels": [],
       "language": "Own contribution English; supplied coauthor prose unchanged"
     }
   },
   "english_modular_and_paste_ready_pages_pixel_identical": true,
-  "visual_review": "Current complete group versions visually reviewed on all 14 rendered pages; body ends page 5, references continue page 6. N47 reference resolves. No clipping/overlap; minor 1.47pt vertical-box warning retained.",
+  "visual_review": "Current group versions visually reviewed on all 14 rendered pages; section 3.3 expanded, body still ends page 5 and references continue page 6. All references resolve; no overfull boxes, clipping or overlap.",
   "rendering": "Local PDFKit fallback; Poppler unavailable",
   "tests": {
     "count": 125,
