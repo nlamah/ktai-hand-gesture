@@ -1,0 +1,35 @@
+Groepsversie met alleen Tons bijdrage toegevoegd
+
+Open group_report.tex als hoofdbestand.
+
+Wat is gedaan
+- Eigen Engelstalige tekst toegevoegd aan literatuur, methode, datasets, implementatie, resultaten en discussie.
+- Een gezamenlijke inleidende alinea toegevoegd en de lege RQ3-vraag ingevuld.
+- RQ1 en RQ2, auteursgegevens en alle zes inhoudelijke tekstblokken van de medestudent letterlijk behouden.
+- De bestaande puntjes behouden en tussen bijdragen toegevoegd. Eigen blokken zijn gemarkeerd met BEGIN TON / END TON.
+- Alleen generieke template-instructies, de abstractinstructie en de voorbeeldtabel niet laten afdrukken; hun originele tekst blijft onder iffalse in de bron staan.
+- Het bestaande conflict tussen subfigure en subcaption technisch opgelost door de ongebruikte legacy-subfigure-invoer uit te schakelen.
+- Eigen verwijzingen en BibTeX-keys hebben een ton-prefix; een aanwezige groepsbibliografie references.bib blijft gebruikt.
+- Technische details, controles en foto's staan in ton_appendix_en.tex. De vier nieuwe live-opnamen zijn foutanalyse, geen trainingsdata of nauwkeurigheidsmeting.
+
+Overzetten naar jullie bestaande LaTeX-/Overleaf-project
+1. Gebruik group_report.tex als jullie hoofdbestand.
+2. Voeg ton_appendix_en.tex, de ton_*_rows_en.tex bestanden, ton_references.bib en de twee afbeeldingen met ton_-prefix toe.
+3. Behoud jullie oorspronkelijke references.bib, figures/recovery_by_variant.pdf, code-snippets/settings-all-run.tex en code-snippets/repeatability.tex.
+4. De meegeleverde ICML-/algorithm-stylebestanden zijn ongewijzigde lokale afhankelijkheden; jullie bestaande exemplaren kunnen blijven staan.
+
+Niet meegeleverd door de medestudent
+De herstelfiguur, twee code-inputs en oorspronkelijke groepsbibliografie waren niet bij de geplakte tekst aanwezig. Ze zijn niet gereconstrueerd. Alleen de lokale PDF-preview gebruikt duidelijk gemarkeerde vervangvakken voor de drie ontbrekende onderdelen; die vervangbestanden zitten niet in deze overdracht.
+De bestaande verwijzingen naar N47, de detectorconfiguratie en repeatability moeten in het complete groepsproject hun oorspronkelijke doelen krijgen. Die verwijzingen zijn niet tekstueel gewijzigd.
+
+Nog gezamenlijk af te ronden
+De gezamenlijke abstract, eventuele RQ1-tekst/resultaten en de definitieve paginabalans. De nummering volgt het aangeleverde bestand: RQ2 is beeldvoorbewerking; RQ3 zijn handfeatures. De definitieve paginacontrole hangt mede af van de ontbrekende originele figuur en codebijlagen.
+
+Controle
+results/group_integration_20261107/preservation.json bewaart bronhashes en checks van de zes beschermde tekstblokken. Alle integratiebewerkingen zijn omkeerbaar: na terugdraaien ontstaat exact de aangeleverde tekst.
+
+Previewcontrole: 11 pagina’s totaal; hoofdtekst loopt tot pagina 5, referenties beginnen op pagina 5. Eigen bijlagen staan op pagina’s 6–11. De vier zichtbare ??-markeringen horen bij bestaande verwijzingen naar de niet meegeleverde coauthoronderdelen. Nieuwe verwijzingen en citaties zijn opgelost. Een te lang origineel codepad krijgt alleen afbreekpunten via opmaakcode; de tekst zelf is gelijk gebleven.
+
+Compileerfout opgelost: eenvoudige plakversie
+Gebruik group_report_paste_ready.tex als je de volledige tekst in main.tex wilt plakken. Deze versie bevat alle eigen tabellen en appendixtekst direct en genereert zijn eigen ton_inline_refs.bib rechtstreeks uit de ingebedde referenties. Er zijn geen losse ton_*.tex-inputs nodig. De drie eigen afbeeldingen zijn optioneel voor compilatie: als ze ontbreken, verschijnt een herkenbare invoegplek. Upload de afbeeldingen in figures om ze te tonen. Behoud de bestaande code-snippets, herstelafbeelding en groepsbibliografie van de medestudent.
+Plak het volledige document uitsluitend in main.tex; ton_feature_rows_en.tex bevat in de modulaire variant slechts acht tabelregels.

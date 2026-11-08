@@ -1,0 +1,87 @@
+{
+  "status": "passed with explicitly marked missing coauthor assets",
+  "source_preservation": "Six substantive coauthor blocks verbatim; original file restored exactly by reversing 22 declared integration edits. RQ1/RQ2 and author details unchanged.",
+  "coauthor_blocks": [
+    {
+      "block": "intro",
+      "bytes": 1193,
+      "sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
+      "verbatim": true
+    },
+    {
+      "block": "methods",
+      "bytes": 1538,
+      "sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412",
+      "verbatim": true
+    },
+    {
+      "block": "datasets",
+      "bytes": 883,
+      "sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
+      "verbatim": true
+    },
+    {
+      "block": "implementation",
+      "bytes": 2866,
+      "sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
+      "verbatim": true
+    },
+    {
+      "block": "results",
+      "bytes": 3796,
+      "sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
+      "verbatim": true
+    },
+    {
+      "block": "discussion",
+      "bytes": 1690,
+      "sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
+      "verbatim": true
+    }
+  ],
+  "verified_numeric_rows": 45,
+  "category_figure_means": 76,
+  "new_citations_and_appendix_labels_resolved": true,
+  "preview_pdf_pages": 11,
+  "preview_main_last_page": 5,
+  "preview_references_start_page": 5,
+  "preview_body_page_limit_satisfied": true,
+  "exact_final_pagination_requires_original_coauthor_figure": true,
+  "own_appendix_pages": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "all_pages_visually_reviewed": true,
+  "overfull_boxes": 0,
+  "inherited_unresolved_labels": [
+    "fig:N47_original",
+    "fig:preprocessing-config",
+    "fig:repeatablity"
+  ],
+  "inherited_unresolved_marker_count": 4,
+  "preview_notice_and_explicit_asset_placeholders": true,
+  "placeholders_in_source_delivery": false,
+  "pdf_sha256": "796f1b95c8602e1564924571a86c507250e00162b4215ec4dbebc8ed4a5bfa10",
+  "delivery_files_sha256": {
+    "group_report.tex": "8af7411f5b8f9f8053af7eeaa4f81645f086c877a2d3c12e9d71ea30f49038d5",
+    "ton_appendix_en.tex": "33f4515c635714736c2b2b1f934be6fa4235796ff35284261a2ce2a43140ef7e",
+    "ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
+    "ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
+    "ton_orientation_rows_en.tex": "377127c35aa4b068071b88914c450dd9711e1428552d362c5f65828d6db198ec",
+    "ton_gh_rows_en.tex": "cfa7dc4729a8fb05a60aa33f71183119ff66621a88718879da355e580ad674d0",
+    "ton_references.bib": "fdef4e1d55e88f87638cdb1eee928673b6bb3d34f62052febe04671bc52524b1",
+    "icml2021.sty": "a468eba41c7b491d5e33af77a75df66b4bca1aa757f319bfac4be704831cba81",
+    "icml2021.bst": "fcc631f383cd339d2f0cbb94490b790cd7b465c745db210a9357c27029d4dee8",
+    "algorithm.sty": "ab166def454ffae005796a1fbe46f52932a07476d64ea82f3c837a70a3ec71c2",
+    "algorithmic.sty": "cefd7a1195973a8404b12f201ead97af3e6983dac32d5b54efb976f54cda31d5",
+    "INTEGRATION_NOTES.txt": "f5889b0164ef28ac8ccca07878db38d863e87e2be05a71f671a7bf5ab0a83df5",
+    "figures/ton_feature_tool_screenshot.png": "d196b7c43e9cbdc31396eff5796c9005b4c41e791bd7a7dd12d6c84ca35ab92b",
+    "figures/ton_live_examples_en.pdf": "6d595c2c43e8d4720dccb3f0d44b87e12a4671a31766d0de64f8e27c85ec3524",
+    "figures/ton_category_importance_en.pdf": "bc43480a810c5fb9298e9606467b1f6d6045b33a22ce05965e6b7e95cedf05bd"
+  },
+  "preservation_json_sha256": "6aeb13942f33b2907881b23530e9fcfa15525fdedd791627f7efedbe7f0bb949"
+}

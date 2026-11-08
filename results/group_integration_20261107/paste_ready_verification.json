@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "variant": "paste-ready main with all own TeX inputs inlined",
+  "main_tex_sha256": "bfb96f1e3d91afc2da25fca45426804ff18d1b2add7e687ae608fcb99d566f91",
+  "inlined_table_sources_sha256": {
+    "ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
+    "ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
+    "ton_orientation_rows_en.tex": "377127c35aa4b068071b88914c450dd9711e1428552d362c5f65828d6db198ec",
+    "ton_gh_rows_en.tex": "cfa7dc4729a8fb05a60aa33f71183119ff66621a88718879da355e580ad674d0"
+  },
+  "inlined_appendix_sha256": "33f4515c635714736c2b2b1f934be6fa4235796ff35284261a2ce2a43140ef7e",
+  "embedded_bibliography_sha256": "fdef4e1d55e88f87638cdb1eee928673b6bb3d34f62052febe04671bc52524b1",
+  "coauthor_blocks_verbatim": [
+    "intro",
+    "methods",
+    "datasets",
+    "implementation",
+    "results",
+    "discussion"
+  ],
+  "coauthor_inputs_preserved": true,
+  "own_figures_optional_with_explicit_placeholders": [
+    "figures/ton_category_importance_en.pdf",
+    "figures/ton_feature_tool_screenshot.png",
+    "figures/ton_live_examples_en.pdf"
+  ],
+  "original_group_assets_not_reconstructed": true,
+  "compilation_cases": {
+    "with_figures": {
+      "pages": 11,
+      "all_11_pages_pixel_identical_to_previously_reviewed_preview": true
+    },
+    "without_added_files": {
+      "pages": 11,
+      "separate_added_TeX_or_bibliography_files_supplied": false,
+      "added_bibliography_generated_and_used_by_BibTeX": true,
+      "explicit_missing_figure_placeholders": 3,
+      "compiled_successfully": true
+    }
+  },
+  "generated_bibliography": "ton_inline_refs.bib; generated from inline content, separate from existing editable bibliographies",
+  "preview_pdf_sha256": "3f68473eaf033e96be92ea7f9d99f8e850474549ccb4d057433f8ab137415e94",
+  "inherited_unresolved_labels": [
+    "fig:N47_original",
+    "fig:preprocessing-config",
+    "fig:repeatablity"
+  ],
+  "new_unresolved_labels": false,
+  "expected_group_inputs_still_required": [
+    "code-snippets/settings-all-run.tex",
+    "code-snippets/repeatability.tex",
+    "figures/recovery_by_variant.pdf"
+  ],
+  "overfull_boxes": false
+}

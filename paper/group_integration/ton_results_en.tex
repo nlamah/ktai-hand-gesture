@@ -1,0 +1,19 @@
+\paragraph{RQ3: feature comparison.}
+Table~\ref{tab:ton-features} compares all eight descriptions. With Shin as the SVM baseline, our categories lose 22 correct predictions; world-joint angles gain 67, and both additions together lose three. The same-coordinate angle control gains only four. The larger world-angle gain therefore cannot be attributed to the angle formula alone. The small SVM improvement does not recur with LightGBM.
+
+\begin{table*}[t]\centering\small
+\caption{RQ3: pooled classification on 60,251 accepted original images. D: distances; S: directions; E: own categories; J: world-joint measurements. P is macro-precision (\%). All variants contain D.}
+\label{tab:ton-features}
+\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
+Hand description & P & F1 & P & F1\\\midrule
+\tonTableInput ton_feature_rows_en.tex
+\bottomrule\end{tabular}
+\end{table*}
+
+In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
+
+\paragraph{Additional orientation checks.}
+On original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\ref{app:ton-orientation}).
+
+For G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\ref{app:ton-live}).

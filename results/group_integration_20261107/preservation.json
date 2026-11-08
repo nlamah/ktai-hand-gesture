@@ -1,0 +1,65 @@
+{
+  "source_attachment": "/Users/tonheijligers/.codex/attachments/30356e58-b872-42c4-9afe-90514bd7a8f2/Pasted text.txt",
+  "source_sha256": "4420a861cc38e5c9fee787ae8f7899ced1022a015192145343602f79d1b09ea7",
+  "original_copy_sha256": "4420a861cc38e5c9fee787ae8f7899ced1022a015192145343602f79d1b09ea7",
+  "merged_tex_sha256": "8af7411f5b8f9f8053af7eeaa4f81645f086c877a2d3c12e9d71ea30f49038d5",
+  "reversible_edit_check": true,
+  "coauthor_blocks": [
+    {
+      "block": "intro",
+      "bytes": 1193,
+      "sha256": "8be7aecd08d5b8ea968dd7e23470f46fe06ac7427996bddc3ebd88da500831ce",
+      "verbatim": true
+    },
+    {
+      "block": "methods",
+      "bytes": 1538,
+      "sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412",
+      "verbatim": true
+    },
+    {
+      "block": "datasets",
+      "bytes": 883,
+      "sha256": "7f8144844295f0c7eb7f25092693d9845fabff643d62ac84d46c480d1655128c",
+      "verbatim": true
+    },
+    {
+      "block": "implementation",
+      "bytes": 2866,
+      "sha256": "7a7652a0f666c2ed001242d6e0243e291fb23095d119d266ae24ade6444af54e",
+      "verbatim": true
+    },
+    {
+      "block": "results",
+      "bytes": 3796,
+      "sha256": "3bd5809d090c84b7ed0a6ce94968ca5ca8935cdf97bf1d2507765b849e55be1c",
+      "verbatim": true
+    },
+    {
+      "block": "discussion",
+      "bytes": 1690,
+      "sha256": "ea2904e594128adf22fa444c77b7e4957d8ce38dfe47295cd3eaa25fafac07da",
+      "verbatim": true
+    }
+  ],
+  "RQ1_and_RQ2_verbatim": true,
+  "all_new_prose_language": "English",
+  "own_RQ": "RQ3",
+  "original_group_research_question_numbering_preserved": true,
+  "own_blocks_marked": "BEGIN TON / END TON; dots retained or added",
+  "template_only_suppression": "Original generic prompts, abstract instruction, citation tutorial and example table retained under iffalse; not printed",
+  "technical_changes": "Disable legacy subfigure conflict; optional availability guards for unused packages; T1 encoding; add noncolliding prefixed bibliography; own appendix input",
+  "missing_group_assets": [
+    "figures/recovery_by_variant.pdf",
+    "code-snippets/settings-all-run.tex",
+    "code-snippets/repeatability.tex"
+  ],
+  "numeric_sources": {
+    "results/feature_factorial_01/metrics.csv": "02e02c97abad2a33784d67ad6394f6bbb9538bad05ce15b709632c6b3cb8403b",
+    "results/feature_factorial_01/paired_changes.csv": "c7b826ca9b1f525f3c1899f5cd5953e5e9f89bac9686c1d7d0b58e07fc6ea64d",
+    "paper/handedness_rows_nl.tex": "f78dbd75fb85972981ec7e07849bbef3c45b2d8100f3792799e7e926443ac67f",
+    "results/gh_occlusion_01/metrics.csv": "e9800f3ca55745da501a462958e4f39781d6e983c030fc2aa3ddae57add12aa9",
+    "results/gh_occlusion_01/synthetic_test_metrics.csv": "5233d23d0cc173ed7ba48985b5faed8f4f9f2b782587a782c4ff41c646e019d1",
+    "results/gh_live_diagnostics_20261107/predictions.csv": "5bc259aba5ac514c5bc2a53f760945858e79805fce6410389df2a24ec7e45833"
+  }
+}

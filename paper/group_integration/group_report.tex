@@ -1,0 +1,366 @@
+%%%%%%%% ICML 2021 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\iffalse
+\usepackage{subfigure}
+\fi
+\usepackage{booktabs} % for professional tables
+\IfFileExists{multirow.sty}{\usepackage{multirow}}{}
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2021} with \usepackage[nohyperref]{icml2021} above.
+\usepackage{hyperref}
+% BEGIN TON: portable type encoding
+\hypersetup{hypertexnames=false}
+% END TON: portable type encoding
+
+\IfFileExists{caption.sty}{\usepackage{caption}}{}
+\IfFileExists{subcaption.sty}{\usepackage{subcaption}}{}
+\IfFileExists{listings.sty}{\usepackage{listings}}{}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage[accepted]{icml2021}
+% BEGIN TON: font encoding
+\usepackage[T1]{fontenc}
+% BEGIN TON: line breaks for inherited long code path
+\let\tonOriginalTexttt\texttt
+\renewrobustcmd{\texttt}[1]{%
+\ifstrequal{#1}{experiments/hand\_detection\_recovery/plot\_results.py}%
+{\tonOriginalTexttt{experiments/\allowbreak hand\_detection\_recovery/\allowbreak plot\_results.py}}%
+{\tonOriginalTexttt{#1}}}
+
+% END TON: line breaks for inherited long code path
+
+\makeatletter\let\tonTableInput\@@input\makeatother
+% END TON: font encoding
+
+
+% The Impact of Edge Detection on Sign Language Alphabet Recognition
+\icmltitlerunning{Sign Language Alphabet Recognition}
+
+\begin{document}
+
+\pagenumbering{arabic}
+
+\twocolumn[
+\icmltitle{Sign Language Alphabet Recognition}
+
+\begin{icmlauthorlist}
+\icmlauthor{Ton Heijligers (852935308)}{ou}
+\icmlauthor{Youri de Waal (852843968)}{ou}
+\icmlauthor{Danny Linden (85261859)}{ou}
+\end{icmlauthorlist}
+
+\icmlaffiliation{ou}{Open Universiteit}
+\icmlcorrespondingauthor{}{}
+
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{}
+
+\vskip 0.3in
+]
+\iffalse
+\begin{abstract}
+    Write a short abstract that contains a brief summary of the work and describes the main points you want to make.
+    
+\end{abstract}
+\fi
+% BEGIN TON: local preview notice
+\InputIfFileExists{ton_preview_notice.tex}{}{}
+% END TON: local preview notice
+
+
+
+% Mijn idee is om te onderzoeken of we de inputafbeeldingen kunnen vereenvoudigen voordat we ze aan het model geven.
+% We gebruiken een convolution/filter om vooral de randen met hoog contrast over te houden, zodat de vorm van de hand centraal staat en achtergrond, kleur en andere details grotendeels verdwijnen.
+% Vervolgens trainen/testen we hetzelfde model op:
+% 1. de originele afbeeldingen;
+% 2. de vereenvoudigde edge-images.
+% Onderzoeksvraag: Does edge-based image preprocessing improve sign language alphabet recognition?
+
+
+\section{Brief Introduction}
+
+% BEGIN TON: shared introduction
+This project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \citep{ton-zhang2020,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.
+
+% END TON: shared introduction
+\leavevmode \\\\
+...
+\\\
+In the landmark-based recognition pipeline used in this study, hand landmark extraction determines which images can provide input to the letter classifier. When the detector returns \textit{no\_hand} landmarks, the image cannot be used for feature extraction and subsequent training. Improving detection coverage could therefore increase the number of images available for model training.
+\\\\
+In our baseline run on 78,000 ASL (American Sign Language) Alphabet training images covering the letters A-Z, MediaPipe returned \textit{no\_hand} detection for 17,598 images (22.56\%). A further 151 images produced multiple hand detections, while 60,251 images passed the single-hand acceptance criteria. These counts are reported in Section: \ref{sec:rq2-results} \nameref{sec:rq2-results} and can be reproduced from \texttt{baseline.csv} in the digital supplement for the \texttt{test\_all} run. These outcomes motivated an investigation of image preprocessing as a second detection attempt for initially missed images.
+\\\\
+We investigate a single application of morphological dilation using a square \(3 \times 3\) kernel, with erosion and a Canny-edge overlay included as comparison methods. 
+
+
+%   Image N47 serves as a development example, followed by an evaluation on all initially missed A-Z training images. The same detector model and thresholds are used before and after preprocessing.
+%   Because there are more than 17.000 images, we focussing on a specific image \ref{fig:N47_original} \nameref{fig:N47_original}.
+
+
+% \begin{figure}
+% \centering
+%     \begin{minipage}{.25\textwidth}
+%       \centering
+%       \includegraphics[width=.8\linewidth]{figures/N47_original.png}
+%       \captionof{figure}{N: Failure}
+%       \label{fig:N47_original}
+%     \end{minipage}%
+%     \begin{minipage}{.25\textwidth}
+%       \centering
+%       \includegraphics[width=.8\linewidth]{figures/N48.jpg}
+%       \captionof{figure}{N: recognized}
+%       \label{fig:test2}
+%     \end{minipage}
+% \end{figure}
+
+\begin{enumerate}
+    \item Does targeted data augmentation reduce confusion between certain letters more effectively than general data augmentation?
+    \item To what extent does applying a \(3 \times 3\) dilation filter recover visually plausible hand landmarks in ASL Alphabet training images for which MediaPipe initially detects \textit{no\_hand}?
+    \item Do explicit hand-shape categories and joint angles improve on, or replace, Shin's landmark directions?
+\end{enumerate}
+
+\section{Related works}
+\iffalse
+Briefly provide an overview of previous research and studies that are relevant to your topic. Show how this project fits into the broader conversation. Highlight what has already been done / discussed. Summarize key findings, identify gaps or limitations in existing research, and explain how your project builds on or differs from past efforts. Focus on the most important and credible sources and keep your explanations clear and concise.
+
+
+\fi
+% BEGIN TON: related work
+Shin et al. describe ASL letters using distances and directions between estimated hand points \citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \citep{ton-zhang2020}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \citep{ton-fisher2019}.
+% END TON: related work
+
+\section{Methods}
+\iffalse
+Describe the methods used. How it works. It can include algorithms, system descriptions, new language constructs, analyses, etc.
+Provide diagrams to help in the discussion. Figure \ref{fig:one-col-figure} and Figure \ref{fig:two-col-figure} shows an example of a one-column figure and a two-column figure. 
+
+
+\fi
+\subsection{Image Preprocessing}
+
+For RQ2, image preprocessing is applied as a second attempt to obtain hand landmarks from images for which MediaPipe initially returns no hand detection. Three transformations are compared: dilation, erosion and a Canny-edge overlay. Each transformation modifies the original image independently, after which the same hand detector is applied again. This comparison measures whether changing the input image allows the detector to recover a previously missed hand.
+
+    \subsubsection{Dilation}
+        Replaces a pixel value in each color channel with the highest value in its vicinity. This allows light areas to expand and contours to change.
+
+    \subsubsection{Erosion}
+    	It uses the lowest value in that area. This allows light areas to become smaller and dark areas to expand.
+
+    \subsubsection{Canny overlay}
+        Zoekt randen op basis van veranderingen in helderheid en voegt de gevonden randen toe aan de oorspronkelijke kleurenfoto. In jouw implementatie worden die randen lichter gemaakt.
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/example_plot.png}
+%     \caption{One-column figure that explains the steps or framework of your method / model.}
+%     \label{fig:one-col-figure}
+% \end{figure}
+
+% \begin{figure*}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/example_pipeline.png}
+%     \caption{One-column figure that explains the steps or framework of your method / model.}
+%     \label{fig:two-col-figure}
+% \end{figure*}
+
+
+% BEGIN TON: methods
+
+\par\noindent ...\par\medskip
+\subsection{Hand-shape descriptions and orientation (RQ3)}\label{sec:ton-methods}
+We compare four building blocks: distances (D), Shin's directions between hand points (S), our own categories such as finger bending and spreading (E), and measured joint angles (J). Distances are always included; switching the other three blocks on or off gives eight combinations. Both SVM and LightGBM receive the same combinations and test images. E and J use estimated world points, whereas D and S use image points. A separate control calculates J from the same points as Shin.
+
+After training, we shuffle one feature group between held-out images and measure the loss in precision and F1. Labels and fitted models remain unchanged. These permutation tests use 13,000 fixed images and five shuffles per group. They measure model dependence, whereas retraining the eight combinations measures the effect of adding or removing information.
+
+Separate orientation checks compare mirror training, normalization to one hand orientation, and G/H rotation. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\ref{app:ton-protocol}--\ref{app:ton-live}.
+\par\noindent ...\par\medskip
+
+% END TON: methods
+
+\section{Experimental Results}
+    \subsection{Datasets}
+        \iffalse
+Include a description of the data used, what it contains, train test splits, etc.
+\fi
+% BEGIN TON: datasets
+For RQ3, classification uses only the 60,251 original images with an accepted single-hand detection; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.
+% END TON: datasets
+\leavevmode 
+        \\\\
+        ...
+        \\\\
+        
+        For RQ2, we use the A-Z training images from the Kaggle ASL Alphabet dataset. This subset contains 78,000 images, with 3,000 images per letter. The additional classes \textit{space}, \textit{delete}, and \textit{nothing} are outside the scope of this experiment.
+        \\\\
+        All original images are first processed by MediaPipe. Images with the status \texttt{no\_hand} are selected for the recovery experiment. The supplied Kaggle test images are excluded from RQ2. This experiment evaluates hand-detection recovery within the original training images.
+        \\\\
+        Image N47 (Figure~\ref{fig:N47_original}) is used as a development example to inspect the effect of dilation. The complete evaluation includes N47 and images inspected during earlier development. It therefore describes the results on the full dataset, including previously examined images.
+        
+    \subsection{Implementation Details}
+% BEGIN TON: implementation
+The feature comparison trains eight representations with two learners across five folds: 80 models. Model settings remain fixed across representations. Only J is imputed and standardized, using the training fold. We report macro-precision and macro-F1 over A--Z, giving each letter equal weight. A paired comparison counts corrected and newly introduced errors on the same images. Appendix~\ref{app:ton-protocol} gives the settings, feature dimensions and reproducible result paths.
+% END TON: implementation
+\leavevmode 
+        \\\\
+        ...
+        \\\\
+        
+        MediaPipe Hand Landmarker processes each image in IMAGE mode, with both detection and presence thresholds set to 0.50. Up to two hands are detected so that multiple-hand outputs can be identified. The same model and settings are used for the original and processed images.\footnote{The detector configuration and output validation are implemented in \texttt{research/data.py}, in the \texttt{Detector} class.} The software versions, settings and checksums are recorded in \texttt{\ref{fig:preprocessing-config} settings.json} in the digital supplement for the \texttt{test\_all} run.
+        \\\\
+        Each image with the original status \texttt{no\_hand} is processed using three separate variants. Dilation and erosion each use a square $3 \times 3$ kernel with one iteration. Both operations are applied to the colour image at its original resolution.
+        \\\\
+        For the Canny-overlay variant, the image is converted to grayscale and smoothed using a $5 \times 5$ Gaussian filter. Canny edge detection uses thresholds of 50 and 150. The resulting edge map is converted to three channels and added to the original colour image, using weights of 0.25 for the edges and 1.0 for the original image.
+        \\\\
+        Each variant is created independently from the original image. The processed images are saved as lossless PNG files and passed to the same detector during the retry step.\footnote{The transformations are defined in the \texttt{variants} function in \texttt{research/morphology\_pilot.py}. The baseline, preprocessing and retry stages are implemented in \texttt{research/recovery\_experiment.py}.}
+        \\\\
+        Outputs are paired using the original image identifier. Technical recovery is defined as a transition from \texttt{no\_hand} to \texttt{ok}, requiring exactly one detected hand and successful geometric validation. For the combined result, each image is counted once if at least one variant produces \texttt{ok}. A systematic visual assessment of the recovered landmarks remains to be completed.
+        \\\\
+        The exported results are analysed using pandas to calculate recovery counts and percentages per preprocessing variant and per letter. Each recovery percentage uses the number of originally missed images in the corresponding group as its denominator. An image may contribute to multiple variant counts, while the combined recovery count includes each image only once.
+        \\\\
+        Matplotlib is used to visualise the results calculated with pandas. The figures are exported as PNG and PDF files. The underlying plotting data are saved as CSV files, together with source-file checksums and plotting-library versions, to support verification and reproduction.\footnote{The calculations and figures are generated by \texttt{experiments/hand\_detection\_recovery/plot\_results.py}.}
+        
+    
+    \subsection{Results}
+    \label{sec:rq2-results}
+\iffalse
+        Analyze and discuss your results. Table \ref{tab:example-table} shows an example of a table.
+        Include plots and visualizations such as Figure \ref{fig:one-col-figure}.
+
+\fi
+% BEGIN TON: results
+\paragraph{RQ3: feature comparison.}
+Table~\ref{tab:ton-features} compares all eight descriptions. With Shin as the SVM baseline, our categories lose 22 correct predictions; world-joint angles gain 67, and both additions together lose three. The same-coordinate angle control gains only four. The larger world-angle gain therefore cannot be attributed to the angle formula alone. The small SVM improvement does not recur with LightGBM.
+
+\begin{table*}[t]\centering\small
+\caption{RQ3: pooled classification on 60,251 accepted original images. D: distances; S: directions; E: own categories; J: world-joint measurements. P is macro-precision (\%). All variants contain D.}
+\label{tab:ton-features}
+\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{SVM} & \multicolumn{2}{c}{LightGBM}\\
+Hand description & P & F1 & P & F1\\\midrule
+\tonTableInput ton_feature_rows_en.tex
+\bottomrule\end{tabular}
+\end{table*}
+
+In the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.
+
+\paragraph{Additional orientation checks.}
+On original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\ref{app:ton-orientation}).
+
+For G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\ref{app:ton-live}).
+% END TON: results
+
+\par\noindent ...\par\medskip
+        In the baseline run, 60,251 of the 78,000 A-Z training images passed the single-hand acceptance criteria. MediaPipe returned \textit{no\_hand} detection for 17,598 images (22.56\%) and multiple hands for 151 images (0.19\%). The complete per-image detection results are available in \texttt{baseline.csv} in the digital supplement for the \texttt{test\_all} run.
+        \\\\
+        For the development example N47, the original image produced \textit{no\_hand} detection. After one application of $3 \times 3$ dilation, the detector returned one hand that passed geometric validation under the same confidence thresholds. The measured outcomes for this image are recorded in \texttt{n47\_example.csv}.
+        \\\\
+        All 17,598 initially missed images were subsequently processed using the three variants. Dilation recovered 3,560 images (20.23\%), erosion recovered 2,018 images (11.47\%), and the Canny overlay recovered 1,391 images (7.90\%). At least one variant recovered 4,799 unique images (27.27\%). Figure~\ref{fig:rq2-recovery} compares the individual recovery rates with the combined result.
+
+
+        
+        \begin{figure*}[h]
+            \centering
+            \includegraphics[width=\linewidth/2]{figures/recovery_by_variant.pdf}
+            \caption{Technical recovery among the 17,598 originally missed images. Individual filter groups overlap because an image can be recovered by multiple variants. The combined result counts each recovered image once. Percentages were calculated using pandas and plotted with Matplotlib.}
+            \label{fig:rq2-recovery}
+        \end{figure*}
+        
+        The percentages for the individual variants overlap. An image recovered by both dilation and erosion contributes to both variant counts, but only once to the combined result. The three variants produced 6,969 successful image-filter pairs, corresponding to 4,799 distinct recovered images. The individual percentages therefore cannot be added to obtain the combined recovery percentage.
+        \\\\
+        Of the 4,799 recovered images, 3,024 were recovered by exactly one variant, 1,380 by exactly two variants, and 395 by all three variants. These counts explain the difference between the total number of successful image-filter pairs and the number of unique recovered images.
+        \\\\
+        After all retries, 12,799 images had no accepted detection under any variant. Of these, 12,779 images retained the status \texttt{no\_hand} under all three variants. The remaining 20 images produced another rejection status under at least one variant.
+        \\\\
+        The per-image outcomes and successful variants are recorded in \texttt{per\_image.csv}. Images without an accepted retry are listed in \texttt{unrecovered.csv}. Images with \texttt{no\_hand} under every variant are listed separately in \texttt{still\_no\_hand.csv}. These results quantify technical recovery. The proportion of visually plausible recoveries has not yet been established.
+        \\\\
+        To assess repeatability, the complete experiment was executed a second time on the same workstation using identical recorded settings, software versions and model files. Both runs produced identical detection outcomes for all 78,000 original images and identical checksums for all 52,794 processed images. The retry statuses also matched for every image and variant. For all 6,969 successful retries, the stored image and world landmark coordinates were exactly equal. Both runs recovered 4,799 unique images, corresponding to 27.27\% of the originally missed images. The comparison results and checksums of the compared output files are recorded in \texttt{\ref{fig:repeatablity} \nameref{fig:repeatablity}} in the digital supplement for the \texttt{test\_all\_repeat} run.
+        
+    \subsection{Discussion}
+\iffalse
+        Additionally, you can include a separate discussion section in which you summarize the results, indicate possible limitations of your work, and provide suggestions for future research.
+
+\fi
+% BEGIN TON: discussion
+\paragraph{RQ3: interpretation and limitations.}
+Our categories do not consistently improve on Shin, and categories plus joint angles do not fully replace his directions under the tested settings. The small world-angle improvement depends on the learner and coordinate source. Permutation dependence should not be read as the gain from adding a feature.
+
+The G/H rotation learns artificial rotated geometry but does not resolve the observed live G/H confusion. A correct label on the original dataset is also not an independent assessment of ASL execution. Real hand-back views can yield different estimated hand points; rigid rotation preserves the original geometry and does not recreate those detection changes.
+
+The folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test \citep{ton-cawley2010}. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.
+% END TON: discussion
+
+\par\noindent ...\par\medskip
+        Dilation produced the highest technical recovery rate of the three evaluated variants. The higher combined recovery rate shows that the other variants also recovered images that dilation did not recover. However, the combined result requires trying all three variants and accepting an image when at least one attempt succeeds.
+        \\\\
+        The N47 example demonstrates that a small change to the input pixels can change the detection outcome while the model and thresholds remain fixed. The experiment does not establish which individual change in a contour, texture or contrast caused this response. Such explanations require further controlled comparisons and visual inspection.
+        \\\\
+        The results are limited to the evaluated dataset and detector configuration. N47 and earlier development images are included in the complete run, and the reported results therefore include previously examined examples. In addition, technical recovery does not establish the accuracy of the estimated hand points. A visual assessment is needed to determine whether the recovered landmarks are plausible.
+        \\\\
+        The agreement between the two runs supports repeatability under the recorded conditions. Repeatability across other computers, software versions or detector models was not evaluated. The coordinate comparison covers the retry detections, as landmark coordinates from the original baseline images were not retained.
+        \\\\
+        The contribution to RQ2 is therefore the measured technical recovery of initially missed images. Whether these recovered images improve letter recognition requires a separate training and evaluation experiment.
+        
+\iffalse
+    \subsection{Citing references}
+        LaTeX manages the citations for you. You simply have to add the bibtex entry for the reference in the references.bib file and you can use the citation in the paper \cite{langley00}. You can also cite multiple references in one command \cite{DudaHart2nd,Newell81,kearns89}. The bibtex entries for a paper can be obtained in websites such as google scholar or dblp.
+        
+        \begin{table}[h]
+            \centering
+            \label{tab:example-table}
+            \caption{Example Table}
+            \begin{tabular}{lllll}
+                \toprule
+                \multirow{2}{*}{Models} & \multicolumn{3}{c}{Metric 1} & Metric 2\\
+                \cmidrule{2-4} \cmidrule{5-5} \\
+                {} & precision & recall & F-score  & R@10 \\
+                \midrule
+                model 1 & 0.67  & 0.8 & 0.729  & 0.75 \\
+                model 2 & 0.8 & 0.9 & 0.847 & 0.85 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+
+\fi
+\IfFileExists{references.bib}{\bibliography{references,ton_references}}{\bibliography{ton_references}}
+\bibliographystyle{icml2021}
+
+
+\appendix
+\section{Appendices}
+
+
+
+\input{code-snippets/settings-all-run}
+
+\input{code-snippets/repeatability}
+
+%\input{appendices/rq1}
+
+
+%\input{appendices/rq2}
+
+
+%\input{appendices/rq3}
+
+
+
+% BEGIN TON: technical appendix
+
+\par\noindent ...\par\medskip
+\input{ton_appendix_en.tex}
+% END TON: technical appendix
+
+\end{document}
+

@@ -1,0 +1,112 @@
+[
+  {
+    "old": "\\usepackage{subfigure}",
+    "new": "\\iffalse\n\\usepackage{subfigure}\n\\fi",
+    "reason": "Technical: suppress legacy subfigure; source already loads subcaption"
+  },
+  {
+    "old": "\\usepackage{multirow}",
+    "new": "\\IfFileExists{multirow.sty}{\\usepackage{multirow}}{}",
+    "reason": "Technical: optional local-preview package multirow"
+  },
+  {
+    "old": "\\usepackage{caption}",
+    "new": "\\IfFileExists{caption.sty}{\\usepackage{caption}}{}",
+    "reason": "Technical: optional local-preview package caption"
+  },
+  {
+    "old": "\\usepackage{subcaption}",
+    "new": "\\IfFileExists{subcaption.sty}{\\usepackage{subcaption}}{}",
+    "reason": "Technical: optional local-preview package subcaption"
+  },
+  {
+    "old": "\\usepackage{listings}",
+    "new": "\\IfFileExists{listings.sty}{\\usepackage{listings}}{}",
+    "reason": "Technical: optional local-preview package listings"
+  },
+  {
+    "old": "\\usepackage{hyperref}",
+    "new": "\\usepackage{hyperref}\n% BEGIN TON: portable type encoding\n\\hypersetup{hypertexnames=false}\n% END TON: portable type encoding\n",
+    "reason": "Technical additions only"
+  },
+  {
+    "old": "\\usepackage[accepted]{icml2021}",
+    "new": "\\usepackage[accepted]{icml2021}\n% BEGIN TON: font encoding\n\\usepackage[T1]{fontenc}\n\\makeatletter\\let\\tonTableInput\\@@input\\makeatother\n% END TON: font encoding\n",
+    "reason": "Technical: font encoding after ICML selects its font family"
+  },
+  {
+    "old": "\\usepackage[T1]{fontenc}",
+    "new": "\\usepackage[T1]{fontenc}\n% BEGIN TON: line breaks for inherited long code path\n\\let\\tonOriginalTexttt\\texttt\n\\renewrobustcmd{\\texttt}[1]{%\n\\ifstrequal{#1}{experiments/hand\\_detection\\_recovery/plot\\_results.py}%\n{\\tonOriginalTexttt{experiments/\\allowbreak hand\\_detection\\_recovery/\\allowbreak plot\\_results.py}}%\n{\\tonOriginalTexttt{#1}}}\n\n% END TON: line breaks for inherited long code path\n",
+    "reason": "Technical line wrapping of one inherited code path; its text remains identical"
+  },
+  {
+    "old": "Write a brief introduction of your chosen assignment that provides an overview of task and the key ideas of the methods used.\nReport should be at most five (5) pages long excluding references.\nYou can include a list of research questions or summary list of findings at the end of the introduction.\n",
+    "new": "\n% BEGIN TON: shared introduction\nThis project investigates how a computer can locate a hand and recognize the ASL letter shown in a photograph. We study three complementary changes: targeted training augmentation, a second detection attempt after image preprocessing, and descriptions of hand shape. MediaPipe estimates 21 hand points; a classifier then learns from their geometry \\citep{ton-zhang2020,ton-shin2021}. We distinguish detection coverage from correct letter recognition: more accepted hand detections do not automatically mean better classification. Static A--Z images are studied, rather than continuous signing or the movements of J and Z.\n\n% END TON: shared introduction\n\\leavevmode ",
+    "reason": "Authorized shared introduction edit: replace template instructions"
+  },
+  {
+    "old": "    \\item Research Question 3",
+    "new": "    \\item Do explicit hand-shape categories and joint angles improve on, or replace, Shin's landmark directions?",
+    "reason": "Fill own RQ3 placeholder; retain RQ1/RQ2 wording and order"
+  },
+  {
+    "old": "\\begin{abstract}\n    Write a short abstract that contains a brief summary of the work and describes the main points you want to make.\n    \n\\end{abstract}",
+    "new": "\\iffalse\n\\begin{abstract}\n    Write a short abstract that contains a brief summary of the work and describes the main points you want to make.\n    \n\\end{abstract}\n\\fi",
+    "reason": "Template-only abstract instruction retained but not printed"
+  },
+  {
+    "old": "\\iffalse\n\\begin{abstract}\n    Write a short abstract that contains a brief summary of the work and describes the main points you want to make.\n    \n\\end{abstract}\n\\fi",
+    "new": "\\iffalse\n\\begin{abstract}\n    Write a short abstract that contains a brief summary of the work and describes the main points you want to make.\n    \n\\end{abstract}\n\\fi\n% BEGIN TON: local preview notice\n\\InputIfFileExists{ton_preview_notice.tex}{}{}\n% END TON: local preview notice\n",
+    "reason": "Conditional preview notice; absent in final group project"
+  },
+  {
+    "old": "Briefly provide an overview of previous research and studies that are relevant to your topic. Show how this project fits into the broader conversation. Highlight what has already been done / discussed. Summarize key findings, identify gaps or limitations in existing research, and explain how your project builds on or differs from past efforts. Focus on the most important and credible sources and keep your explanations clear and concise.\n\n",
+    "new": "\\iffalse\nBriefly provide an overview of previous research and studies that are relevant to your topic. Show how this project fits into the broader conversation. Highlight what has already been done / discussed. Summarize key findings, identify gaps or limitations in existing research, and explain how your project builds on or differs from past efforts. Focus on the most important and credible sources and keep your explanations clear and concise.\n\n\n\\fi\n% BEGIN TON: related work\nShin et al. describe ASL letters using distances and directions between estimated hand points \\citep{ton-shin2021}. MediaPipe estimates 21 such points, including depth and a separate 3D world representation \\citep{ton-zhang2020}. We examine whether explicit descriptions, such as a bent finger or two fingers being spread, add useful information to this representation. We distinguish the effect of adding features from the information a fitted model uses: permutation importance measures the latter and can be affected by related features \\citep{ton-fisher2019}.\n% END TON: related work\n\n",
+    "reason": "Suppress template-only instructions"
+  },
+  {
+    "old": "Describe the methods used. How it works. It can include algorithms, system descriptions, new language constructs, analyses, etc.\nProvide diagrams to help in the discussion. Figure \\ref{fig:one-col-figure} and Figure \\ref{fig:two-col-figure} shows an example of a one-column figure and a two-column figure. \n\n",
+    "new": "\\iffalse\nDescribe the methods used. How it works. It can include algorithms, system descriptions, new language constructs, analyses, etc.\nProvide diagrams to help in the discussion. Figure \\ref{fig:one-col-figure} and Figure \\ref{fig:two-col-figure} shows an example of a one-column figure and a two-column figure. \n\n\n\\fi\n",
+    "reason": "Suppress template-only instructions"
+  },
+  {
+    "old": "\\section{Experimental Results}",
+    "new": "\n% BEGIN TON: methods\n\n\\par\\noindent ...\\par\\medskip\n\\subsection{Hand-shape descriptions and orientation (RQ3)}\\label{sec:ton-methods}\nWe compare four building blocks: distances (D), Shin's directions between hand points (S), our own categories such as finger bending and spreading (E), and measured joint angles (J). Distances are always included; switching the other three blocks on or off gives eight combinations. Both SVM and LightGBM receive the same combinations and test images. E and J use estimated world points, whereas D and S use image points. A separate control calculates J from the same points as Shin.\n\nAfter training, we shuffle one feature group between held-out images and measure the loss in precision and F1. Labels and fitted models remain unchanged. These permutation tests use 13,000 fixed images and five shuffles per group. They measure model dependence, whereas retraining the eight combinations measures the effect of adding or removing information.\n\nSeparate orientation checks compare mirror training, normalization to one hand orientation, and G/H rotation. Copies remain in their source image's training fold. Definitions, settings and controls are in Appendix~\\ref{app:ton-protocol}--\\ref{app:ton-live}.\n\\par\\noindent ...\\par\\medskip\n\n% END TON: methods\n\n\\section{Experimental Results}",
+    "reason": "Insert own method block after coauthor method"
+  },
+  {
+    "old": "Include a description of the data used, what it contains, train test splits, etc.",
+    "new": "\\iffalse\nInclude a description of the data used, what it contains, train test splits, etc.\n\\fi\n% BEGIN TON: datasets\nFor RQ3, classification uses only the 60,251 original images with an accepted single-hand detection; missing detections are excluded. Five fixed folds separate blocks of consecutive file numbers. These blocks are not verified participants. Every representation uses the same held-out sources, and every image receives one out-of-fold prediction. Recovered images from RQ2 are not added to this feature comparison. Its scores therefore describe classification after accepted detection, rather than the full recognition pipeline.\n% END TON: datasets\n\\leavevmode ",
+    "reason": "Replace generic dataset instruction, retain separator/coauthor data"
+  },
+  {
+    "old": "\\subsection{Implementation Details}\n        ...",
+    "new": "\\subsection{Implementation Details}\n% BEGIN TON: implementation\nThe feature comparison trains eight representations with two learners across five folds: 80 models. Model settings remain fixed across representations. Only J is imputed and standardized, using the training fold. We report macro-precision and macro-F1 over A--Z, giving each letter equal weight. A paired comparison counts corrected and newly introduced errors on the same images. Appendix~\\ref{app:ton-protocol} gives the settings, feature dimensions and reproducible result paths.\n% END TON: implementation\n\\leavevmode ",
+    "reason": "Fill empty own implementation slot"
+  },
+  {
+    "old": "        Analyze and discuss your results. Table \\ref{tab:example-table} shows an example of a table.\n        Include plots and visualizations such as Figure \\ref{fig:one-col-figure}.\n        \\\\\\\\\n        ...\n        \\\\\\\\            \n",
+    "new": "\\iffalse\n        Analyze and discuss your results. Table \\ref{tab:example-table} shows an example of a table.\n        Include plots and visualizations such as Figure \\ref{fig:one-col-figure}.\n\n\\fi\n% BEGIN TON: results\n\\paragraph{RQ3: feature comparison.}\nTable~\\ref{tab:ton-features} compares all eight descriptions. With Shin as the SVM baseline, our categories lose 22 correct predictions; world-joint angles gain 67, and both additions together lose three. The same-coordinate angle control gains only four. The larger world-angle gain therefore cannot be attributed to the angle formula alone. The small SVM improvement does not recur with LightGBM.\n\n\\begin{table*}[t]\\centering\\small\n\\caption{RQ3: pooled classification on 60,251 accepted original images. D: distances; S: directions; E: own categories; J: world-joint measurements. P is macro-precision (\\%). All variants contain D.}\n\\label{tab:ton-features}\n\\begin{tabular}{lrrrr}\\toprule\n & \\multicolumn{2}{c}{SVM} & \\multicolumn{2}{c}{LightGBM}\\\\\nHand description & P & F1 & P & F1\\\\\\midrule\n\\tonTableInput ton_feature_rows_en.tex\n\\bottomrule\\end{tabular}\n\\end{table*}\n\nIn the models with D/S/E, shuffling thumb flexion produces the largest mean F1 drop among our categories for SVM (0.08 percentage points); for LightGBM it is middle--ring spreading (0.03). This identifies model dependence, rather than a guaranteed benefit from adding a feature.\n\n\\paragraph{Additional orientation checks.}\nOn original accepted images, mirror training loses 26 correct predictions; right normalization loses 136. Both help on a separate artificial original/mirrored mixture, where mirror training performs better. This does not establish performance for new left-handed users (Appendix~\\ref{app:ton-orientation}).\n\nFor G/H, adding 180-degree vertical-axis training rotations corrects four original-view errors and introduces five. When G/H test landmarks are also rotated, macro-F1 instead rises from 0.8693 to 0.9757. The added geometry is therefore learned. However, two user-labelled live G examples with the hand back visible remain H; a live H is recovered. These four selected examples are error analysis, not a new accuracy estimate (Appendix~\\ref{app:ton-live}).\n% END TON: results\n\n\\par\\noindent ...\\par\\medskip\n",
+    "reason": "Fill own result placeholder; coauthor results remain byte-identical"
+  },
+  {
+    "old": "        Additionally, you can include a separate discussion section in which you summarize the results, indicate possible limitations of your work, and provide suggestions for future research.\n        \\\\\\\\\n        ...\n        \\\\\\\\\n\n",
+    "new": "\\iffalse\n        Additionally, you can include a separate discussion section in which you summarize the results, indicate possible limitations of your work, and provide suggestions for future research.\n\n\\fi\n% BEGIN TON: discussion\n\\paragraph{RQ3: interpretation and limitations.}\nOur categories do not consistently improve on Shin, and categories plus joint angles do not fully replace his directions under the tested settings. The small world-angle improvement depends on the learner and coordinate source. Permutation dependence should not be read as the gain from adding a feature.\n\nThe G/H rotation learns artificial rotated geometry but does not resolve the observed live G/H confusion. A correct label on the original dataset is also not an independent assessment of ASL execution. Real hand-back views can yield different estimated hand points; rigid rotation preserves the original geometry and does not recreate those detection changes.\n\nThe folds were inspected during development and are not verified people, so these are exploratory results rather than an untouched final test \\citep{ton-cawley2010}. Detection recovery, accepted-image classification and selected webcam errors have different denominators and should be interpreted separately.\n% END TON: discussion\n\n\\par\\noindent ...\\par\\medskip\n",
+    "reason": "Fill own discussion placeholder; coauthor discussion unchanged"
+  },
+  {
+    "old": "    \\subsection{Citing references}\n        LaTeX manages the citations for you. You simply have to add the bibtex entry for the reference in the references.bib file and you can use the citation in the paper \\cite{langley00}. You can also cite multiple references in one command \\cite{DudaHart2nd,Newell81,kearns89}. The bibtex entries for a paper can be obtained in websites such as google scholar or dblp.\n        \n        \\begin{table}[h]\n            \\centering\n            \\label{tab:example-table}\n            \\caption{Example Table}\n            \\begin{tabular}{lllll}\n                \\toprule\n                \\multirow{2}{*}{Models} & \\multicolumn{3}{c}{Metric 1} & Metric 2\\\\\n                \\cmidrule{2-4} \\cmidrule{5-5} \\\\\n                {} & precision & recall & F-score  & R@10 \\\\\n                \\midrule\n                model 1 & 0.67  & 0.8 & 0.729  & 0.75 \\\\\n                model 2 & 0.8 & 0.9 & 0.847 & 0.85 \\\\\n                \\bottomrule\n            \\end{tabular}\n        \\end{table}\n\n",
+    "new": "\\iffalse\n    \\subsection{Citing references}\n        LaTeX manages the citations for you. You simply have to add the bibtex entry for the reference in the references.bib file and you can use the citation in the paper \\cite{langley00}. You can also cite multiple references in one command \\cite{DudaHart2nd,Newell81,kearns89}. The bibtex entries for a paper can be obtained in websites such as google scholar or dblp.\n        \n        \\begin{table}[h]\n            \\centering\n            \\label{tab:example-table}\n            \\caption{Example Table}\n            \\begin{tabular}{lllll}\n                \\toprule\n                \\multirow{2}{*}{Models} & \\multicolumn{3}{c}{Metric 1} & Metric 2\\\\\n                \\cmidrule{2-4} \\cmidrule{5-5} \\\\\n                {} & precision & recall & F-score  & R@10 \\\\\n                \\midrule\n                model 1 & 0.67  & 0.8 & 0.729  & 0.75 \\\\\n                model 2 & 0.8 & 0.9 & 0.847 & 0.85 \\\\\n                \\bottomrule\n            \\end{tabular}\n        \\end{table}\n\n\n\\fi\n",
+    "reason": "Template citation tutorial and dummy table suppressed, source retained"
+  },
+  {
+    "old": "\\bibliography{references}",
+    "new": "\\IfFileExists{references.bib}{\\bibliography{references,ton_references}}{\\bibliography{ton_references}}",
+    "reason": "Add prefixed own bibliography without replacing a group references file"
+  },
+  {
+    "old": "\\end{document}",
+    "new": "\n% BEGIN TON: technical appendix\n\n\\par\\noindent ...\\par\\medskip\n\\input{ton_appendix_en.tex}\n% END TON: technical appendix\n\n\\end{document}",
+    "reason": "Append own technical supplement after coauthor code inputs"
+  }
+]
