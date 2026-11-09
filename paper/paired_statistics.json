@@ -1,0 +1,48 @@
+{
+  "fixed": 143,
+  "lost": 76,
+  "net": 67,
+  "groups": [
+    {
+      "group": "kaggle:train:block_0000",
+      "n": 10504,
+      "net_correct": 4,
+      "delta_pp": 0.03808073115003808
+    },
+    {
+      "group": "kaggle:train:block_0001",
+      "n": 11399,
+      "net_correct": 27,
+      "delta_pp": 0.23686288270900954
+    },
+    {
+      "group": "kaggle:train:block_0002",
+      "n": 12101,
+      "net_correct": 2,
+      "delta_pp": 0.016527559705809436
+    },
+    {
+      "group": "kaggle:train:block_0003",
+      "n": 12255,
+      "net_correct": 5,
+      "delta_pp": 0.04079967360261118
+    },
+    {
+      "group": "kaggle:train:block_0004",
+      "n": 10009,
+      "net_correct": 23,
+      "delta_pp": 0.22979318613248076
+    },
+    {
+      "group": "kaggle:train:block_0005",
+      "n": 3983,
+      "net_correct": 6,
+      "delta_pp": 0.1506402209389907
+    }
+  ],
+  "group_resampling_95_sensitivity_pp": [
+    0.037430022132534824,
+    0.19469359036763392
+  ],
+  "description": "Descriptive resampling of six filename blocks; not an independent inferential confidence interval."
+}

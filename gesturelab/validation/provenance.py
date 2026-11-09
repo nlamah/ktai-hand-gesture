@@ -13,7 +13,7 @@ THREAD_KEYS = ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS',
 
 
 def _git(*arguments):
-    result = subprocess.run(['git', *arguments], capture_output=True, text=True)
+    result = subprocess.run(['git', *arguments], capture_output=True, text=True, encoding='utf-8')
     return result.stdout if result.returncode == 0 else None
 
 

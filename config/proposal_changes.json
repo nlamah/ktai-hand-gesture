@@ -1,0 +1,345 @@
+[
+  {
+    "letter": "A",
+    "column": 8,
+    "header": "Middle finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "A",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "B",
+    "column": 2,
+    "header": "Thumb IP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "B",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "B",
+    "column": 7,
+    "header": "Middle finger PIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "C",
+    "column": 10,
+    "header": "Ring finger PIP",
+    "before": "Partly bent",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "C",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Partly bent",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "D",
+    "column": 10,
+    "header": "Ring finger PIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "D",
+    "column": 13,
+    "header": "Little finger PIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "D",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "E",
+    "column": 2,
+    "header": "Thumb IP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "E",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "F",
+    "column": 4,
+    "header": "Index finger PIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "F",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Partly bent",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "H",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "H",
+    "column": 13,
+    "header": "Little finger PIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "I",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "I",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "J",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "J",
+    "column": 13,
+    "header": "Little finger PIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "J",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "K",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "K",
+    "column": 7,
+    "header": "Middle finger PIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "K",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "M",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "P",
+    "column": 2,
+    "header": "Thumb IP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "P",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "Q",
+    "column": 8,
+    "header": "Middle finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Q",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Q",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "R",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "R",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "R",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "T",
+    "column": 2,
+    "header": "Thumb IP",
+    "before": "Partly bent",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "T",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "U",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "U",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "V",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "V",
+    "column": 11,
+    "header": "Ring finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "V",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "W",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "W",
+    "column": 7,
+    "header": "Middle finger PIP",
+    "before": "Extended",
+    "after": "Partly bent / Extended"
+  },
+  {
+    "letter": "W",
+    "column": 14,
+    "header": "Little finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "X",
+    "column": 4,
+    "header": "Index finger PIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "X",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Y",
+    "column": 5,
+    "header": "Index finger DIP",
+    "before": "Bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Z",
+    "column": 8,
+    "header": "Middle finger DIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Z",
+    "column": 10,
+    "header": "Ring finger PIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  },
+  {
+    "letter": "Z",
+    "column": 13,
+    "header": "Little finger PIP",
+    "before": "Partly bent",
+    "after": "Bent / Partly bent"
+  }
+]
