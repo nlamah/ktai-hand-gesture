@@ -14,3 +14,19 @@ __pycache__/
 *.synctex.gz
 
 /captures/
+
+/results/
+
+# Generated RQ2 runs and lock files (keep the experiment source code).
+/experiments/**/runs/
+/experiments/**/.locks/
+
+# Local previews, exports and editor settings.
+/tmp/
+/output/
+/outputs/
+/.idea/
+*~
+
+# Full evidence archives are shared separately from source control.
+/rq2*_evidence.zip
