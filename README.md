@@ -1,415 +1,204 @@
-# Static ASL landmark feature study
+# Hand-gesture Lab 4 — separate steps, inspectable code
 
-This minimal research repository compares a Shin-inspired SVM baseline with interpretable hand-shape features and continuous joint angles, using SVM and LightGBM on one Kaggle ASL Alphabet dataset.
+Read [WORKFLOW.md](docs/WORKFLOW.md) for the complete workflow and commands.
+For the practical guide to the SVM/Shin webcam study, development/test
+capture, A/B comparison and a selected improvement, read
+[RESEARCH_PROTOCOL.md](docs/RESEARCH_PROTOCOL.md).
+The read-only experiment audit and one-variant replay are in
+[VALIDATION.md](docs/VALIDATION.md).
+For an optional SVM weight on the existing index/middle fingertip distance and
+the U/V/R development confusion analysis, see
+[FINGERTIP_WEIGHTING.md](docs/FINGERTIP_WEIGHTING.md).
+To train on original and reflected landmarks for left/right-hand robustness,
+see [MIRROR_TRAINING.md](docs/MIRROR_TRAINING.md).
+For a controlled MLP-versus-SVM comparison on the original Shin inputs and folds,
+see [MLP_TRAINING.md](docs/MLP_TRAINING.md).
+This project compares landmark representations for manual-alphabet pose
+classification. It supports your own Dutch manual-alphabet photos, imported
+ASL datasets and a separate webcam study using a fixed SVM/Shin baseline.
 
-- [English interim report, ICML 2021 format](paper/report.pdf)
-- [Supplementary appendix](paper/appendix.pdf)
-- [Editable LaTeX](paper/report.tex)
-- [All setup and reproduction steps](REPRODUCE.md)
-- [Repository-relative paths and portability checks](docs/REPOSITORY_PATHS.md)
-- [Start from scratch: Kaggle download, landmark detection, rejected images and threshold experiments](REPRODUCE.md#3-from-downloaded-images-to-accepted-landmarks-start-from-scratch)
-- [Frozen results and verification](results/)
-- [RQ2: PowerShell reproduction, analysis and figure interpretation](#rq2-powershell-reproduction)
+| Component | Command or file |
+|---|---|
+| Collect training photos using alphabet references | `python -m streamlit run apps/collect_app.py -- --project data/ngt` |
+| Inspect and assess finger features and thresholds | `python -m streamlit run apps/feature_check_app.py -- --project data/ngt` |
+| Read or modify feature calculations | `gesturelab/features/finger_features.py` |
+| Export precision/recall of manual finger assessments | `python -m scripts.evaluate_features --project data/ngt` |
+| Freeze a shared experiment split | `python -m scripts.prepare_split --project data/ngt --out experiments/ngt_01` |
+| Train the baseline | `python -m scripts.train_without_features --experiment experiments/ngt_01` |
+| Train with additional finger features | `python -m scripts.train_with_features --experiment experiments/ngt_01` |
+| Compare cross-validation results | `python -m scripts.compare_results --experiment experiments/ngt_01` |
+| Evaluate both models on reserved test photos | Add `--final-test` to the comparison command |
+| Try a trained model with the webcam | `python -m apps.webcam predict --project data/ngt --model experiments/ngt_01/with_features/model.joblib` |
 
-## RQ2 PowerShell reproduction
+In the basic two-variant experiment, both receive the same 21 image landmarks and 21 estimated world
+landmarks: 126 normalized coordinates. The second receives 81 additional
+geometric features, for 207 inputs. Images, splits, classifier, settings and
+normalization are otherwise identical. SVM is the default;
+`scripts/prepare_split.py --model` selects another supported classifier.
 
-This workflow measures technical hand-detection recovery: original-image baseline, preprocessing of original `no_hand` images, and detection retry. The existing functions are called in sequence. Analysis tables and a review gallery are generated automatically; figures require a separate command. This experiment does not retrain the letter classifier.
+The 26 individual reference images are stored in `assets/alphabet/` as
+`A.png` through `Z.png`. The filenames define the letter labels; no crop JSON
+is needed. They come from the Dutch manual alphabet; see
+[assets/SOURCES.md](assets/SOURCES.md). References guide recording and are not
+training images. Start with eight letters and expand when ready. Photographs
+capture poses; they do not capture the complete movement of dynamic letters.
 
-Run the blocks below in order in the same PowerShell session. The small check and repeatability experiment are optional. Stop if a command fails. New names are used below to preserve the historical `test_all` results.
+To reopen a dataset export, extract it and use its `dataset` directory instead
+of `data/ngt`. Features are recomputed from stored landmarks.
+Refresh references with `python -m scripts.init_dataset --project <dataset-directory>`.
 
-### 1. Open the project and select Python
+See [TRAINING_INPUTS.md](docs/TRAINING_INPUTS.md) for the separation between landmark
+normalization, finger calculations and extensible model input variants.
 
-Open an Anaconda PowerShell terminal **in the repository root**: the directory containing `app.py`, `environment.yml`, `research/` and `experiments/`. All commands and paths below are relative to that directory. Check it before continuing:
-
-```powershell
-if (-not (Test-Path -LiteralPath './environment.yml') -or -not (Test-Path -LiteralPath './app.py')) {
-    throw 'Open the terminal in the repository root first.'
-}
-```
-
-Only if the environment does not exist yet, create it from the repository's environment specification:
-
-```powershell
-conda env create -f environment.yml
-if ($LASTEXITCODE -ne 0) { throw 'Environment creation failed.' }
-```
-
-Activate the environment and select its interpreter. `$py` stores the Python executable; `&` runs it.
-
-```powershell
-conda activate ktai-hand-gesture
-$py = (Get-Command python -CommandType Application).Source
-& $py --version
-& $py -m pip check
-if ($LASTEXITCODE -ne 0) { throw 'Dependency check failed.' }
-```
-
-The environment specifies Python 3.12. Check that the displayed interpreter version matches. The activated environment supplies Python; no user-specific installation path is required. Use the pinned dependencies and the same source revision for comparisons.
-
-### 2. Prepare and check the complete dataset
-
-Download and extract the dataset as described in [REPRODUCE.md](REPRODUCE.md#3-from-downloaded-images-to-accepted-landmarks-start-from-scratch). Source images belong under `data/asl-alphabet-download/asl_alphabet_train/`; an additional nested `asl_alphabet_train` directory is supported. The experiment uses A-Z, with 3,000 JPEG images per letter.
-
-Extract the downloaded dataset into `data/asl-alphabet-download/` inside this repository. Keep the `asl_alphabet_train/` and `asl_alphabet_test/` subdirectories. Each collaborator prepares this same relative layout; no copy from another person's checkout is required.
-
-Run this inventory before the full experiment. It checks both the count and expected filenames (A1.jpg through Z3000.jpg). Without this check, a run on an incomplete source folder could be mistaken for a complete dataset measurement.
-
-```powershell
-$train = Join-Path $PWD 'data/asl-alphabet-download/asl_alphabet_train'
-$nestedTrain = Join-Path $train 'asl_alphabet_train'
-if (Test-Path -LiteralPath $nestedTrain -PathType Container) { $train = $nestedTrain }
-$inventory = foreach ($code in 65..90) {
-    $letter = [string][char]$code
-    $folder = Join-Path $train $letter
-    $files = @()
-    if (Test-Path -LiteralPath $folder -PathType Container) {
-        $files = @(Get-ChildItem -LiteralPath $folder -File -Filter '*.jpg')
-    }
-    $missing = @(1..3000 | Where-Object { ('{0}{1}.jpg' -f $letter, $_) -notin $files.Name })
-    [PSCustomObject]@{ Letter = $letter; Images = $files.Count; MissingExpectedFiles = $missing.Count }
-}
-$inventory | Format-Table -AutoSize
-if (@($inventory | Where-Object { $_.Images -ne 3000 -or $_.MissingExpectedFiles -ne 0 }).Count -gt 0) {
-    throw 'Incomplete A-Z dataset. Complete the source files before running RQ2.'
-}
-```
-
-### 3. Optional small workflow check
-
-```powershell
-& $py experiments/hand_detection_recovery/run.py --name rq2_check_110 --limit 110
-if ($LASTEXITCODE -ne 0) { throw 'Small workflow check failed.' }
-& $py experiments/hand_detection_recovery/verify_results.py --run experiments/hand_detection_recovery/runs/rq2_check_110
-if ($LASTEXITCODE -ne 0) { throw 'Small-run verification failed.' }
-```
-
-This runs all three stages on the first 110 images in dataset order (A1-A110). It tests the workflow, is not representative of A-Z, and does not include N47. Inspect its `analysis.md` for the actual number of original misses and recoveries.
-
-### 4. Run the complete experiment
-
-```powershell
-& $py experiments/hand_detection_recovery/run.py --name rq2_full_01
-if ($LASTEXITCODE -ne 0) { throw 'Full experiment stopped. Read the error before continuing.' }
-$run = 'experiments/hand_detection_recovery/runs/rq2_full_01'
-```
-
-Without `--limit`, all available A-Z images are evaluated. Each original `no_hand` image receives three independent variants: dilation, erosion and Canny overlay. Each variant starts from the original pixels and is retried with the same detector configuration. Results are grouped in `$run`. Technical recovery means a transition from `no_hand` to `ok`, including single-hand and geometric acceptance. Visual landmark validity still requires review.
-
-**Clean-start behaviour:** `run.py` deletes the existing run directory with the selected name unless `--resume` is supplied. This includes figures and manual review files inside that directory. Use a different name to preserve an earlier run.
-
-### 5. Resume an interrupted run
-
-Use this instead of restarting step 4 when you want to retain saved progress:
-
-```powershell
-& $py experiments/hand_detection_recovery/run.py --name rq2_full_01 --resume
-if ($LASTEXITCODE -ne 0) { throw 'Resume failed. Review the reported compatibility or execution error.' }
-$run = 'experiments/hand_detection_recovery/runs/rq2_full_01'
-```
-
-For the small check, use `--name rq2_check_110 --limit 110 --resume`. Keep the same limit, source data, configuration and processing code. New runs store paths relative to the repository root. Keep the same repository layout when sharing a run. Historical SQLite checkpoints remain tied to the code and inventory recorded when they were created; start a new run after changing that code or inventory. Completed historical exports can still be verified and analyzed.
-
-### 6. Verify and inspect the measurements
-
-```powershell
-$run = 'experiments/hand_detection_recovery/runs/rq2_full_01'
-& $py experiments/hand_detection_recovery/verify_results.py --run $run
-if ($LASTEXITCODE -ne 0) { throw 'Measurement verification failed.' }
-Invoke-Item "$run/analysis.md"
-Invoke-Item "$run/summary.csv"
-Invoke-Item "$run/review_gallery.html"
-```
-
-Verification checks the exported measurements and prints `"verified": true` on success; it does not repeat detection. The gallery shows original and processed images with stored landmarks and supports inspection by letter and outcome, including the N47 development example. Use `recovered.csv` for recovered filenames and successful variants, `still_no_hand.csv` for images with no hand under every variant, and `unrecovered.csv` for all images without an accepted retry.
-
-Analysis is already generated by `run.py`. To regenerate it from existing measurements:
-
-```powershell
-& $py experiments/hand_detection_recovery/analyze.py --run $run
-if ($LASTEXITCODE -ne 0) { throw 'Analysis generation failed.' }
-```
-
-Before recording visual judgements, copy `visual_review_template.csv` to a separately named working file: regenerating analysis replaces the template. Gallery image links are relative to the gallery file. Keep the run under `experiments/hand_detection_recovery/runs/` and the originals under `data/asl-alphabet-download/` when sharing or relocating the repository.
-
-### 7. Generate figures and their supporting data
-
-```powershell
-& $py experiments/hand_detection_recovery/plot_results.py --run $run
-if ($LASTEXITCODE -ne 0) { throw 'Figure generation failed.' }
-Invoke-Item "$run/figures"
-```
-
-The script verifies the exports and uses pandas and Matplotlib to generate PNG/PDF figures from existing measurements. The `*_data.csv` files contain plotted values; `figure_sources.json` records input checksums and plotting-library versions. Always report values from the selected run. Historical `test_all` values below explain interpretation, rather than guaranteeing the same results on every system.
-
-| Figure | Interpretation |
-| --- | --- |
-| `recovery_by_variant` | Each variant's recoveries divided by all original misses. The variant groups overlap; the final bar counts each recovered image once. |
-| `recovery_by_letter` | Unique recovery divided by original misses within each letter. The denominator differs between letters. |
-| `n47_comparison` | Original N47, its dilated input, and stored retry landmarks displayed over original pixels. Generated only when N47 is in the run. |
-
-### 8. Optional independent repeatability check
-
-Run the complete experiment again under a different name, with the same source data, software and settings:
-
-```powershell
-& $py experiments/hand_detection_recovery/run.py --name rq2_full_02
-if ($LASTEXITCODE -ne 0) { throw 'Repeat experiment failed.' }
-& $py experiments/hand_detection_recovery/compare_runs.py --reference experiments/hand_detection_recovery/runs/rq2_full_01 --repeat experiments/hand_detection_recovery/runs/rq2_full_02
-if ($LASTEXITCODE -ne 0) { throw 'Run comparison failed.' }
-Invoke-Item 'experiments/hand_detection_recovery/runs/rq2_full_02/repeatability.json'
-Invoke-Item 'experiments/hand_detection_recovery/runs/rq2_full_02/repeatability_differences.csv'
-```
-
-Read `all_compared_outputs_equal` in `repeatability.json`: successful execution alone does not establish equality. The comparison checks recorded settings, exported outcomes and stored retry landmark coordinates. Baseline landmark coordinates are not stored by this workflow and cannot be compared. Agreement supports repeatability under the tested conditions; it does not guarantee identical results on every hardware/software configuration.
-
-### 9. Preserve the evidence used in the paper
-
-Keep the full run, figure data, source code revision, environment specification and original dataset provenance. The run's `settings.json` records configuration and checksums. Archive before reusing a run name. This command creates an archive without overwriting an existing archive:
-
-```powershell
-$archive = 'rq2_full_01_evidence.zip'
-if (Test-Path -LiteralPath $archive) { throw 'Archive already exists. Choose a new filename.' }
-tar -a -c -f $archive -C experiments/hand_detection_recovery/runs rq2_full_01
-if ($LASTEXITCODE -ne 0) { throw 'Evidence archive creation failed.' }
-Get-FileHash -LiteralPath $archive -Algorithm SHA256
-```
-
-Also archive `rq2_full_02` if reporting the repeatability comparison. The run archive is evidence, not a complete source-code or original-dataset distribution. Provide the exact source version (including any uncommitted changes), `requirements.txt`, `environment.yml` and dataset download instructions alongside it. Keep the repository-relative directory layout when unpacking the run and original images; gallery links then work from any checkout location.
-
-### Optional: execute the three stages individually
-
-Use this alternative when inspecting each stage separately; it is not necessary after step 4. Use a new directory for a fresh manual experiment. Individual stage commands reuse saved progress and do not perform the wrapper's automatic clean start.
-
-```powershell
-$manualRun = 'experiments/hand_detection_recovery/runs/rq2_manual_01'
-& $py -m research.recovery_experiment baseline --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Baseline failed.' }
-& $py -m research.recovery_experiment preprocess --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Preprocessing failed.' }
-& $py -m research.recovery_experiment retry --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Retry failed.' }
-& $py experiments/hand_detection_recovery/verify_results.py --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Verification failed.' }
-& $py experiments/hand_detection_recovery/analyze.py --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Analysis failed.' }
-& $py experiments/hand_detection_recovery/plot_results.py --run $manualRun
-if ($LASTEXITCODE -ne 0) { throw 'Plotting failed.' }
-```
-
-For a limited manual check, add `--limit 110` to each of the first three stage commands and use a separate run directory.
-
-
-### Why the filter percentages do not add up to 27.27%
-
-The `test_all` results contain 17,598 original misses. Dilation recovers 3,560
-images (20.23%), erosion 2,018 (11.47%) and the Canny overlay 1,391 (7.90%).
-An image may appear in two or all three of those groups. These are overlapping
-success rates, not disjoint parts of a total.
-
-For example, a photo accepted after both dilation and erosion contributes to
-both filter bars but contributes only once to the **Any variant** bar. Therefore,
-the sum of the filter counts is 6,969 successful **image–filter pairs**, while
-the union contains 4,799 **distinct images**, or 27.27% of the original misses.
-Adding the rounded percentages gives 39.60%, which counts some images repeatedly.
-The combined rate is computed as:
+## Code organization
 
 ```text
-unique recovery rate = images with at least one successful variant / original misses
-                     = 4,799 / 17,598 = 27.27%
+ktai-hand-gesture/
+├── apps/           # Streamlit apps and the local webcam app
+├── scripts/        # Dataset, training, comparison and demo commands
+├── docs/           # Workflow, feature definitions and input-variant guide
+├── gesturelab/     # Shared implementation
+│   ├── datasets/
+│   ├── features/
+│   ├── training/
+│   ├── camera/
+│   ├── research/   # Protocol capture, live A/B, selected refit and fixed tests
+│   └── validation/ # Independent feature/split/score audit and one-run replay
+├── tests/          # Unit tests and complete synthetic workflow check
+├── assets/         # Alphabet references and attribution
+├── config/         # Configuration defaults
+└── models/         # Downloaded MediaPipe model
 ```
 
-The final bar represents trying all three filters and accepting any technical
-success; it is not the performance of a single selected filter. Inspect
-`figures/recovery_overlap_data.csv` for the number of images recovered by
-exactly zero, one, two or three variants:
+Terminal entry points live in `scripts/`, the Streamlit and webcam apps in `apps/`, and
+the detailed guides in `docs/`. Run all documented commands from the project root. Generated datasets and
+experiment results are stored in `data/` and `experiments/`.
+The input variants are defined in `gesturelab/features/training_inputs.py`;
+training runs in `gesturelab/training/fitting.py`, and reports are produced by
+`gesturelab/training/comparison.py`.
 
-| Successful variants per image | Number of images in `test_all` |
-| --- | ---: |
-| Zero | 12,799 |
-| Exactly one | 3,024 |
-| Exactly two | 1,380 |
-| All three | 395 |
+The comparison measures whether the additional geometric finger features improve
+recognition. Both variants otherwise use the same data and classifier settings.
 
-Thus, `3,024 + 1,380 + 395 = 4,799` distinct images recover, whereas
-`3,024 + 2 × 1,380 + 3 × 395 = 6,969` counts every successful image–filter pair.
-A photo that reaches `ok` still requires
-visual review before its landmarks are described as plausible. The figures
-measure detection recovery, not improvement in letter-classification accuracy.
+## Installation
 
-### Evidence files and implementation
+Open Terminal in the `ktai-hand-gesture` project directory.
 
-| File within the run | Research use |
-| --- | --- |
-| `settings.json` | Source selection, detector/filter settings, versions and checksums |
-| `baseline.csv`, `no_hand.csv` | Original detections and the subset sent to preprocessing |
-| `per_image.csv`, `summary.csv` | Paired outcomes and aggregate technical recovery |
-| `recovered.csv` | Recovered filenames and their successful variants |
-| `still_no_hand.csv` | Images with zero detected hands under every variant |
-| `unrecovered.csv` | Images with no accepted retry, including other rejection states |
-| `retry_outcomes.csv`, `by_letter.csv` | Status counts per variant and results per letter |
-| `processed.csv`, `processed/` | Original-to-variant mapping, checksums and processed PNGs |
-| `retry_landmarks.jsonl` | Stored retry outputs and hand coordinates |
-| `n47_example.csv` | Measured statuses for the development example |
-| `analysis.md`, `review_gallery.html` | Readable overview and visual inspection |
+```bash
+conda env create -f environment.yml
+conda activate ktai-hand-gesture
+```
 
-The entry point is [run.py](experiments/hand_detection_recovery/run.py).
-It calls [recovery_experiment.py](research/recovery_experiment.py) for each stage.
-Filters are in `variants()` in [morphology_pilot.py](research/morphology_pilot.py),
-and detection and acceptance are in `Detector` in [data.py](research/data.py).
-[analyze.py](experiments/hand_detection_recovery/analyze.py) generates the analysis;
-[plot_results.py](experiments/hand_detection_recovery/plot_results.py) generates the figures.
-Archive the reported run before another clean start. N47 and earlier development
-images are included by default; the complete run is a descriptive dataset
-evaluation, not an untouched holdout evaluation.
-
-## Included artifacts and language
-
-The six deployed live-model `.joblib` files under `models/`, their provenance JSON files, the four G/H diagnostic models and the MediaPipe model asset are included in version control. No retraining is required when those files are present after cloning. The pinned Python/scikit-learn environment is still required to load them.
-
-Confusion matrices, OOF prediction tables and analysis reports under `results/` are versioned. Raw webcam captures under `captures/` remain local and ignored, as requested; they can contain participant information. Analysis reports may describe captures that are therefore unavailable in a fresh clone, and capture-replay commands require those local files. The Kaggle images under `data/` and new experiment runs under `runs/` are also ignored; see the download and extraction steps in `REPRODUCE.md`.
-
-Documentation, application text, feature labels and the active workbook use English. Legacy serialized category/viewpoint IDs, recorded session names, original filenames and Dutch import aliases are retained for compatibility with existing models and evidence. They do not require participants to use Dutch labels. Documentation files are `docs/ALPHABET_CAPTURE.md` and `docs/GH_CAPTURE.md`.
-
-## Simple live camera (recommended)
+For an existing environment:
 
 ```bash
 conda activate ktai-hand-gesture
-python -m research.live_camera
+python -m pip install -r requirements.txt
 ```
 
-A single fixed-size window displays the camera image and current letter. Select a trained model using the buttons below the image or keys **1-6**, without restarting:
+The apps run locally. Guided recording opens a separate local camera window;
+Python must run on the computer with the webcam. On macOS, Terminal/Python may
+need camera permission. The first hand analysis downloads the MediaPipe model.
+Minimal Linux installations may need `libgles2`.
 
-| Button | Model |
-|---|---|
-| **Reference [1]** | Shin reference: distances and directions (820 inputs) |
-| **Joint angles [2]** | Reference plus joint angles (835 inputs) |
-| **All-letter tilt [3]** | Joint-angle model with all-letter ±15° tilt training |
-| **C-only tilt [4]** | Joint-angle model with ±15° tilt training for C only |
-| **G/H rotation [5]** | Joint-angle model with larger direction rotations for G/H only |
-| **Image + depth [6]** | Reference plus 3D and projected 2D joint angles (849 inputs; no augmentation) |
-
-The default is Joint angles. The augmented models are experimental comparisons, not generally better models. Model selection is locked during a guided round. Snapshot exports preserve the actual model hash and its 820/835/849-input schema.
-
-The camera window keeps a fixed layout while models switch. No workbook, feature panels or browser reruns are involved. The snapshot button opens a frozen-frame letter annotation only when requested. Hand landmarks are shown by default; press **L** to toggle them. Overlays never change the detector input. A dash means no accepted hand detection. Press **Q** or **Esc** to close. Close other camera apps first. For a different camera, use `--camera 1`; on macOS allow camera access for your terminal/Python if requested.
-
-### Save a confusion for analysis
-
-Click **Bewaar verwarring** below the camera or press **Space** when you see a mistake. The currently displayed frame freezes. Type the intended letter (A-Z), then press **Enter** to save it; **Esc** cancels. The last intended letter is prefilled for the next capture, and Backspace clears it if unknown. Q is a valid letter while annotating; it only quits in live mode.
-
-Each tool launch starts a new round with a unique ID. **New round / N** starts another round without restarting the camera. Switching models stays within the current round, allowing comparisons. The round label/number appears below the buttons and is saved as `capture_round`, alongside `session_id` and the exact active model in each `capture.json`. Previous captures remain untouched; older ones already contain a `session_id` but no friendly round label.
-
-Optionally name the round when starting:
+On macOS, LightGBM also needs OpenMP in the Conda environment:
 
 ```bash
-python -m research.live_camera --round-name "GH-back-of-hand"
+conda install -n ktai-hand-gesture -c conda-forge llvm-openmp
 ```
 
-Each snapshot creates a new folder under `captures/confusions/` containing:
+## Train locally with external ASL data
 
-- `frame.png`: original unmirrored camera photo.
-- `model_input.png`: exact unmirrored image passed to the landmark detector.
-- `preview.png`: mirrored preview with the predicted letter and visible landmarks.
-- `capture.json`: intended/predicted letters, timestamps, landmarks and detection status, 820, 835 or 849 raw and preprocessed features matching the chosen model, joint angles when used, all class decision scores, image checksums and model SHA256/provenance.
+You can train on downloaded photos without recording your own dataset first.
+Extract the download into `data/external/`, activate `ktai-hand-gesture`, and use
+the importer for its format:
 
-Nothing is recorded until you request and confirm a snapshot. Captures stay local and are ignored by Git. Select another destination with `--output /absolute/path/to/confusions`. These manually chosen examples are for error analysis; they do not estimate live accuracy and are not automatically added to training.
+| Download | Raw files | Local training guide |
+|---|---|---|
+| Roboflow COCO export | `data/external/asl_letters_v1/` with `train/`, `valid/` and `test/` | [ASL_TRAINING.md](docs/ASL_TRAINING.md) |
+| Kaggle ASL Alphabet | `data/external/archive-kaggle/` with the alphabet train/test folders | [KAGGLE_TRAINING.md](docs/KAGGLE_TRAINING.md) |
 
-The model recipe scored **97.748% accuracy** and **0.97524 macro-F1** on the shared five-fold accepted-image evaluation. The deployment model was then fitted on all 60,251 accepted images; it has no separate final-test or webcam accuracy measurement.
-
-The local model has already been trained. After a fresh clone, generate the ignored artifact with `python -m research.live_model` if needed. The tool accepts `--model /absolute/path/to/model.joblib`.
-
-## Guided tilt experiment: C, D and O
-
-You do not need to manually edit or add training images. First collect planned webcam comparisons with the current model, separately from training:
-
-```bash
-python -m research.live_camera --guided --role development
-```
-
-The window guides 27 attempts: C/D/O × wrist neutral/up/down × three repetitions. Keep your finger shape and camera position fixed; tilt at the wrist only, and relax/reform the hand between repetitions. The tilt names are qualitative instructions, not measured angle targets. Press Space or click the button for each planned attempt, inspect the frozen pose and press Enter. Esc retries the current pose; Q exits in live mode. Predictions are hidden during collection to reduce selection of only correct examples. Save every planned attempt, including incorrect predictions and detection failures.
-
-At a separate time, collect an evaluation session:
-
-```bash
-python -m research.live_camera --guided --role evaluation
-```
-
-The terminal prints the new session directory under `captures/guided/`. Resume an interrupted round with:
-
-```bash
-python -m research.live_camera --guided --resume captures/guided/YOUR_SESSION_DIRECTORY
-```
-
-The app resumes from finalized capture records, locks the baseline model version, and keeps development/evaluation roles separate. Both roles remain outside training. Use the development session to choose augmentation of the existing Kaggle training data, then compare the fixed baseline and chosen variant on the reserved evaluation session. Each saved record contains the planned letter, qualitative tilt, repetition, session role and the usual image/landmark/feature data. Collection does not automatically retrain a model or change its reported scores. A second session from the same signer tests session transfer, not signer-independent performance.
-
-## Try the trained tilt-augmentation variant
-
-```bash
-python -m research.live_camera --model models/asl_shin_angles_tilt15.joblib
-```
-
-The original default model remains `models/asl_shin_angles.joblib`. The new experiment augments the 630 Shin direction features with -15°/+15° camera-x rotations, preserving distances and joint angles. The candidate has already been trained locally; fresh clones can reproduce it with `python -m research.studies.tilt_augmentation --stage train`.
-
-Results are mixed: development captures improve from 17/27 to 18/27 (one additional O; C unchanged). On the same five Kaggle folds, accuracy changes from 97.74776% to 97.70294% and macro-F1 from .975244 to .974686. This does not establish a general improvement. [Full results and reproduction](results/tilt_augmentation_01/report.md).
-
-## C-only tilt experiment
-
-```bash
-python -m research.live_camera --model models/asl_shin_angles_C_tilt15.joblib
-```
-
-This separate candidate augments only the 1,912 C training images with -15°/+15° direction rotations; the other 58,339 originals remain single examples. It uses 64,075 fitting rows, with original total weight per source image preserved. On the 27 development captures its predictions are unchanged from baseline (17/27 correct; C 3/9). Kaggle five-fold accuracy is also unchanged at 97.74776%; macro-F1 differs by less than 0.000001. [Details and reproduction](results/tilt_C_only_01/report.md). The default model remains the original baseline.
-
-## Feature inspection app (optional)
+For the extracted Kaggle dataset, this command imports all 78,000 letter photos,
+calculates landmarks, trains both Random Forest variants and creates a comparison:
 
 ```bash
 conda activate ktai-hand-gesture
-python -m streamlit run app.py
+python -u -m scripts.train_kaggle_dataset
 ```
 
-Enable **Webcam on**; the app displays **Recognized letter** using the full-data SVM with 820 Shin descriptors and 15 joint-angle measurements. A typed target letter is optional and only controls the Excel-feature comparison. Predictions use each current frame; no letter persists when no hand is detected. Alternatives are SVM rankings, not calibrated probabilities.
+The imported dataset is saved in `data/asl_kaggle/`; models and the HTML report
+are saved in `experiments/asl_kaggle_rf_01/`. Raw downloads, imported datasets and
+experiments are separate. If you already have a fully imported dataset with
+`manifest.json`, reuse it; do not initialize it with NGT references or import it again from scratch.
+The Kaggle command supports resuming the same run. For retraining after changes,
+choose a new experiment directory.
 
-The trained artifact is `models/asl_shin_angles.joblib` (generated locally, ignored by Git). If it is missing, train it once before starting the app:
+See [the external-data workflow](docs/WORKFLOW.md#alternative-train-locally-with-external-asl-data)
+for both command sequences, output files and how to reuse existing data. These
+models use ASL labels; keep them separate from NGT recordings. The supplied
+Kaggle test photos duplicate training photos, so that run reports development
+cross-validation without an independent final test.
+
+If you still need the Roboflow files, [ASL_DOWNLOAD.md](docs/ASL_DOWNLOAD.md)
+explains the optional download step. Local import and training do not require a
+Roboflow API key. The first landmark analysis downloads the MediaPipe model if
+it is not already present.
+
+## Compare the Shin 2021 paper method
+
+Three independent inputs implement the distance/axis method from Shin et al.:
+190 distance values, 630 axis cosines and 820 combined values. They can be
+compared with the existing 126/207-value inputs on identical photo IDs and
+grouped folds, using SVM and LightGBM. No letters are automatically excluded.
+The comparison also includes finger features alone (81), Shin plus finger
+features (901), and all three sources together (1,027). The 820-versus-901
+comparison tests whether the finger features add value beyond the Shin inputs.
+
+For the already imported and analyzed Kaggle data:
 
 ```bash
-python -m research.live_model
+python -m scripts.run_shin2021 --project data/asl_kaggle --out experiments/shin2021_kaggle_01 --grouping source --folds 3 --allow-no-test
 ```
 
-Use `--force` to retrain or `python -m streamlit run app.py -- --model /absolute/path/to/model.joblib` to select another compatible local bundle. The Excel reference remains the sole original workbook in `assets/`.
+Open `experiments/shin2021_kaggle_01/report.html` afterward. Use a new output
+directory. This is an application of the article's method, not a reproduction
+of its scores. See [PAPER_SHIN2021.md](docs/PAPER_SHIN2021.md) for formulas,
+explicit assumptions, parameter profiles, exact split reuse, individual commands,
+final testing and webcam use. Old experiment/model files are preserved; updated
+input-code hashes require new training rather than disabling checks.
 
-The best primary comparison improves SVM accuracy from 97.637% to 97.748% on 60,251 accepted detections. This is a small development-set gain; the report documents selection, dataset and paper-comparability limitations. Remaining files are necessary implementation, tests, data, evidence or report assets. Superseded work is in the reversible sibling archive recorded in `CLEANUP.json`.
+## Collaborating with dataset ZIPs
 
-## Experimental 2D + 3D angle model
+Export the dataset, let the next student extract it and add photos under a unique
+participant code, then pass on the updated ZIP. Use successive versions: automatic
+merging of independently extended datasets is not implemented. See the
+[step-by-step ZIP collaboration guide](docs/WORKFLOW.md#sharing-a-dataset-zip-with-classmates)
+for commands and directory examples.
+
+## Tests and demonstration
 
 ```bash
-conda activate ktai-hand-gesture
-python -m research.live_camera --model models/asl_shin_angles_2d.joblib --round-name "2D-3D-test"
+python -m unittest discover -s tests -v
+python tests/smoke_modular.py --out examples/my_software_test
+python tests/smoke_shin2021.py --out examples/shin2021_software_test
 ```
 
-The new **Image + depth [6]** model adds 14 aspect-correct projected joint angles to Joint angles. The unchanged five-fold comparison scores 97.693% accuracy and .97465 macro-F1, slightly below Joint angles (97.748%, .97524). It corrects T in the latest 11 selected webcam errors, while G remains wrong; this is an experimental comparison, not a demonstrated general improvement. See `results/angles_2d_01/report.md` for all-letter results, fold variation and development replays.
+Use a new output directory. The smoke test creates explicitly synthetic skeleton
+images and exercises the entire workflow without a camera. Its scores do not
+measure recognition of real NGT photos. `scripts/demo.py` generates synthetic data
+used by the automated tests.
 
-## Live G/H-only diagnosis
+`projects/demo_synthetic` is optional generated example data. You can skip or
+delete that directory when using your own photos; keep `scripts/demo.py` for the tests.
+The smoke test creates its own dataset. See the optional demo instructions in
+[WORKFLOW.md](docs/WORKFLOW.md#optional-what-is-projectsdemo_synthetic-for) for the file
+layout, an inspection example and regeneration commands.
 
-```bash
-conda activate ktai-hand-gesture
-python -m research.live_gh --variant middle
-```
+[FINGER_FEATURES.md](docs/FINGER_FEATURES.md) explains the geometry. [WORKFLOW.md](docs/WORKFLOW.md)
+covers recording, inspection, training, evaluation, comparison and reporting.
 
-This separate native window always chooses G or H; other letters are outside its scope. Buttons/keys 1-4 select all 3D angles, all 2D angles, both, or middle-PIP-only. L toggles the landmark overlay; Q/Esc closes. Close the ordinary camera window before starting this one. The selected development examples motivated the middle-only model; recognizing them does not establish independent live accuracy. The ordinary six-model tool remains `python -m research.live_camera`.
+## RQ2: hand-detection recovery
 
-## Guided G/H viewpoint collection
-
-```bash
-conda activate ktai-hand-gesture
-python -m research.gh_view_capture
-```
-
-Three participants, G/H, four views (palm, oblique palm, oblique back, back), five repetitions: **120 planned photos, 40 per person**. This supersedes the earlier 60/90-photo three-view proposal. Predictions are hidden; participant transitions require Enter. Use `--participants 2` for 80 photos. Photos are separate from training. P01 is development; P02/P03 are reserved evaluation. Full instructions, the four-view illustration and resume/status commands are in [docs/GH_CAPTURE.md](docs/GH_CAPTURE.md).
-
-## Named alphabet test with an example for every letter
-
-```bash
-conda activate ktai-hand-gesture
-python -m research.alphabet_capture
-```
-
-The participant form records name/code, development/new-person status, ASL fingerspelling experience and hand. Five A-Z rounds give 130 photos per person. A fixed dataset example appears beside the camera; **Space saves directly**, **H** marks extra guidance, and Q/Esc pauses. Predictions are hidden. The same stored images can later be scored by both frozen models, separately for new and development participants. See [the complete instructions](docs/ALPHABET_CAPTURE.md), including resume commands and guidance rules. Dataset examples are not independently validated ASL instructions; this is an example-guided static reproduction task.
+The additional RQ2 experiment retries missed ASL hand detections after erosion,
+dilation and a Canny overlay. See the [experiment guide](experiments/hand_detection_recovery/README.md)
+for commands using the existing Conda environment.

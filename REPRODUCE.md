@@ -6,6 +6,16 @@ The report is `paper/report.pdf`; editable source is `paper/report.tex`. It foll
 
 ## 1. Environment
 
+The shared project uses the Conda setup from the main README. To reproduce the exact package versions recorded for this optional study, use `requirements-research.txt` in a separate research environment:
+
+```bash
+conda create -n ktai-hand-gesture-research python=3.12
+conda activate ktai-hand-gesture-research
+python -m pip install -r requirements-research.txt
+```
+
+The existing environment and commands below remain available for normal project work.
+
 Use Python 3.12. The existing local Conda environment can be activated with:
 
 ```bash
