@@ -1,0 +1,129 @@
+{
+  "status": "passed; five-page body, references continue on page 6",
+  "source_preservation": "All nine coauthor text blocks are unchanged after ignoring comments; the only nonverbatim block has unused template-figure comments removed. Both original code snippets and references.bib are byte-identical to the supplied local Overleaf project.",
+  "coauthor_blocks": [
+    {
+      "block": "RQ1_methods",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "64e7f931593b4cae6fe6f425a204c34ac0aa44297d90fa566b73430f7ec07496"
+    },
+    {
+      "block": "RQ1_results",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "9f0a0f60e2528a4b7417226f41b7f1556ded7f9488028f83479a06c95cc8b355"
+    },
+    {
+      "block": "RQ1_discussion",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "185664249fff9bac558bfdad1938e0030bc6f35f8c50599f16f6d440a00944cf"
+    },
+    {
+      "block": "RQ2_intro",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "c823a8221a2a6597021a3a756ec99375e61bfb50c56beefd4ecb199bc2b1a0e7"
+    },
+    {
+      "block": "RQ2_methods",
+      "printed_text_unchanged": true,
+      "verbatim": false,
+      "source_sha256": "4c19392f01676f4d48b75122bbb0715bcc64afa49711e7c2ac9060a233cff412"
+    },
+    {
+      "block": "RQ2_datasets",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "89d3f828bdb2ec9204e145d71b31c5fe4f094132c8ed84644d454dde5e5e6b9a"
+    },
+    {
+      "block": "RQ2_implementation",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "21cc8d0cea322b48cb2ef069cc36a78bad3c9c09bc03dcb9a3f50633f5903b24"
+    },
+    {
+      "block": "RQ2_results",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "f29924c0e4a0cb2778a18d7ccc68e80f6552fbeb12d8de1a6da0735a69c2cef5"
+    },
+    {
+      "block": "RQ2_discussion",
+      "printed_text_unchanged": true,
+      "verbatim": true,
+      "source_sha256": "4a6b632337fc7a46ed533b0f1a65ce14c434ea6aaa2d2e5433097d9a08df8b8f"
+    }
+  ],
+  "verified_numeric_rows": 45,
+  "category_figure_means": 76,
+  "new_citations_and_appendix_labels_resolved": true,
+  "preview_pdf_pages": 14,
+  "preview_main_last_page": 5,
+  "preview_references_start_page": 5,
+  "preview_body_page_limit_satisfied": true,
+  "exact_final_pagination_requires_original_coauthor_figure": false,
+  "own_appendix_pages": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "all_pages_visually_reviewed": true,
+  "overfull_boxes": {
+    "horizontal": 0,
+    "vertical": 0
+  },
+  "inherited_unresolved_labels": [],
+  "inherited_unresolved_marker_count": 0,
+  "preview_notice_and_explicit_asset_placeholders": false,
+  "placeholders_in_source_delivery": false,
+  "pdf_sha256": "fc13da9895537dcfd9a0fe4cba397f25f705dc78c3f4dca1bb178c66ab124ba9",
+  "delivery_files_sha256": {
+    "docs/GROUP_INTEGRATION.md": "55ec97293b06a9d3bb5302c2a20afef84e4381219a63543381c5c33515d5d0df",
+    "paper/group_integration/INTEGRATION_NOTES.txt": "f84aa9bab939d6ceef9e02158744ba4a5e5360b7634bde6deaac7d45f6aac15c",
+    "paper/group_integration/appendices/rq1.tex": "acf1341e33dc4cb6d862186016e0b492e367d3992df68a6690fe96a4ffdf1f0e",
+    "paper/group_integration/appendices/rq2.tex": "71f7f2d3b8a55752baa2b60b69c5cefcfc25c45927aebe9219045ea5665d71f6",
+    "paper/group_integration/appendices/rq3.tex": "2a2011275967cfaf00972e8165b721d1375ccd6230693ec7e42a80475c063534",
+    "paper/group_integration/code-snippets/n47-example.tex": "bef9a116e569c211ce2a90946b8f815f32e84b4f3339c686b928e320d59d0c92",
+    "paper/group_integration/code-snippets/repeatability.tex": "3d60cd4173ab17f76d658e624d48b90c2ce3b4932c7c74a5e511f65aa727e38a",
+    "paper/group_integration/code-snippets/settings-all-run.tex": "956f8b4c0c25dc563c91c3ce5db17adeaa73cd03803ab5f4150040c1250057b5",
+    "paper/group_integration/figures/N47_dilated.png": "06469a6b092a8280d9ffa39f03e9d3b3d5d17fd3c65a283791cbaace8c2ff8e6",
+    "paper/group_integration/figures/N47_original.png": "32b4d4cedd9a6bc8bea04d219805af471f7bb79c42a2340e1e58c730e2e77d9a",
+    "paper/group_integration/figures/N47_overlay.png": "a8777f7d2d4026e885efd50921d60887b21f894ebc158a4a68c4fd1cebcae292",
+    "paper/group_integration/figures/recovery_by_variant.pdf": "5f469132ff50fa949ee41d1af48eadac6a608767daa8b9b37a9e532734711c66",
+    "paper/group_integration/figures/ton_category_importance_en.pdf": "bc43480a810c5fb9298e9606467b1f6d6045b33a22ce05965e6b7e95cedf05bd",
+    "paper/group_integration/figures/ton_feature_tool_screenshot.png": "d196b7c43e9cbdc31396eff5796c9005b4c41e791bd7a7dd12d6c84ca35ab92b",
+    "paper/group_integration/figures/ton_live_examples_en.pdf": "6d595c2c43e8d4720dccb3f0d44b87e12a4671a31766d0de64f8e27c85ec3524",
+    "paper/group_integration/group_report.tex": "06d5b1df997784140939de4921dd1ba4cd361a7067ab657b24fdfd6e354c6a63",
+    "paper/group_integration/group_report_paste_ready.tex": "8b1eb4bbce325ac5c7c71d07297b105ec33900c708ddecca9a1cb120dee09e8d",
+    "paper/group_integration/references.bib": "df950103d38f9cfc81b1f40d84c9be2a3525d046d2991a6973a4446922c06bd1",
+    "paper/group_integration/ton_appendix_en.tex": "f8aef6ba6aae9be879883124a3d014719ac4f2cf6437ef872210ce1b251ca5d1",
+    "paper/group_integration/ton_dataset_en.tex": "df2ac9f977c59ae463b751bd74dde84008c43d2ef0a2f8e1b917c33f81b5a890",
+    "paper/group_integration/ton_discussion_en.tex": "b032619e1d978df94f6e682d283ddfb6ef09db3f7937d712570a41fc139d72d6",
+    "paper/group_integration/ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
+    "paper/group_integration/ton_gh_rows_en.tex": "cfa7dc4729a8fb05a60aa33f71183119ff66621a88718879da355e580ad674d0",
+    "paper/group_integration/ton_implementation_en.tex": "1c2d9b64d6fe2fd8474a43d0c32579969b385bd88c5078a7b95c2ef7f157f8b9",
+    "paper/group_integration/ton_methods_en.tex": "e0fead0b0c883f0a3521d4c3010af2ab42292515ab5e119b66bd0bc640d1d06d",
+    "paper/group_integration/ton_orientation_rows_en.tex": "377127c35aa4b068071b88914c450dd9711e1428552d362c5f65828d6db198ec",
+    "paper/group_integration/ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
+    "paper/group_integration/ton_references.bib": "ff6058bd9cea04318bd27b212745437eb8ee956b7a665924863a07d4ae66141a",
+    "paper/group_integration/ton_related_en.tex": "5d5f6c0ae9ab8a142d87db4949bdcc29714e8191292587f234fe6d567cac8d32",
+    "paper/group_integration/ton_results_en.tex": "a87366c0c6793536a62552a049352abfd52fac298058d174408278a254b35cb1"
+  },
+  "preservation_json_sha256": "9f02437f83ace46a4bbac2ac790c04b3e53975af53704f23c7c948b224c1bcc2",
+  "language": "Own contribution English; supplied coauthor prose unchanged",
+  "orientation_scope": "Brief practical follow-ups; details retained in appendix",
+  "named_boundary_comments_removed": true,
+  "coauthor_appendix_pages": [
+    7,
+    8
+  ],
+  "figure_values_verified": 76,
+  "all_active_figure_paths_resolve": true,
+  "methods_context_expanded": true
+}

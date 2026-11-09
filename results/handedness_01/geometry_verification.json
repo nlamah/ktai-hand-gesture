@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "raw_detections_checked": 312,
+  "maximum_feature_difference": 0.0,
+  "scope": "Raw landmark recomputation versus cached-feature mathematical shortcut, both hand labels and both view types."
+}

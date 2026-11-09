@@ -1,0 +1,18 @@
+{
+  "oof_images_per_variant": 60251,
+  "development_images_per_variant": 27,
+  "metric_reconciliation_passed": true,
+  "C_training_images_augmented": 1912,
+  "other_images_not_augmented": 58339,
+  "fitting_rows": 64075,
+  "resolved_gamma_matches_baseline_exactly": true,
+  "class_weights_match_baseline_exactly": true,
+  "changed_cv_predictions": 3,
+  "changed_development_predictions": 0,
+  "candidate_sha256": "39e0423178bd48065cfb397cb7a245431df3d6cb52b9db45098c7c4109341120",
+  "baseline_sha256": "c68d5884a43ddaa37537a5d496228f8846089dd39076884b3ba978e421ec6e80",
+  "unit_tests_passed": 69,
+  "baseline_and_previous_all_letter_model_unchanged": true,
+  "candidate_loads_in_existing_live_tool": true,
+  "captures_used_for_training": 0
+}

@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "exported_figures": 4,
+  "selected_camera_examples": 4,
+  "selected_mirror_pairs": 2,
+  "same_image_H_G_reference_prediction_invariant": true,
+  "saved_capture_mode_AppTest": "passed",
+  "full_test_suite": {
+    "tests": 107,
+    "status": "passed"
+  },
+  "image_and_model_hashes_checked": true,
+  "mirror_pixel_hashes_both_views_checked": true,
+  "pdf_pages_with_figures": [
+    3,
+    4,
+    5,
+    6,
+    8,
+    10
+  ],
+  "figure_provenance_sha256": "886915a370c6158bbf3a97e447efe9a4b2c8f3f8922207c3ea8eb91d7f3feb18",
+  "appendix_sha256": "ea89a9c5f879ec13b0c1e053ad6e3c460aec36a776be8f0fe83fc6f0672e9f46",
+  "feature_tool_placeholder": false,
+  "embedded_data_figures": 3,
+  "note": "Removed the withdrawn recent camera montage. Feature screenshot/cards, training-rotation and mirror illustrations unchanged.",
+  "archived_feature_report_renders_not_screenshots": true,
+  "current_feature_tool_image_is_user_screenshot": true,
+  "feature_tool_screenshot_page": 6,
+  "feature_concept_figure_page": 5,
+  "embedded_schematic_figures": 1,
+  "feature_illustrations_provenance": "results/feature_illustrations_01/provenance.json",
+  "embedded_feature_study_figures": 3,
+  "training_rotation_figure": "paper/figures/gh_training_rotation.pdf",
+  "training_rotation_provenance": "results/gh_training_rotation_01/provenance.json",
+  "feature_detail_rendering": "Native LaTeX vector text",
+  "current_camera_example_status": "Recent rejected captures removed from appendix; archived outside active captures/results.",
+  "withdrawal_audit": "results/gh_capture_reset_20261107/withdrawal.json",
+  "current_document_verification": "results/gh_live_diagnostics_20261107/document_verification.json"
+}

@@ -1,0 +1,112 @@
+{
+  "latest_GH_round": {
+    "session_id": "20261031T181714Z_df8bf30f",
+    "images": 11,
+    "correct": {
+      "baseline": 2,
+      "image_angles": 3
+    },
+    "predictions": [
+      {
+        "id": "20261031T181839806179Z_9ef071cc",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "G",
+        "path": "captures/confusions/20261031T181839806179Z_9ef071cc/capture.json",
+        "saved_prediction": "H",
+        "baseline": "A",
+        "image_angles": "A"
+      },
+      {
+        "id": "20261031T181856785939Z_1740bec1",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "C",
+        "path": "captures/confusions/20261031T181856785939Z_1740bec1/capture.json",
+        "saved_prediction": "D",
+        "baseline": "D",
+        "image_angles": "D"
+      },
+      {
+        "id": "20261031T181911628820Z_92bfa5c8",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "F",
+        "path": "captures/confusions/20261031T181911628820Z_92bfa5c8/capture.json",
+        "saved_prediction": "B",
+        "baseline": "B",
+        "image_angles": "B"
+      },
+      {
+        "id": "20261031T181949484996Z_83495163",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "K",
+        "path": "captures/confusions/20261031T181949484996Z_83495163/capture.json",
+        "saved_prediction": "H",
+        "baseline": "K",
+        "image_angles": "K"
+      },
+      {
+        "id": "20261031T182038177630Z_e3b8a48f",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "N",
+        "path": "captures/confusions/20261031T182038177630Z_e3b8a48f/capture.json",
+        "saved_prediction": "M",
+        "baseline": "M",
+        "image_angles": "M"
+      },
+      {
+        "id": "20261031T182049105801Z_8e4d3a40",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "O",
+        "path": "captures/confusions/20261031T182049105801Z_8e4d3a40/capture.json",
+        "saved_prediction": "D",
+        "baseline": "D",
+        "image_angles": "D"
+      },
+      {
+        "id": "20261031T182105954800Z_ef065b3f",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "P",
+        "path": "captures/confusions/20261031T182105954800Z_ef065b3f/capture.json",
+        "saved_prediction": "H",
+        "baseline": "M",
+        "image_angles": "M"
+      },
+      {
+        "id": "20261031T182131188874Z_7a883b5c",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "S",
+        "path": "captures/confusions/20261031T182131188874Z_7a883b5c/capture.json",
+        "saved_prediction": "E",
+        "baseline": "E",
+        "image_angles": "E"
+      },
+      {
+        "id": "20261031T182203821496Z_df5cee81",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "T",
+        "path": "captures/confusions/20261031T182203821496Z_df5cee81/capture.json",
+        "saved_prediction": "L",
+        "baseline": "L",
+        "image_angles": "T"
+      },
+      {
+        "id": "20261031T182225683598Z_226ebfd6",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "X",
+        "path": "captures/confusions/20261031T182225683598Z_226ebfd6/capture.json",
+        "saved_prediction": "H",
+        "baseline": "X",
+        "image_angles": "X"
+      },
+      {
+        "id": "20261031T182243095626Z_f60fdd29",
+        "session_id": "20261031T181714Z_df8bf30f",
+        "intended": "Y",
+        "path": "captures/confusions/20261031T182243095626Z_f60fdd29/capture.json",
+        "saved_prediction": "A",
+        "baseline": "A",
+        "image_angles": "M"
+      }
+    ]
+  },
+  "note": "Known selected errors, not an independent webcam test. All saved valid captures replayed without redetection."
+}

@@ -1,0 +1,6 @@
+{
+  "path": "models/asl_shin_angles_right_hand.joblib",
+  "sha256": "c6f20cbf7bc80857e3200ad6c4b20394c465cb1d1037dd9191d1f608f6d90094",
+  "training_images": 60251,
+  "normalization": "detector-right-landmarks-v1"
+}

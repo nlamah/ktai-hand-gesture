@@ -1,0 +1,59 @@
+{
+  "baseline": {
+    "images": 60251,
+    "correct": 58894,
+    "accuracy": 0.9774775522397968,
+    "macro_f1": 0.9752439124601125
+  },
+  "tilt15": {
+    "images": 60251,
+    "correct": 58888,
+    "accuracy": 0.9773779688303929,
+    "macro_f1": 0.975168735602783
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "images": 16238,
+      "correct": 15949,
+      "accuracy": 0.9822022416553763,
+      "macro_f1": 0.9815051925413988,
+      "baseline_accuracy": 0.9820790737775588
+    },
+    {
+      "fold": 2,
+      "images": 10009,
+      "correct": 9463,
+      "accuracy": 0.9454490958137676,
+      "macro_f1": 0.9381780179957315,
+      "baseline_accuracy": 0.9452492756519133
+    },
+    {
+      "fold": 3,
+      "images": 11399,
+      "correct": 11309,
+      "accuracy": 0.9921045705763664,
+      "macro_f1": 0.9915585918039872,
+      "baseline_accuracy": 0.9921922975699623
+    },
+    {
+      "fold": 4,
+      "images": 10504,
+      "correct": 10291,
+      "accuracy": 0.9797220106626047,
+      "macro_f1": 0.9775949859415488,
+      "baseline_accuracy": 0.9802932216298553
+    },
+    {
+      "fold": 5,
+      "images": 12101,
+      "correct": 11876,
+      "accuracy": 0.9814064953309644,
+      "macro_f1": 0.9785834601682984,
+      "baseline_accuracy": 0.9816544087265515
+    }
+  ],
+  "fixed": 9,
+  "lost": 15,
+  "note": "Pooled 26-letter out-of-fold scores. Original fold validation images are never augmented."
+}

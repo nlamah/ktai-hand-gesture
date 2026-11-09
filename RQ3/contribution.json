@@ -1,0 +1,17 @@
+{
+  "question": "Do explicit hand-shape categories and joint angles improve on, or replace, Shin's landmark directions?",
+  "status": "implemented",
+  "entry_point": "python -m RQ3 --help",
+  "shared_baseline": "DS (820 inputs); original frozen implementation: research/shin.py",
+  "main_results": "results/feature_factorial_01/",
+  "supporting_controls": [
+    "coordinate_control",
+    "mirrors",
+    "normalization",
+    "gh_rotation",
+    "occlusion",
+    "live_examples"
+  ],
+  "note": "Supporting orientation checks retain their own 835-input DSJ reference.",
+  "documentation": "RQ3/README.md"
+}

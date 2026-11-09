@@ -1,0 +1,63 @@
+{
+  "version": "gh-angle-diagnostic-v1",
+  "variant": "both",
+  "protocol": {
+    "version": "gh-angle-diagnostic-v1",
+    "variants": [
+      "3d",
+      "2d",
+      "both"
+    ],
+    "input_hashes": {
+      "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+      "reference": "a84bea3370df5ca712b3a68f863fceaa71d297643a836a2645c1ca8dfd935f45",
+      "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
+    },
+    "input_cache_sha256": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
+    "pixel_cache_sha256": "e9b1938151ca0ef2b63602bbbcd545602a0889bc793e0b345dae962c2c5a2701",
+    "folds_sha256": "c3212bfe77c124e5cb84a6acaf4034c074c7918b77ab1e51849be224b36df0d5",
+    "model": "RBF SVM C=10 gamma=scale balanced; train-only median imputation and standard scaling",
+    "classes": [
+      "G",
+      "H"
+    ],
+    "world_columns": [
+      "thumb_mcp_angle_deg",
+      "thumb_ip_angle_deg",
+      "index_mcp_angle_deg",
+      "index_pip_angle_deg",
+      "index_dip_angle_deg",
+      "middle_mcp_angle_deg",
+      "middle_pip_angle_deg",
+      "middle_dip_angle_deg",
+      "ring_mcp_angle_deg",
+      "ring_pip_angle_deg",
+      "ring_dip_angle_deg",
+      "pinky_mcp_angle_deg",
+      "pinky_pip_angle_deg",
+      "pinky_dip_angle_deg",
+      "thumb_mcp_signed_deviation_deg"
+    ],
+    "pixel_columns": [
+      "image2d_thumb_mcp_angle_deg",
+      "image2d_thumb_ip_angle_deg",
+      "image2d_index_mcp_angle_deg",
+      "image2d_index_pip_angle_deg",
+      "image2d_index_dip_angle_deg",
+      "image2d_middle_mcp_angle_deg",
+      "image2d_middle_pip_angle_deg",
+      "image2d_middle_dip_angle_deg",
+      "image2d_ring_mcp_angle_deg",
+      "image2d_ring_pip_angle_deg",
+      "image2d_ring_dip_angle_deg",
+      "image2d_pinky_mcp_angle_deg",
+      "image2d_pinky_pip_angle_deg",
+      "image2d_pinky_dip_angle_deg"
+    ],
+    "policy": "Three predeclared representations, no tuning on webcam outcomes. Captures excluded from training. Binary results cannot be compared as a 26-class improvement."
+  },
+  "sklearn_version": "1.8.0",
+  "training_images": 4801,
+  "created_at_utc": "2026-10-31T18:42:41.653815+00:00",
+  "scope": "Diagnostic G/H-only model. Always chooses G or H; not a replacement for the 26-letter recognizer."
+}

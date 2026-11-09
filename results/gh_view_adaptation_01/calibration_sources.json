@@ -1,0 +1,26 @@
+[
+  {
+    "id": "20261031T152108010733Z_9233886f",
+    "label": "G",
+    "role": "calibration_training",
+    "view": "back_of_hand_visually_reviewed",
+    "capture_json_sha256": "10b43281a45b93eef8d749226f27f7f4975be5ada8473347f726d22310f70257",
+    "image_sha256": "db52745e5178fb9edcf309553c19fa645ee5190406d879d2da99a0738542a6a7"
+  },
+  {
+    "id": "20261031T152116143793Z_11756e66",
+    "label": "H",
+    "role": "calibration_training",
+    "view": "back_of_hand_visually_reviewed",
+    "capture_json_sha256": "6bc6b0e60d9c745767cfcd6034064c9cc41e95d80a2b48f600ee1ab1767961f7",
+    "image_sha256": "dad759b6d241d04f7cfac5523f4c76551ffaf9f4592b22de3bdcd14380cfd080"
+  },
+  {
+    "id": "20261031T181839806179Z_9ef071cc",
+    "label": "G",
+    "role": "calibration_training",
+    "view": "back_of_hand_visually_reviewed",
+    "capture_json_sha256": "adcee56c3dc2f0f8cd89803d70901801a8a7c7be0eb737e4f971d9bc593a6e42",
+    "image_sha256": "e38ded60e33408abccf3cffcdc7153c955efd4bc2934a765fb149365f5a0d69a"
+  }
+]

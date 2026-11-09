@@ -1,0 +1,14 @@
+{
+  "question": "To what extent does applying a 3x3 dilation filter recover visually plausible hand landmarks in ASL Alphabet training images for which MediaPipe initially detects no_hand?",
+  "status": "paper_text_supplied_code_missing",
+  "entry_point_to_supply": "RQ2/experiment.py:main",
+  "shared_detector": "research.data.Detector",
+  "shared_baseline": "baseline.shin.combined_features (DS, 820 inputs)",
+  "outputs": "results/RQ2/; original/retry statuses per source, unique recovery counts, visual assessment and settings",
+  "missing_source_files_named_in_paper": [
+    "research/morphology_pilot.py",
+    "research/recovery_experiment.py",
+    "experiments/hand_detection_recovery/plot_results.py"
+  ],
+  "note": "Supplied paper results do not replace missing executable code."
+}

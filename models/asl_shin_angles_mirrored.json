@@ -1,0 +1,64 @@
+{
+  "version": "shin-angles-live-v1",
+  "shin_version": "shin2021-image-table2-cosine-row-zscore-v1",
+  "input_variant": "shin_angles",
+  "angle_columns": [
+    "thumb_mcp_angle_deg",
+    "thumb_ip_angle_deg",
+    "index_mcp_angle_deg",
+    "index_pip_angle_deg",
+    "index_dip_angle_deg",
+    "middle_mcp_angle_deg",
+    "middle_pip_angle_deg",
+    "middle_dip_angle_deg",
+    "ring_mcp_angle_deg",
+    "ring_pip_angle_deg",
+    "ring_dip_angle_deg",
+    "pinky_mcp_angle_deg",
+    "pinky_pip_angle_deg",
+    "pinky_dip_angle_deg",
+    "thumb_mcp_signed_deviation_deg"
+  ],
+  "sklearn_version": "1.8.0",
+  "created_at_utc": "2026-11-06T15:46:05.613772+00:00",
+  "training_images": 60251,
+  "training_rows": 119192,
+  "source_hashes": {
+    "manifest": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "extraction_protocol": "b83d77e01918cf12bce2fa20f23f1dee6ef8fdbd70bdc888e57b2784f1aa4b62"
+  },
+  "augmentation": {
+    "recipe": "horizontal_rgb_mirror",
+    "mirror_training": true
+  },
+  "experiment_protocol": {
+    "experiment": "original-only versus original + horizontal RGB mirror",
+    "seed": 20261106,
+    "features": 835,
+    "models": [
+      "svm",
+      "lightgbm"
+    ],
+    "folds_sha256": "c3212bfe77c124e5cb84a6acaf4034c074c7918b77ab1e51849be224b36df0d5",
+    "extraction_sha256": "b83d77e01918cf12bce2fa20f23f1dee6ef8fdbd70bdc888e57b2784f1aa4b62",
+    "test_mix": "Exactly one view per source; half mirrored within each letter/fold, fixed seed, shared by learners",
+    "paired_test": "Also evaluate both views of every held-out source separately; never treat views as independent sources",
+    "training_sources": "Freshly accepted originals only; add mirror only for these same fitting sources if accepted",
+    "weights": "Original and mirror each .5 when both accepted; original alone 1 otherwise",
+    "preprocessing": "Fit on original fitting rows only; preserve for both models",
+    "svm": "C=10 RBF; gamma and balanced class weights taken from original fitting rows",
+    "lightgbm": "100 trees, 31 leaves, learning_rate .1, min_child_samples 20, seed 42, 4 threads",
+    "rejections": "No prediction (?) for failed detection; all-attempt metrics include these failures",
+    "policy": "One predefined mirror recipe; no tuning or candidate selection from held-out outcomes",
+    "scope": "Synthetic mirroring robustness, not validated real left-handed signer performance",
+    "training_source_sha256": {
+      "research/studies/mirror_augmentation.py": "3a2ec9b3d83782f6bca2fbaa387d454ea4476c7bdd5becb9ae76fef6ed8107f6",
+      "research/mirroring.py": "30d7d8f6b0faadc40b12a2d348049d30afb40eeea9ddeb8a5e3700b7a6c20f69",
+      "research/studies/compare_angles.py": "56f82ef7bc2b293f311eef931d54622a32e2fc25b3b5d09af3cc98b0a047bdff",
+      "research/studies/compare_models.py": "b08802092342c19f8e5a4190920dc18e5194f37b11ceecf5883a90438612a2c2",
+      "research/classifiers.py": "783fc8023784f358dc59466f03a7dfd1bf2b8db0de80fe5b0f1fc01fa7a52fd0"
+    },
+    "source_manifest_sha256": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35"
+  },
+  "scope": "Full-data deployment fit; cross-validation scores belong to the recipe, not this fitted model."
+}

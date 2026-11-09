@@ -1,0 +1,11 @@
+{
+  "sha256": "f431b60adf5319627c206bdb1226f963f3007a0dfd56ff060231dbce7f27eee6",
+  "revision": "bcf9f98f6c8797b2c8f0233e20ff6dcac96bc37a",
+  "file": "baseline/frozen_sources/live_model_f431b60adf53.py",
+  "original_path": "research/live_model.py",
+  "purpose": "Exact source snapshot for historical mirror/GH protocol checks; never used by the current live app.",
+  "studies": [
+    "mirrors",
+    "gh_rotation"
+  ]
+}
