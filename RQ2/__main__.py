@@ -1,4 +1,4 @@
-from baseline.runner import run_contribution
+from RQ2.experiment import main
 
 if __name__ == '__main__':
-    run_contribution('RQ2')
+    raise SystemExit(main())

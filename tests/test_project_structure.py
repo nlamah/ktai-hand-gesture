@@ -76,7 +76,7 @@ class ProjectStructureTests(unittest.TestCase):
                 train_cache(cache, output, ['svm'])
 
     def test_integration_slots_do_not_claim_missing_experiments_are_implemented(self):
-        for package in ['RQ1', 'RQ2']:
+        for package in ['RQ1']:
             manifest = json.loads((ROOT / package / 'contribution.json').read_text())
             self.assertNotEqual(manifest['status'], 'implemented')
             self.assertFalse((ROOT / package / 'experiment.py').exists())
