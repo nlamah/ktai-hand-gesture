@@ -1,0 +1,18 @@
+{
+  "model": "lightgbm",
+  "variant": "DJ",
+  "fold": 4,
+  "inputs": 205,
+  "training_images": 49747,
+  "test_images": 10504,
+  "seconds": 35.45892220799578,
+  "training_ids_sha256": "64c1422da743f8513fb4a5280b162fea292a992f3396b54f225ea088cbe8e3c7",
+  "test_ids_sha256": "07994edaa4f7ce7af882e78947d07945ace21bc811a1dc9b9a612359daf153b6",
+  "estimator_sha256": "10ec60c16e7ad2bb118a4aa326a93f4d88e5b8b23591f46fea2af2382318dc29",
+  "images": 10504,
+  "correct": 9909,
+  "accuracy": 0.9433549124143183,
+  "macro_precision": 0.9523605998942011,
+  "macro_recall": 0.9461591030353833,
+  "macro_f1": 0.9457591921360173
+}

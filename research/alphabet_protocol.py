@@ -73,7 +73,7 @@ class AlphabetSession(ProtocolSession):
     capture_cooldown=1.0
 
     def __init__(self,directory,model_sha):
-        self.directory=Path(directory);self.plan=json.loads((self.directory/'session.json').read_text(encoding='utf-8'))
+        self.directory=Path(directory);self.plan=json.loads((self.directory/'session.json').read_text())
         if self.plan.get('schema')!=SCHEMA or self.plan.get('tasks')!=tasks(self.plan['repeats']):raise ValueError('Modified or unknown alphabet protocol.')
         if self.plan['model_sha256']!=model_sha:raise ValueError('The capture model has changed.')
         for path,expected in self.plan['frozen_models'].items():
@@ -100,7 +100,7 @@ class AlphabetSession(ProtocolSession):
         from research.live_model import DEFAULT_MODEL,DEFAULT_BASELINE_MODEL
         participant=profile(**participant)
         plan=tasks(repeats)
-        examples=json.loads(EXAMPLES.read_text(encoding='utf-8'))['examples']
+        examples=json.loads(EXAMPLES.read_text())['examples']
         if set(examples)!=set(LABELS):raise ValueError('An example is required for all 26 letters.')
         frozen={str(p.resolve()):sha256(p.read_bytes()).hexdigest() for p in [DEFAULT_BASELINE_MODEL,DEFAULT_MODEL]}
         session_id='alphabet_'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'_'+uuid4().hex[:8]
@@ -118,7 +118,7 @@ class AlphabetSession(ProtocolSession):
     def refresh(self):
         super().refresh();self.assistance=False
         for directory in self.completed.values():
-            record=json.loads((Path(directory)/'capture.json').read_text(encoding='utf-8'))
+            record=json.loads((Path(directory)/'capture.json').read_text())
             metadata=record['protocol']
             if metadata.get('participant')!=self.plan['participant'] or metadata.get('example')!=self.plan['examples'][record['expected_letter']]:
                 raise ValueError('Participant or example differs from the fixed capture plan.')

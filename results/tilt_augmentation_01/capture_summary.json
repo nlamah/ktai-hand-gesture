@@ -1,0 +1,98 @@
+{
+  "development": {
+    "baseline": {
+      "images": 27,
+      "correct": 17,
+      "accuracy": 0.6296296296296297,
+      "macro_f1": 0.6100353184752162,
+      "unknown_predictions": 0,
+      "confusion_CDO": [
+        [
+          3,
+          4,
+          2
+        ],
+        [
+          1,
+          8,
+          0
+        ],
+        [
+          1,
+          2,
+          6
+        ]
+      ],
+      "by_letter": {
+        "C": {
+          "images": 9,
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1": 0.42857142857142855
+        },
+        "D": {
+          "images": 9,
+          "precision": 0.5714285714285714,
+          "recall": 0.8888888888888888,
+          "f1": 0.6956521739130435
+        },
+        "O": {
+          "images": 9,
+          "precision": 0.75,
+          "recall": 0.6666666666666666,
+          "f1": 0.7058823529411765
+        }
+      }
+    },
+    "tilt15": {
+      "images": 27,
+      "correct": 18,
+      "accuracy": 0.6666666666666666,
+      "macro_f1": 0.642439431913116,
+      "unknown_predictions": 0,
+      "confusion_CDO": [
+        [
+          3,
+          3,
+          3
+        ],
+        [
+          1,
+          8,
+          0
+        ],
+        [
+          1,
+          1,
+          7
+        ]
+      ],
+      "by_letter": {
+        "C": {
+          "images": 9,
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1": 0.42857142857142855
+        },
+        "D": {
+          "images": 9,
+          "precision": 0.6666666666666666,
+          "recall": 0.8888888888888888,
+          "f1": 0.7619047619047619
+        },
+        "O": {
+          "images": 9,
+          "precision": 0.7,
+          "recall": 0.7777777777777778,
+          "f1": 0.7368421052631579
+        }
+      }
+    }
+  },
+  "evaluation": {
+    "status": "incomplete",
+    "completed": 0,
+    "planned": 27,
+    "scores_not_computed": true
+  }
+}

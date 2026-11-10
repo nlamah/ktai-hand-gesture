@@ -1,0 +1,9 @@
+{
+  "unit_tests": 41,
+  "unit_tests_passed": true,
+  "cli_entrypoints_checked": 8,
+  "headless_streamlit_app_passed": true,
+  "feature_matrix_rows_exactly_recomputed": 60251,
+  "historical_training_repeated_during_cleanup": false,
+  "notes": "Focused tests and full numerical-input equality validate the refactor; historical research scores were reconciled from saved OOF predictions."
+}

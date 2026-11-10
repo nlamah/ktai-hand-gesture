@@ -1,0 +1,24 @@
+{
+  "capture_id": "20261031T212827197875Z_759e34da",
+  "expected_letter": "H",
+  "saved_model_path": "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/models/asl_shin_angles.joblib",
+  "saved_model_sha256": "c68d5884a43ddaa37537a5d496228f8846089dd39076884b3ba978e421ec6e80",
+  "capture_json_sha256": "e12b428cea1a048fd0c847f986ab3e7f0a7659cb6387393e434bcd6fbcca8d98",
+  "standard_predictions": {
+    "Referentie": "G",
+    "Vingerhoeken": "G",
+    "Kanteltraining alle": "G",
+    "C-kantelproef": "G",
+    "G/H-draaitraining": "G",
+    "Beeld + diepte": "G"
+  },
+  "binary_predictions": {
+    "3d": "H",
+    "2d": "H",
+    "both": "H",
+    "middle": "H"
+  },
+  "index_PIP_3d_deg": 165.47117614746094,
+  "middle_PIP_3d_deg": 159.8436279296875,
+  "note": "New H-to-G example with palm visible. Shows orientation alone is not a sufficient explanation. Selected diagnostic example, not an accuracy estimate."
+}

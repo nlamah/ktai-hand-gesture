@@ -1,0 +1,458 @@
+[
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_thumb_mcp_shape",
+    "f1_drop_percentage_points": -0.0080820355333544
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_thumb_ip",
+    "f1_drop_percentage_points": 0.07936359275618442
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_index_mcp",
+    "f1_drop_percentage_points": 0.016878386239815843
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_index_pip",
+    "f1_drop_percentage_points": 0.017876293509219404
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_index_dip",
+    "f1_drop_percentage_points": -0.043475071310144546
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_mcp",
+    "f1_drop_percentage_points": -0.0248472499059934
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_pip",
+    "f1_drop_percentage_points": -0.03937803302352397
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_dip",
+    "f1_drop_percentage_points": -0.022238479990554224
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_mcp",
+    "f1_drop_percentage_points": -0.02526443827269504
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_pip",
+    "f1_drop_percentage_points": -0.012202215165274378
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_dip",
+    "f1_drop_percentage_points": -0.041425774073804544
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_mcp",
+    "f1_drop_percentage_points": 0.017081993928883595
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_pip",
+    "f1_drop_percentage_points": -0.004439471144295826
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_dip",
+    "f1_drop_percentage_points": -0.01491218373405008
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_spread_index_middle",
+    "f1_drop_percentage_points": -0.0035436364255525955
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_spread_middle_ring",
+    "f1_drop_percentage_points": 0.004712562322891598
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_crossing_index_middle",
+    "f1_drop_percentage_points": 0.009429959484795563
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_thumb_tip_index_proximity",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "svm",
+    "variant": "DSE",
+    "group": "check_thumb_tip_middle_proximity",
+    "f1_drop_percentage_points": -0.0002865823458275685
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_thumb_mcp_shape",
+    "f1_drop_percentage_points": 0.10072500836845696
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_thumb_ip",
+    "f1_drop_percentage_points": 0.1852738117805956
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_index_mcp",
+    "f1_drop_percentage_points": -0.1070597814882
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_index_pip",
+    "f1_drop_percentage_points": 0.2066384849500496
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_index_dip",
+    "f1_drop_percentage_points": -0.05440171846891991
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_middle_mcp",
+    "f1_drop_percentage_points": 0.12400201274969065
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_middle_pip",
+    "f1_drop_percentage_points": 0.04785201804913959
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_middle_dip",
+    "f1_drop_percentage_points": 0.19008140161926762
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_ring_mcp",
+    "f1_drop_percentage_points": 0.025302662831086654
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_ring_pip",
+    "f1_drop_percentage_points": 0.005968565673536402
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_ring_dip",
+    "f1_drop_percentage_points": 0.0781147012632125
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_mcp",
+    "f1_drop_percentage_points": 0.12446890467399127
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_pip",
+    "f1_drop_percentage_points": 0.04635602837835866
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_dip",
+    "f1_drop_percentage_points": 0.2623999734047
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_spread_index_middle",
+    "f1_drop_percentage_points": 0.025320520141280858
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_spread_middle_ring",
+    "f1_drop_percentage_points": -0.0038845540598094535
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_crossing_index_middle",
+    "f1_drop_percentage_points": 0.08021633497982186
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_thumb_tip_index_proximity",
+    "f1_drop_percentage_points": 0.008141408613368
+  },
+  {
+    "model": "svm",
+    "variant": "DE",
+    "group": "check_thumb_tip_middle_proximity",
+    "f1_drop_percentage_points": 0.002032396983877244
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_thumb_mcp_shape",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_thumb_ip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_index_mcp",
+    "f1_drop_percentage_points": -0.0046155000028836
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_index_pip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_index_dip",
+    "f1_drop_percentage_points": 0.009147426338460399
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_mcp",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_pip",
+    "f1_drop_percentage_points": 0.004586804755084
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_middle_dip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_mcp",
+    "f1_drop_percentage_points": 0.004737278210056799
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_pip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_ring_dip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_mcp",
+    "f1_drop_percentage_points": -0.0015336692677324001
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_pip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_flexion_pinky_dip",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_spread_index_middle",
+    "f1_drop_percentage_points": 0.006289165541668801
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_spread_middle_ring",
+    "f1_drop_percentage_points": 0.03352845483934137
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_crossing_index_middle",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_thumb_tip_index_proximity",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DSE",
+    "group": "check_thumb_tip_middle_proximity",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_thumb_mcp_shape",
+    "f1_drop_percentage_points": 0.03558548527386089
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_thumb_ip",
+    "f1_drop_percentage_points": 0.018713622716866662
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_index_mcp",
+    "f1_drop_percentage_points": 0.0035936546070815508
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_index_pip",
+    "f1_drop_percentage_points": 0.0040387736165144
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_index_dip",
+    "f1_drop_percentage_points": 0.041964956825223686
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_middle_mcp",
+    "f1_drop_percentage_points": 0.004505655947384399
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_middle_pip",
+    "f1_drop_percentage_points": 0.053678082266737155
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_middle_dip",
+    "f1_drop_percentage_points": 0.06602256236642484
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_ring_mcp",
+    "f1_drop_percentage_points": 0.06190010412355047
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_ring_pip",
+    "f1_drop_percentage_points": 0.0736519590058999
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_ring_dip",
+    "f1_drop_percentage_points": 0.008606212495919105
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_mcp",
+    "f1_drop_percentage_points": 0.006435837601765438
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_pip",
+    "f1_drop_percentage_points": 0.01509554283136165
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_flexion_pinky_dip",
+    "f1_drop_percentage_points": 0.03432488374402842
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_spread_index_middle",
+    "f1_drop_percentage_points": 0.24229334059893667
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_spread_middle_ring",
+    "f1_drop_percentage_points": 0.02590583402033947
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_crossing_index_middle",
+    "f1_drop_percentage_points": 0.001198889209396405
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_thumb_tip_index_proximity",
+    "f1_drop_percentage_points": 0.0
+  },
+  {
+    "model": "lightgbm",
+    "variant": "DE",
+    "group": "check_thumb_tip_middle_proximity",
+    "f1_drop_percentage_points": 0.0
+  }
+]

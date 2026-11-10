@@ -50,6 +50,10 @@ def load_bundle(path):
         raise ValueError("The model file is damaged or has an invalid format.") from error
     if not isinstance(bundle, dict) or bundle.get('version') not in (BUNDLE_VERSION, BASELINE_BUNDLE_VERSION, IMAGE_ANGLE_BUNDLE_VERSION):
         raise ValueError('This file is not a supported live ASL model.')
+    if bundle.get('hand_normalization') is not None:
+        from research.handedness import VERSION
+        if bundle['hand_normalization'] != VERSION or bundle['version'] != BUNDLE_VERSION:
+            raise ValueError('Unknown or incompatible hand normalization.')
     baseline = bundle['version'] == BASELINE_BUNDLE_VERSION
     expected_angles = () if baseline else ANGLE_COLUMNS
     if bundle.get('shin_version') != SHIN_VERSION or tuple(bundle.get('angle_columns', ())) != expected_angles:
@@ -71,6 +75,11 @@ def input_variant(bundle):
 
 
 def model_inputs(bundle, detection):
+    if bundle.get('hand_normalization') is not None:
+        from research.handedness import VERSION, right_hand_detection
+        if bundle['hand_normalization'] != VERSION:
+            raise ValueError('Unknown hand normalization.')
+        detection = right_hand_detection(detection)
     return detection_inputs(detection,input_variant(bundle))
 
 

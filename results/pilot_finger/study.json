@@ -1,0 +1,14 @@
+{
+  "note": "Application of Shin et al. (2021) to this dataset, not a reproduction of published scores. Training groups are consecutive filename-number blocks, not verified people or sessions. Nearby numbered images stay together; correlation across blocks can remain. Cross-validation is exploratory and does not establish person-independent accuracy. 26 supplied test photos duplicate training pixels and were excluded as test examples. No independent final-test photos remain; results are development cross-validation only.",
+  "models": [
+    "svm"
+  ],
+  "variants": [
+    "finger_features_only",
+    "shin2021_combined",
+    "shin2021_with_finger_features",
+    "all_features"
+  ],
+  "classifier_profile": "project",
+  "final_test_evaluated": false
+}

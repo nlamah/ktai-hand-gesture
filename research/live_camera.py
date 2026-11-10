@@ -14,12 +14,14 @@ from research.capture import DEFAULT_CAPTURE_DIR, save_capture
 from research.data import Detector
 from research.protocol import ProtocolSession
 from research.live_model import DEFAULT_MODEL, load_bundle, predict_letter
-from research.model_choices import MODEL_CHOICES, MODEL_BUTTONS, describe_model
+from research.model_choices import (MODEL_CHOICES, MODEL_BUTTONS, PRIMARY_KEYS,
+                                    describe_model,model_shortcut,visible_model_buttons)
 
 WINDOW = 'ASL letter - Space: capture | Q / Esc: close'
 BUTTON = (12, 488, 628, 532)
 PREVIEW_WIDTH, PREVIEW_HEIGHT = 640, 480
-ROUND_BUTTON = (12, 672, 208, 716)
+MODEL_ROW_COUNT = (len(PRIMARY_KEYS) + 2) // 3
+ROUND_BUTTON = (12, 576 + MODEL_ROW_COUNT * 48, 208, 620 + MODEL_ROW_COUNT * 48)
 HAND_CONNECTIONS = ((0,1),(1,2),(2,3),(3,4),(0,5),(5,6),(6,7),(7,8),
                     (5,9),(9,10),(10,11),(11,12),(9,13),(13,14),(14,15),
                     (15,16),(13,17),(0,17),(17,18),(18,19),(19,20))
@@ -59,25 +61,31 @@ def render_preview(frame, letter, detection=None, mirror=True):
     return canvas
 
 
-def camera_panel(preview, prompt=None, notice=None, model_key=None, locked=False, round_info=None):
+def camera_panel(preview, prompt=None, notice=None, model_key=None, locked=False, round_info=None, archive=False):
     """Fixed-size footer with a clickable snapshot button, also in freeze mode."""
-    panel = np.zeros((PREVIEW_HEIGHT + 272, PREVIEW_WIDTH, 3), dtype=np.uint8)
+    buttons=visible_model_buttons(archive)
+    rows=(len(buttons)+2)//3
+    round_button=(12,576+rows*48,208,620+rows*48)
+    panel = np.zeros((round_button[3] + 36, PREVIEW_WIDTH, 3), dtype=np.uint8)
     panel[:PREVIEW_HEIGHT] = preview
     cv2.rectangle(panel, BUTTON[:2], BUTTON[2:], (235, 235, 235), -1)
-    text = prompt or 'Save confusion [Space]'
+    text = prompt or 'Save example [Space]'
     cv2.putText(panel, text, (24, 516), cv2.FONT_HERSHEY_SIMPLEX, .65, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.putText(panel, notice or 'Click the button or press Space. Q/Esc: close.',
                 (12, 559), cv2.FONT_HERSHEY_SIMPLEX, .48, (255, 255, 255), 1, cv2.LINE_AA)
-    for i,(key,label,path,rect) in enumerate(MODEL_BUTTONS,1):
+    for key,label,path,rect in buttons:
         color=(120,120,120) if locked else (170,225,170) if key==model_key else (220,220,220)
         cv2.rectangle(panel,rect[:2],rect[2:],color,-1)
-        cv2.putText(panel,f'{label} [{i}]',(rect[0]+8,rect[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.47,(0,0,0),1,cv2.LINE_AA)
-    cv2.rectangle(panel,ROUND_BUTTON[:2],ROUND_BUTTON[2:],(120,120,120) if locked else (220,220,220),-1)
-    cv2.putText(panel,'New round [N]',(24,700),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
+        shortcut = model_shortcut(key)
+        cv2.putText(panel,f'{label} [{shortcut}]',(rect[0]+8,rect[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.47,(0,0,0),1,cv2.LINE_AA)
+    cv2.rectangle(panel,round_button[:2],round_button[2:],(120,120,120) if locked else (220,220,220),-1)
+    cv2.putText(panel,'New round [N]',(24,round_button[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.5,(0,0,0),1,cv2.LINE_AA)
+    cv2.rectangle(panel,(222,round_button[1]),(418,round_button[3]),(120,120,120) if locked else (220,220,220),-1)
+    cv2.putText(panel,'Hide archive [A]' if archive else 'More models [A]',(230,round_button[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.45,(0,0,0),1,cv2.LINE_AA)
     label=f"Round: {round_info['name'][:36]} / {round_info['number']}" if round_info else 'L: toggle landmarks'
-    cv2.putText(panel,label,(12,738),cv2.FONT_HERSHEY_SIMPLEX,.48,(255,255,255),1,cv2.LINE_AA)
+    cv2.putText(panel,label,(12,round_button[3]+22),cv2.FONT_HERSHEY_SIMPLEX,.48,(255,255,255),1,cv2.LINE_AA)
     if round_info:
-        cv2.putText(panel,'L: landmarks',(232,700),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
+        cv2.putText(panel,'L: landmarks',(442,round_button[1]+28),cv2.FONT_HERSHEY_SIMPLEX,.44,(255,255,255),1,cv2.LINE_AA)
     return panel
 
 
@@ -109,13 +117,15 @@ def snapshot_mouse(event, x, y, flags, state):
     if state.get('annotating') or event != cv2.EVENT_LBUTTONDOWN:
         return
     if not state.get('model_locked'):
-        for key,label,path,rect in MODEL_BUTTONS:
+        for key,label,path,rect in visible_model_buttons(state.get('archive',False)):
             if rect[0]<=x<=rect[2] and rect[1]<=y<=rect[3]:
                 state['model_request']=key
                 return
-    if not state.get('model_locked') and ROUND_BUTTON[0]<=x<=ROUND_BUTTON[2] and ROUND_BUTTON[1]<=y<=ROUND_BUTTON[3]:
-        state['round_request']=True
-        return
+    rows=(len(visible_model_buttons(state.get('archive',False)))+2)//3
+    round_y=576+rows*48
+    if not state.get('model_locked') and round_y<=y<=round_y+44:
+        if 12<=x<=208:state['round_request']=True;return
+        if 222<=x<=418:state['archive']=not state.get('archive',False);return
     if BUTTON[0] <= x <= BUTTON[2] and BUTTON[1] <= y <= BUTTON[3]:
         state['requested'] = state.get('shown')
 
@@ -137,7 +147,8 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
     capture = cv2.VideoCapture(camera)
     detector = None
     window_open = False
-    state = {"shown": None, "requested": None, "model_request":None, "model_locked":bool(protocol)}
+    state = {"shown": None, "requested": None, "model_request":None, "model_locked":bool(protocol),
+             "archive":bool(model_key and model_key not in PRIMARY_KEYS)}
     round_info = new_round(round_name)
     show_landmarks = not getattr(protocol,'hide_landmarks',False)
     capture_ready_at = 0.
@@ -155,8 +166,10 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_open = True
         cv2.setMouseCallback(WINDOW, snapshot_mouse, state)
-        print('Camera started. Select a model below or press 1-6. N: new round. L: landmarks. Space: capture. Q/Esc: close.', flush=True)
+        print('Camera started. [1] Reference, [2] World joints, [9] G/H y180; [7/8/0] left/right controls. A: model archive. N: new round. L: landmarks. Space: save example (correct or incorrect). Q/Esc: close.', flush=True)
         while True:
+            if protocol and (protocol.directory/'withdrawn.json').exists():
+                raise ValueError('This capture round was withdrawn. Close the window and start a new session.')
             if state.pop('round_request',False) and not protocol:
                 round_info=new_round(round_name,round_info['number']+1)
                 state['shown']=None;state['requested']=None
@@ -175,6 +188,7 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                     print(f'{label} could not be loaded: {error}',flush=True)
                 else:
                     model_path=path;model_key=key;model_label=label
+                    if key not in PRIMARY_KEYS:state['archive']=True
                     state['shown']=None;state['requested']=None
                     print(f'Selected model: {label}',flush=True)
             ok, frame = capture.read()
@@ -205,7 +219,7 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                     prompt=f"{getattr(protocol,'participant_label',protocol.current['participant'])}: press Enter to begin" if participant_pending else None,
                     notice='Check participant and hand. Enter starts the round.' if participant_pending else notice if time.monotonic()<notice_until else None))
             else:
-                cv2.imshow(WINDOW, camera_panel(preview, prompt='Take planned photo [Space]' if protocol else None, notice=protocol.label() if protocol else notice if time.monotonic() < notice_until else f'Model: {model_label} | Space: capture | Q/Esc: close', model_key=model_key, locked=bool(protocol), round_info=packet['capture_round']))
+                cv2.imshow(WINDOW, camera_panel(preview, prompt='Take planned photo [Space]' if protocol else None, notice=protocol.label() if protocol else notice if time.monotonic() < notice_until else f'Model: {model_label} | Space: capture | Q/Esc: close', model_key=model_key, locked=bool(protocol), round_info=packet['capture_round'],archive=state['archive']))
             key = cv2.waitKey(1) & 0xFF
             if key in (27, ord('q'), ord('Q')):
                 break
@@ -213,10 +227,14 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                 state['requested']=None
                 if key in (10,13):protocol.participant_confirmed=protocol.current['participant']
                 continue
-            if ord('1')<=key<ord('1')+len(MODEL_CHOICES) and not protocol:
+            if ord('1')<=key<=ord('9') and not protocol:
                 state['model_request']=MODEL_CHOICES[key-ord('1')][0]
+            if key==ord('0') and len(MODEL_CHOICES)>=10 and not protocol:
+                state['model_request']=MODEL_CHOICES[9][0]
             if key in (ord('n'),ord('N')) and not protocol:
                 state['round_request']=True
+            if key in (ord('a'),ord('A')) and not protocol:
+                state['archive']=not state['archive']
             if key in (ord('h'),ord('H')) and hasattr(protocol,'toggle_guidance'):
                 protocol.toggle_guidance()
             if key in (ord('l'),ord('L')):
@@ -236,7 +254,9 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                         confirmed, annotation = confirm_expected(frozen_preview, chosen['protocol']['task']['letter'], fixed=True,
                             **({'panel_renderer':protocol.render_panel} if hasattr(protocol,'render_panel') else {}))
                     else:
-                        confirmed, annotation = confirm_expected(frozen_preview, expected)
+                        confirmed, annotation = confirm_expected(frozen_preview, expected,
+                            panel_renderer=lambda p,prompt,note:camera_panel(p,prompt,note,
+                                model_key=model_key,locked=True,round_info=chosen['capture_round'],archive=state['archive']))
                 finally:
                     state['annotating'] = False
                     state['requested'] = None

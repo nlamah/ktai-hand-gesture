@@ -1,0 +1,30 @@
+{
+  "kind": "Vector explanatory diagrams; stylized coordinates, not measured landmarks or classification results.",
+  "figure": "paper/figures/feature_concepts_nl.pdf",
+  "figure_sha256": "2120d8a986753719d4a2c1bda2e0d9fe3e775457ec012ec3232462643c44b7ac",
+  "script_sha256": "e79212d7b9270b09d182ba9837cf8a3c6e1a2da8cad2a20f16a7119d1c4b7717",
+  "screenshot": "paper/figures/feature_tool_screenshot.png",
+  "screenshot_sha256": "d196b7c43e9cbdc31396eff5796c9005b4c41e791bd7a7dd12d6c84ca35ab92b",
+  "screenshot_source": "User-supplied Screenshot 2026-11-07 at 14.10.54.png; copied unchanged",
+  "screenshot_zoom_pixel_boxes": {
+    "index_pip": [
+      617,
+      655,
+      807,
+      715
+    ],
+    "spread_index_middle": [
+      225,
+      725,
+      414,
+      788
+    ]
+  },
+  "technical_sources_sha256": {
+    "research/geometry.py": "92ab102ba119976ed84ccfcac272c9c42c4a1270f308bfb64caf849a2cab5b2a",
+    "research/workbook.py": "9ef50ee5b90b58b1780e1dd81a24cf7d84ca20e384eeffb27cc57bfd854c96b9",
+    "config/thresholds.json": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd",
+    "assets/asl_feature_references.xlsx": "0b396e53d2b7a99147c5984c0c3c2144ce0054016c46b221e1fb9ee1dc7a71ef"
+  },
+  "interpretation": "Not-spread does not imply contact. Crossing is suspected. Thumb-over-palm concept is approximated by signed MCP deviation, not a palm-area overlap detector."
+}

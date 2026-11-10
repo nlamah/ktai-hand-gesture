@@ -1,82 +1,66 @@
-# Capture G and H from four viewpoints
+# G/H capture with explicit hand-position instructions
 
-We test whether the same intended letter is recognized differently when the palm or the back of the hand faces the camera. The same saved images are subsequently compared across the existing models. This is a first paired viewpoint experiment: the views are qualitative categories, not measured rotation angles.
+This is an optional collection protocol. See [RQ3/README.md](../RQ3/README.md) for completed experiments and the [live guide](LIVE_TESTPLAN.md) for free model comparisons.
 
-![Four hand viewpoints](../assets/gh_viewpoint_guide.png)
-
-The image is an AI-generated orientation guide showing an open hand. It does not demonstrate a G or H sign and is not an authoritative ASL instruction.
-
-## Required images
-
-Three participants (P01, P02, P03) each capture 40 photos:
-
-| Viewpoint | G | H |
-|---|---:|---:|
-| Palm directly facing the camera | 5 | 5 |
-| Oblique palm view; part of the palm remains visible | 5 | 5 |
-| Oblique back view; part of the back remains visible | 5 | 5 |
-| Back of the hand directly facing the camera | 5 | 5 |
-| Total per participant | 20 | 20 |
-
-Total: 120 photos, or 80 with two participants. The additional oblique back view replaces the earlier three-view plan of 60/90 photos.
-
-Form the same intended G or H with the same hand throughout. For G the index finger is extended and the middle, ring and little fingers are bent; for H both the index and middle fingers are extended. Keep the thumb position consistent within each letter. The open hand in the guide only illustrates orientation. Relax and form the sign again for every attempt, rather than saving five nearly identical video frames.
-
-Use the same camera, lighting, background and approximate distance. Include the whole hand and wrist, preferably without the face. Keep the position and direction of extended fingers as consistent as possible when changing the visible side. Some variation remains: this is not a calibrated 3D rotation experiment. Obtain participants' consent before storing photos locally.
-
-The default is the right hand for everyone. Another choice can be recorded at startup, but each participant must use the same selected hand throughout. Handedness is a possible additional factor to report in the analysis.
+The two guided sessions from 7 November were withdrawn because execution was incorrect. Their captures and derived examples are excluded from the current study. The exclusion record is `results/gh_capture_reset_20261107/withdrawal.json`; withdrawn sessions cannot be resumed.
 
 ## Start
 
-Close other camera apps and windows. From the repository root:
+Close other camera windows and run from the repository root:
 
 ```bash
 conda activate ktai-hand-gesture
-python -m research.gh_view_capture
+python -m research.gh_view_capture --participants 1
 ```
 
-The camera starts only when this command runs. The terminal prints the session directory. Every start without `--resume` creates a new session.
+This plans 40 attempts: two letters, four views and five repetitions. Use `--participants 2` or `--participants 3` for more people; the default is three. Each new session receives a new directory. You can pause and resume.
 
-For two participants:
+## Hand position
 
-```bash
-python -m research.gh_view_capture --participants 2
-```
+The large panel beside the camera shows:
 
-If P01 and P03 use the right hand and P02 uses the left:
+1. **Hand:** use the specified physical right or left hand. A reflected preview does not change which hand you use.
+2. **Letter:** for G, extend the index finger and thumb approximately parallel and bend the other fingers. For H, extend the index and middle fingers together, bend the ring/little fingers and fold the thumb.
+3. **View:** form the letter first, then turn the whole hand while preserving finger shape. Screen pointing direction may change naturally.
 
-```bash
-python -m research.gh_view_capture --hands right left right
-```
+| Instruction | Camera view |
+|---|---|
+| PALM TOWARDS CAMERA | Palm visible; knuckles face away. Experimental palm control. |
+| OBLIQUE: PALM VISIBLE | Turn roughly 45 degrees from the palm control; part of the palm stays visible. |
+| OBLIQUE: BACK VISIBLE | Turn roughly 45 degrees from the hand-back view; part of the back stays visible. |
+| BACK TOWARDS CAMERA | Knuckles and hand back visible; palm faces away. |
+
+The diagram is a **top view**: orange marks the palm side, blue the back, and the camera is below. **The arrow indicates palm direction, not finger direction.** It is a schematic, not an anatomical model. Angles are qualitative instructions, not calibrated measurements.
+
+[ASL University](https://www.lifeprint.com/asl101/topics/feedback.htm) describes inward/sideways palms for usual G/H. Palm-facing attempts are an experimental control. Review execution beforehand, preferably with someone familiar with ASL.
 
 ## Controls
 
-1. Check the participant code and requested hand. Press Enter to start that participant.
-2. Read the requested letter, viewpoint and repetition. The fixed sequence alternates conditions to limit order effects.
-3. Form the sign and press Space or click the capture button.
-4. The selected frame freezes. Press Enter to save the attempt. The intended letter is prefilled and locked.
-5. Relax and follow the next task. After 40 photos, the tool explicitly asks for the next participant.
+- **Enter at the start:** confirm participant and hand.
+- **Space or capture button:** freeze the frame.
+- **Enter after capture:** save the attempt with its fixed intended letter.
+- **Esc during confirmation:** retry a procedure error, such as forming the wrong requested letter.
+- **Q/Esc in the live view:** pause and release the camera.
 
-Save every planned attempt, including failed detections. Predictions are hidden to prevent outcome-driven adjustment. Use Esc on the confirmation screen only for a procedural mistake, such as the wrong participant or sign, or an accidental keypress; do not replace a classifier error. Q/Esc in the live window pauses the session and releases the camera.
+Predictions remain hidden. Keep classification errors and failed detections. Relax and reform the sign between attempts. Keep hand, camera, distance and lighting consistent, with the whole hand and wrist visible.
 
-## Pause and resume
+## Resume
 
-Use the actual session directory printed at startup:
+Use the actual session directory printed by the terminal:
 
 ```bash
 python -m research.gh_view_capture --resume captures/gh_viewpoint/GH_views_DATE_ID
-```
-
-The tool counts finalized captures and continues with the first missing task. Confirm the current participant again after resuming. To inspect progress without opening the camera:
-
-```bash
 python -m research.gh_view_capture --resume captures/gh_viewpoint/GH_views_DATE_ID --status
 ```
 
-## Saved information and evaluation
+New sessions record instruction version `explicit-gh-pose-v3` and the English display version `large-en-gh-guidance-v1`. Keep display/instruction versions identifiable when comparing sessions.
 
-Each photo has its own directory containing the unchanged camera frame, exact detector input, a preview without the predicted letter, and `capture.json`. Metadata include participant code, requested hand, intended letter, viewpoint, repetition, detection status, landmarks, features, model hash and hidden prediction. `session.json` stores the fixed plan and comparison-model hashes. Captures remain local under `captures/gh_viewpoint/` and are not training data.
+## Storage and interpretation
 
-P01 is development. Reserve P02 and P03 for checking a predefined approach. Two additional participants still do not justify population-wide claims. With frozen models, compare viewpoints within each participant. Report detection coverage, accuracy, macro-F1 and G/H confusion by participant and viewpoint, acknowledging the small sample. Do not adapt a model using results intended as a final check.
+Each saved attempt includes the original frame, exact detector input, preview without a prediction and `capture.json`: intended letter, participant, hand, view, status, landmarks and model information. Both comparison models later receive the same saved inputs; collection does not train a model.
 
-Legacy Dutch viewpoint IDs remain in saved metadata for compatibility; the interface displays English labels.
+P01 is development. Additional participants are reserved evaluation only while model and analysis choices remain fixed. Captures stay local under `captures/gh_viewpoint/` and are not automatically training data. There is no current public evaluator for a newly collected G/H session; the existing `live_examples` workflow concerns four fixed free captures.
+
+## Occlusion experiment already completed
+
+Landmark rotation alone cannot hide a finger or produce new detector errors. A coarse source-derived hand volume was rendered and redetected: MediaPipe accepted 0/128 renders versus 64/64 source photographs. A separate 2%/5% hidden-point noise proxy trained ten fold models but added no gain over pure rotation on the original or clean artificially rotated tests. These are not validated hand-back observations. Results and commands are in [the RQ3 guide](../RQ3/README.md); deployment models were not replaced.

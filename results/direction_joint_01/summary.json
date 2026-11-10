@@ -1,0 +1,137 @@
+{
+  "images": 60251,
+  "folds": 5,
+  "metrics": [
+    {
+      "model": "svm",
+      "variant": "shin",
+      "fold": "pooled",
+      "features": 820,
+      "images": 60251,
+      "accuracy": 0.9763655375014523,
+      "macro_f1": 0.9738623512517159
+    },
+    {
+      "model": "svm",
+      "variant": "distance_joint",
+      "fold": "pooled",
+      "features": 205,
+      "images": 60251,
+      "accuracy": 0.945112944183499,
+      "macro_f1": 0.9437966279619174
+    },
+    {
+      "model": "svm",
+      "variant": "shin_joint",
+      "fold": "pooled",
+      "features": 835,
+      "images": 60251,
+      "accuracy": 0.9764319264410549,
+      "macro_f1": 0.9740280224833051
+    },
+    {
+      "model": "svm",
+      "variant": "shin_world",
+      "fold": "pooled",
+      "features": 835,
+      "images": 60251,
+      "accuracy": 0.9774775522397968,
+      "macro_f1": 0.9752439124601125
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin",
+      "fold": "pooled",
+      "features": 820,
+      "images": 60251,
+      "accuracy": 0.9709714361587359,
+      "macro_f1": 0.9678434068595703
+    },
+    {
+      "model": "lightgbm",
+      "variant": "distance_joint",
+      "fold": "pooled",
+      "features": 205,
+      "images": 60251,
+      "accuracy": 0.9394200926125708,
+      "macro_f1": 0.9372669938800401
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin_joint",
+      "fold": "pooled",
+      "features": 835,
+      "images": 60251,
+      "accuracy": 0.9704071301721133,
+      "macro_f1": 0.9674031089109891
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin_world",
+      "fold": "pooled",
+      "features": 835,
+      "images": 60251,
+      "accuracy": 0.970174768883504,
+      "macro_f1": 0.96691985428131
+    }
+  ],
+  "paired_changes": [
+    {
+      "model": "svm",
+      "variant": "shin",
+      "fixed": 0,
+      "lost": 0,
+      "net": 0
+    },
+    {
+      "model": "svm",
+      "variant": "distance_joint",
+      "fixed": 284,
+      "lost": 2167,
+      "net": -1883
+    },
+    {
+      "model": "svm",
+      "variant": "shin_joint",
+      "fixed": 89,
+      "lost": 85,
+      "net": 4
+    },
+    {
+      "model": "svm",
+      "variant": "shin_world",
+      "fixed": 143,
+      "lost": 76,
+      "net": 67
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin",
+      "fixed": 0,
+      "lost": 0,
+      "net": 0
+    },
+    {
+      "model": "lightgbm",
+      "variant": "distance_joint",
+      "fixed": 515,
+      "lost": 2416,
+      "net": -1901
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin_joint",
+      "fixed": 138,
+      "lost": 172,
+      "net": -34
+    },
+    {
+      "model": "lightgbm",
+      "variant": "shin_world",
+      "fixed": 98,
+      "lost": 146,
+      "net": -48
+    }
+  ],
+  "scope": "Same normalized image x/y/z, same samples/folds, fixed project hyperparameters; no new tuning. Earlier world-angle results are context only."
+}

@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "screenshot_byte_identical_to_user_source": true,
+  "screenshot_dimensions": [
+    2606,
+    856
+  ],
+  "schematic_panels": 6,
+  "workbook_check_counts": {
+    "flexion": 13,
+    "spread": 2,
+    "crossing": 1,
+    "thumb_shape": 1,
+    "contact": 2
+  },
+  "feature_rule_source_hashes_unchanged": true,
+  "experiment_prediction_and_model_hashes_unchanged": true,
+  "final_pdf_pages": {
+    "main": 4,
+    "appendix": 11
+  },
+  "feature_pages": [
+    5,
+    6
+  ],
+  "appendix_sha256": "ea89a9c5f879ec13b0c1e053ad6e3c460aec36a776be8f0fe83fc6f0672e9f46",
+  "note": "Feature pages 5/6 and sharp vector cards unchanged. Only the withdrawn G/H camera page was removed; all retained pages are pixel-identical.",
+  "previous_feature_revision_pixel_identical_pages_after_shift": 7,
+  "current_unchanged_appendix_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "original_source_card_crops_visually_read": true,
+  "native_vector_detail_cards": true,
+  "detail_card_text_extractable_from_pdf": true,
+  "expected_values_checked_against_C_workbook": true,
+  "details_provenance": "results/feature_illustrations_01/detail_cards.json",
+  "details_provenance_sha256": "5194b2f8a8d41786f35dfb2350575abd68a12319df8c3f852d9b5f07b503e631",
+  "visually_inspected_updated_page": 6,
+  "current_document_verification": "results/gh_live_diagnostics_20261107/document_verification.json"
+}

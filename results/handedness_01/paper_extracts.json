@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "primary_scope": "accepted_only",
+  "primary_presentation": "original",
+  "reporter_sha256": "d01dfeef2b0f437cff892f3c7b2000024c7af9b7c74defeda4b076374e4884b3",
+  "source_sha256": {
+    "results/handedness_01/metrics.csv": "848039f1e57b11389f3df317df274da019eb4e33434828c3e3607ccbac2e43a7",
+    "results/handedness_01/paired_changes.csv": "400bba04bc35a30aff0fed02ea59a340f1ef6e29cdfe0a1a6c7f3dc1e44ee093",
+    "results/handedness_01/summary.json": "54ff283df18dfbb24667af658ad42cfd4b9e5dd94eb0203a386b1eb6d2b69040",
+    "results/handedness_01/verification.json": "1b20ea7743acaaddfc285e37a873dfa264c08bddaceeea638743c8ba901e4d3a"
+  },
+  "generated_sha256": {
+    "paper/handedness_main_nl.tex": "a850c7ebb7223ebe27eb28a82cf7db18dd714ffa36d98b4614cfe11a98d33051",
+    "paper/handedness_rows_nl.tex": "b2bba3114c3f27fc5378fe3f9c7f722806627d56c6a35d87877564569689df98",
+    "paper/handedness_results_nl.tex": "fabef2b98c074eb7ab736004d3d1cef8597d304504b20c143346e6b6e08847d1",
+    "paper/handedness_counts_nl.tex": "d07bb0dcd27f55c3ba2b60787cb82bf28424c534cae3769a4e9bd6b25e6973b6"
+  }
+}

@@ -1,0 +1,9 @@
+﻿model,variant,fixed,lost,net
+svm,shin,0,0,0
+svm,distance_joint,284,2167,-1883
+svm,shin_joint,89,85,4
+svm,shin_world,143,76,67
+lightgbm,shin,0,0,0
+lightgbm,distance_joint,515,2416,-1901
+lightgbm,shin_joint,138,172,-34
+lightgbm,shin_world,98,146,-48

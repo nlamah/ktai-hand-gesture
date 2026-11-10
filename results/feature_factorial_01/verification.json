@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "models_checked": 80,
+  "metric_rows_recomputed": 96,
+  "paired_rows_recomputed": 96,
+  "letter_rows_recomputed": 416,
+  "held_out_predictions_replayed": 2080,
+  "train_only_scalers_checked": 40,
+  "permutation_interventions_replayed": 30,
+  "permutation_observations_checked": 3900,
+  "historical_DS_and_DSJ_predictions_identical": true,
+  "shared_held_out_subset_and_seed_orders_verified": true,
+  "equivalent_RBF_execution_addendum_checked": true,
+  "results_sha256": {
+    "protocol.json": "03ee30ffe08c96d9cea0ab4b7eb8783157401f92e54c7ebffe361668048b4653",
+    "metrics.csv": "02e02c97abad2a33784d67ad6394f6bbb9538bad05ce15b709632c6b3cb8403b",
+    "per_letter.csv": "ecebf3d68ed328d5ff81cc73d9e728295f08d09d2b87cffea8827f2d317937f5",
+    "paired_changes.csv": "c7b826ca9b1f525f3c1899f5cd5953e5e9f89bac9686c1d7d0b58e07fc6ea64d",
+    "predictions.csv": "62577153f2470df7385b32fdd8221e4efdc757a4084276184f72e9e5d939a12c",
+    "permutation.csv": "e5bbc9f22d98b1eb2647a3f9b9ed0771fdbf3b1ad938e7291d036b9b7b6d34c3",
+    "permutation_summary.csv": "abb4c984270db9125aaa431d59f6960c53da3952ed186b3713c6ac8ba87c7824",
+    "confusions.csv": "e34c4a3590db5e6fbfe1a810897fc5850b64a6235f5cc126d1e8adda6e8d177f"
+  },
+  "scope": "Computational verification; filename folds and permutations do not establish causal feature value or unseen-person performance."
+}

@@ -1,0 +1,8 @@
+{
+  "candidate_sha256": "bf8fd1a3e0c556b517a67ffcfdbba193834e753f28c4049cf27bec49c31e9412",
+  "fresh_original_sha256": "c07c8ce5e314dd1806678daf1bd533473cb22061b305a314d59be8c629c9ec7b",
+  "training_sources": 60251,
+  "GH_sources": 4801,
+  "training_rows": 65052,
+  "calibration_sources": 0
+}

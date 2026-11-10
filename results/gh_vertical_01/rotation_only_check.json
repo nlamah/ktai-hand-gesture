@@ -1,0 +1,13 @@
+{
+  "model_path": "runs/gh_vertical_01/rotation_only.joblib",
+  "model_sha256": "e840affbaab5ca83c37c8455065ec04144c68bd9df8ca1d625d888387a5e6a1c",
+  "training_rows": 128736,
+  "calibration_sources": 0,
+  "replayed_selected_captures": 22,
+  "source_sha256": {
+    "research/gh_vertical.py": "e83c90c83efbb1355928db378fabf51c58c379ac9822d0d68c4a4ef81ef74440",
+    "research/studies/gh_vertical_adaptation.py": "1c971a4b955adb5c07809a0d874167da29c39f7bccae9af69469da31a118f574",
+    "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/research/studies/check_gh_vertical_only.py": "4923b1010b3560c2cb71d4684b235ffa4a608052f6cdf4d1816e1536de055ad2"
+  },
+  "role": "Ablation on previously inspected development examples; no independent accuracy claim and no cross-validation for this arm"
+}

@@ -1,0 +1,70 @@
+{
+  "unit_tests_passed": 123,
+  "model_choices": [
+    "Reference",
+    "World joints",
+    "G/H y180 only",
+    "Fresh original",
+    "Mirror trained",
+    "Right normalized"
+  ],
+  "landmarks_projection_and_raw_frame_preservation_tested": true,
+  "round_boundary_and_GH_snapshot_model_alignment_tested": true,
+  "round_metadata_serialization_tested": true,
+  "rendered_panel_visually_inspected": true,
+  "physical_webcam_session_tested": false,
+  "projected_angle_schema_serialization_tested": true,
+  "sixth_model_and_new_round_hit_regions_tested": true,
+  "status": "passed",
+  "model_archive_choices": [
+    "All-letter tilt",
+    "C-only tilt",
+    "G/H rotation",
+    "Image + depth"
+  ],
+  "browser_model_selection_and_exact_frame_capture_AppTest": "passed",
+  "failed_browser_detection_capture_tested": true,
+  "model_shortcuts_preserved": {
+    "reference": "1",
+    "angles": "2",
+    "GH_back": "9",
+    "mirror_base": "7",
+    "mirror": "8",
+    "right_hand": "0"
+  },
+  "rendered_native_panel_sizes": {
+    "primary": [
+      640,
+      752
+    ],
+    "archive": [
+      640,
+      848
+    ]
+  },
+  "browser_initial_layout_visually_inspected": true,
+  "verification_details": "results/live_cleanup_01/verification.json",
+  "GH_capture_guidance": {
+    "size": [
+      1160,
+      752
+    ],
+    "language": "Dutch",
+    "font_sizes_px": [
+      18,
+      20,
+      21,
+      23,
+      24,
+      25,
+      27,
+      29,
+      52
+    ],
+    "original_640x480_preview_unchanged": true,
+    "diagram_arrow_means_palm_normal": true,
+    "guidance_version": "large-nl-gh-guidance-v1",
+    "single_participant_option": true
+  },
+  "current_verification_details": "results/gh_capture_reset_20261107/verification.json"
+}

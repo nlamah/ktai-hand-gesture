@@ -1,0 +1,69 @@
+{
+  "status": "passed; complete group assets included",
+  "variant": "paste-ready main with all own TeX inputs inlined",
+  "main_tex_sha256": "8b1eb4bbce325ac5c7c71d07297b105ec33900c708ddecca9a1cb120dee09e8d",
+  "inlined_table_sources_sha256": {
+    "ton_feature_rows_en.tex": "3bdcfb20cd9826b72662b9be4085d899a6fab7fd486ab37879b48d1881aceddc",
+    "ton_paired_rows_en.tex": "d7f04f428015dd36a236e19285965ab5491e8eb4aa371f000259dc38bc8a918c",
+    "ton_orientation_rows_en.tex": "377127c35aa4b068071b88914c450dd9711e1428552d362c5f65828d6db198ec",
+    "ton_gh_rows_en.tex": "cfa7dc4729a8fb05a60aa33f71183119ff66621a88718879da355e580ad674d0"
+  },
+  "inlined_appendix_sha256": "f8aef6ba6aae9be879883124a3d014719ac4f2cf6437ef872210ce1b251ca5d1",
+  "embedded_bibliography_sha256": "ff6058bd9cea04318bd27b212745437eb8ee956b7a665924863a07d4ae66141a",
+  "coauthor_blocks_verbatim": [
+    "RQ1_methods",
+    "RQ1_results",
+    "RQ1_discussion",
+    "RQ2_intro",
+    "RQ2_datasets",
+    "RQ2_implementation",
+    "RQ2_results",
+    "RQ2_discussion"
+  ],
+  "coauthor_inputs_preserved": true,
+  "own_figures_optional_with_explicit_placeholders": [],
+  "original_group_assets_not_reconstructed": true,
+  "compilation_cases": {
+    "with_figures": {
+      "pages": 14,
+      "all_pages_pixel_identical_between_current_modular_and_paste_versions": true
+    }
+  },
+  "generated_bibliography": "ton_inline_refs.bib; generated from inline content, separate from existing editable bibliographies",
+  "preview_pdf_sha256": "e33bd3b1ddd5d0e978d3f2e3030a69a861716fd4c5f58bd2447b293845bb72bf",
+  "inherited_unresolved_labels": [],
+  "new_unresolved_labels": false,
+  "expected_group_inputs_still_required": [
+    "code-snippets/settings-all-run.tex",
+    "code-snippets/repeatability.tex",
+    "code-snippets/n47-example.tex",
+    "figures/recovery_by_variant.pdf"
+  ],
+  "overfull_boxes": {
+    "horizontal": 0,
+    "vertical": 0
+  },
+  "coauthor_translation_only_changes": [],
+  "language": "Own contribution English; supplied coauthor prose unchanged",
+  "named_boundary_comments_removed": true,
+  "inlined_prose_sources_sha256": {
+    "ton_discussion_en.tex": "b032619e1d978df94f6e682d283ddfb6ef09db3f7937d712570a41fc139d72d6",
+    "ton_related_en.tex": "5d5f6c0ae9ab8a142d87db4949bdcc29714e8191292587f234fe6d567cac8d32",
+    "ton_methods_en.tex": "e0fead0b0c883f0a3521d4c3010af2ab42292515ab5e119b66bd0bc640d1d06d",
+    "ton_results_en.tex": "a87366c0c6793536a62552a049352abfd52fac298058d174408278a254b35cb1",
+    "ton_dataset_en.tex": "df2ac9f977c59ae463b751bd74dde84008c43d2ef0a2f8e1b917c33f81b5a890",
+    "ton_implementation_en.tex": "1c2d9b64d6fe2fd8474a43d0c32579969b385bd88c5078a7b95c2ef7f157f8b9"
+  },
+  "coauthor_printed_blocks_unchanged": [
+    "RQ1_methods",
+    "RQ1_results",
+    "RQ1_discussion",
+    "RQ2_intro",
+    "RQ2_methods",
+    "RQ2_datasets",
+    "RQ2_implementation",
+    "RQ2_results",
+    "RQ2_discussion"
+  ],
+  "group_inputs_included": true
+}

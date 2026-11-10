@@ -1,0 +1,71 @@
+{
+  "version": "gh-occlusion-proxy-v1",
+  "renderer": "landmark-volumes-depthbuffer-v1",
+  "renderer_parameters": {
+    "resolution": 384,
+    "finger_base_radius": 0.13,
+    "finger_tip_radius": 0.085,
+    "thumb_radius": 0.16,
+    "palm_half_thickness": 0.16,
+    "wrist_length": 0.65,
+    "wrist_radius": 0.25,
+    "skin_rgb": [
+      213,
+      161,
+      123
+    ],
+    "background_rgb": [
+      226,
+      230,
+      233
+    ]
+  },
+  "render_screen": "64 fixed accepted G/H sources, 32 per class, lowest SHA256(id+screen-v1); original RGB, volume 0 and volume 180 degrees",
+  "screen_detector": "MediaPipe 0.10.35 IMAGE; detection and presence thresholds 0.5; no threshold tuning",
+  "proxy": "Rotate image/world landmarks around wrist by diag(-1,1,-1); add deterministic Gaussian xyz noise only to finger joints hidden behind another component in volume render",
+  "hidden_candidates": [
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    10,
+    11,
+    12,
+    14,
+    15,
+    16,
+    18,
+    19,
+    20
+  ],
+  "noise_sigma_palm_length": {
+    "noise002": 0.02,
+    "noise005": 0.05
+  },
+  "noise_coupling": "Same standard-normal vector for image/world, each scaled by its own wrist-to-middle-MCP length; source-ID seed; same vector across both strengths",
+  "visibility_assumptions": "Fixed approximate finger radii and palm thickness; source palm-facing assumption; no anatomical fit or measured detector error distribution",
+  "training": "Only original fitting sources; original GH 0.5 plus one noisy rotated copy 0.5; other letters 1; original-only scaling, gamma and class weights",
+  "evaluation": "Same five frozen filename-block folds; same 60251 accepted original images, 26 letters, pooled macro precision/F1; no test augmentation",
+  "controls": [
+    "original",
+    "gh_y180"
+  ],
+  "selection": "Two fixed exploratory strengths; no best-arm deployment or claim of confirmatory testing; this dataset has been inspected before",
+  "withdrawn_capture_sources": 0,
+  "new_real_dorsal_test_sources": 0,
+  "claim_limit": "Original-view regression/robustness only; no evidence of improved real dorsal-camera recognition. Synthetic render detector failures are reported, never replaced with supplied landmarks.",
+  "inputs": {
+    "data/asl_kaggle/manifest.json": "ff04b8e95e280109416799fa69d955861113a3908aeda583fe36ea2ef8ca3d35",
+    "data/asl_kaggle/research/inputs.npz": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
+    "data/asl_kaggle/research/inputs_metadata.json": "1e8d7c66cf2ffadca8b780a24d315b804def7f97ac8ecd7076be2a8601d38e6b",
+    "data/asl_kaggle/research/summary.json": "c3212bfe77c124e5cb84a6acaf4034c074c7918b77ab1e51849be224b36df0d5"
+  },
+  "source_sha256": {
+    "research/synthetic_hand.py": "24abefa21904ca68bb3a053637dc066458babc2046f481f837a7a6276f760eb4",
+    "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/research/studies/gh_occlusion.py": "f807bf2b4a9c43475506698d223a5124d0593622a0b5285aa742356401c3a00a",
+    "research/live_model.py": "672139a183392be7ae1e3c6ca5f112536855080b8264b07ada588cad3bd26af6",
+    "research/geometry.py": "92ab102ba119976ed84ccfcac272c9c42c4a1270f308bfb64caf849a2cab5b2a"
+  }
+}

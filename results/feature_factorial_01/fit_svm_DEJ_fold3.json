@@ -1,0 +1,18 @@
+{
+  "model": "svm",
+  "variant": "DEJ",
+  "fold": 3,
+  "inputs": 275,
+  "training_images": 48852,
+  "test_images": 11399,
+  "seconds": 17.802136124984827,
+  "training_ids_sha256": "5663717ad17e58c23cdc2de0dbb32b72f9bac3d959471d4227f97d0280ee8c91",
+  "test_ids_sha256": "331743d4ca22b0f4cfffab6dda1f7a76e45acda71a6fb8b79473b9193c2086f3",
+  "estimator_sha256": "5ab00b5b51dab1c7daccf5dd8f150e794ad56922beef02cc43e9b17ffa3af6a7",
+  "images": 11399,
+  "correct": 11189,
+  "accuracy": 0.9815773313448548,
+  "macro_precision": 0.981245932936506,
+  "macro_recall": 0.9793970160808902,
+  "macro_f1": 0.9800124926334208
+}

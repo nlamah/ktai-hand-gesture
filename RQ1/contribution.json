@@ -1,0 +1,8 @@
+{
+  "question": "Does targeted data collection reduce confusion between certain letters more effectively than general data collection?",
+  "status": "paper_text_supplied_code_missing",
+  "entry_point_to_supply": "RQ1/experiment.py:main",
+  "shared_baseline": "baseline.shin.combined_features (DS, 820 inputs)",
+  "outputs": "results/RQ1/; per-source test predictions, fold IDs, precision/F1 and settings",
+  "note": "RQ1 methods, results and two tables supplied in the latest group source; executable code and raw experiment inputs have not been supplied."
+}

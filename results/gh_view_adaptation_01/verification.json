@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "metric_rows": 72,
+  "per_letter_rows": 312,
+  "paired_rows": 36,
+  "fold_replay_predictions_per_arm": 260,
+  "capture_replays": 22,
+  "calibration_reencodings": 6,
+  "model_sha256": "3fda207e3e96ceace3d25d5e70f0650c6f1181ba2c3220a15cb687a118b161bd",
+  "predictions_sha256": "3b34e396488a368542e83524bbbbe6c2c8b3ebbcb59c65dc6cd65e8b85989232",
+  "note": "Calibration replay is training fit. Source-group CV does not measure unseen back-of-hand accuracy."
+}

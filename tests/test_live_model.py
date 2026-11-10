@@ -69,7 +69,7 @@ class LiveModelTests(unittest.TestCase):
                  patch('research.live_model.predict_letter', return_value={'letter': 'O', 'alternatives': ['D', 'C']}):
                 app = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py')).run()
                 self.assertEqual(len(app.exception), 0)
-                camera = next(t for t in app.toggle if t.label == 'Webcam on')
+                camera = next(t for t in app.toggle if t.label == 'Camera on')
                 self.assertFalse(camera.disabled)
                 app.session_state['asl_live_feature_last_detection'] = detection()
                 camera.set_value(True).run()
@@ -81,5 +81,5 @@ class LiveModelTests(unittest.TestCase):
                 app.run()
                 self.assertEqual(app.metric[0].value, '—')
                 self.assertEqual(len(app.exception), 0)
-                next(t for t in app.toggle if t.label == 'Webcam on').set_value(False).run()
+                next(t for t in app.toggle if t.label == 'Camera on').set_value(False).run()
                 self.assertEqual(app.metric[0].value, '—')

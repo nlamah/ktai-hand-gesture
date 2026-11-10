@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "source_images": 60251,
+  "metric_rows": 12,
+  "per_letter_rows": 312,
+  "paired_rows": 6,
+  "fold_model_replay_predictions": 260,
+  "capture_replays": 22,
+  "historical_OOF_baseline_exact_match": true,
+  "training_only_preprocessing_verified": true,
+  "no_mirrors_calibration_or_router": true,
+  "candidate_sha256": "bf8fd1a3e0c556b517a67ffcfdbba193834e753f28c4049cf27bec49c31e9412",
+  "predictions_sha256": "29fe3bbe7f89a139eddd43c0c6e72f905dbdffce0d09fc1789b74ef29931d121"
+}
