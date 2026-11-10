@@ -1,6 +1,6 @@
 # ASL alphabet: shared baseline and three research questions
 
-This is the instructor's reproduction guide. The project recognizes **static A–Z images** using MediaPipe landmarks and a letter classifier. It does not model continuous signing or the movements of J and Z.
+This is the instructor's reproduction guide. The project recognizes **static AÃ¢â‚¬â€œZ images** using MediaPipe landmarks and a letter classifier. It does not model continuous signing or the movements of J and Z.
 
 The numbering follows the supplied **group paper**:
 
@@ -8,10 +8,10 @@ The numbering follows the supplied **group paper**:
 |---|---|---|
 | Shared baseline | Shin distances and directions: **DS, 820 inputs** | [baseline/](baseline/), available |
 | RQ1 | Targeted versus general data collection | [RQ1/](RQ1/), methods/results supplied; executable code missing |
-| RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2/](RQ2/), paper text supplied; executable code missing |
+| RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2 guide](RQ2/README.md), implemented; detection recovery and visual assessment |
 | RQ3 | Own hand-shape features and joint measurements, with/without Shin directions | [RQ3 guide](RQ3/README.md), implemented; includes brief practical explorations |
 
-**The complete group study requires the missing RQ1/RQ2 code.** The shared baseline, RQ3 and supporting controls below are available. The supplied RQ2 paper results are not an executable implementation in this repository.
+**The complete group study still requires the missing RQ1 code.** RQ2 is available through `python -m RQ2`; see its guide for raw-image inputs, running, verification and reporting. The shared baseline, RQ3 and supporting controls below are also available.
 
 ## 1. Install and check
 
@@ -44,7 +44,7 @@ These are our fixed model profiles using Shin features, not an exact replication
 ```text
 baseline/         Shared Shin interface, classifier profiles, checks and input export
 RQ1/              Integration slot for targeted/general augmentation
-RQ2/              Integration slot for image preprocessing and detection recovery
+RQ2/              Public interface and guide for image preprocessing and detection recovery
 RQ3/              Public experiment workflows and the RQ3 guide
 research/         Shared processing, live tools and fixed numerical implementations
 research/studies/ Numerical implementations called by the RQ3 workflows
@@ -104,7 +104,7 @@ python -m research.dataset import --source /path/to/asl-alphabet --project data/
 python -m zipfile -e /path/to/paper_inputs_20261108.zip .
 ```
 
-Only the 78,000 A–Z training images are in scope; `space`, `del` and `nothing` are excluded. Supplied test images that duplicate training images are not an independent test. The original inventory contains 60,251 accepted single hands, 17,598 `no_hand` results and 151 multiple-hand detections.
+Only the 78,000 AÃ¢â‚¬â€œZ training images are in scope; `space`, `del` and `nothing` are excluded. Supplied test images that duplicate training images are not an independent test. The original inventory contains 60,251 accepted single hands, 17,598 `no_hand` results and 151 multiple-hand detections.
 
 ## 4. Retrain the shared baseline
 
@@ -141,7 +141,7 @@ python -m RQ3 features --dry-run
 python -m RQ3 features
 ```
 
-`features` runs input checks, training, permutation tests, export, independent verification and reporting. It fits **80 fold models**: eight representations × two learners × five folds. D is always present; S, E and J are switched on/off: DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. The full representation has 905 inputs.
+`features` runs input checks, training, permutation tests, export, independent verification and reporting. It fits **80 fold models**: eight representations Ãƒâ€” two learners Ãƒâ€” five folds. D is always present; S, E and J are switched on/off: DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. The full representation has 905 inputs.
 
 Classification uses 60,251 accepted images. Permutation uses 13,000 fixed held-out images and 3,900 group interventions, without refitting. The optimized SVM route checks parity with ordinary classifier predictions. Matching checkpoints under `runs/feature_factorial_01/` are resumable; the complete run is computationally expensive.
 
@@ -178,7 +178,7 @@ Use the supplied deployment models without retraining:
 python -m research.live_camera
 ```
 
-Choose **1** for DS, **2** for DSJ, **9** for G/H rotation, **7/8** for the matched mirror reference/mirror-trained models and **0** for right normalization. The default is DSJ. **Space → intended letter → Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
+Choose **1** for DS, **2** for DSJ, **9** for G/H rotation, **7/8** for the matched mirror reference/mirror-trained models and **0** for right normalization. The default is DSJ. **Space Ã¢â€ â€™ intended letter Ã¢â€ â€™ Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
 
 For the browser feature tool:
 
@@ -192,7 +192,7 @@ Select a model, enable **Camera on**, optionally enter the intended letter and u
 
 The current group contribution is in [group_report.tex](paper/group_integration/group_report.tex), with an equivalent [paste-ready version](paper/group_integration/group_report_paste_ready.tex). The [transfer package](paper/group_integration_ton.zip) includes the supplied group figures, bibliography and code appendices. The shortened body fits five pages; references continue onto page 6. See the [integration steps](docs/GROUP_INTEGRATION.md) before updating a newer group main. The own contribution uses six references.
 
-The original group illustration and code appendices are now included, and the N47 reference resolves. Executable RQ1/RQ2 code, raw experiment inputs and the shared abstract still need to be supplied. Existing coauthor prose and code remain unchanged.
+The original group illustration and code appendices are now included, and the N47 reference resolves. Executable RQ1 code, separately distributed raw experiment inputs and the shared abstract still need to be supplied. RQ2 detection recovery is implemented; see its guide. Existing coauthor prose and code remain unchanged.
 
 The standalone [working paper](paper/report.pdf) and [technical supplement](paper/appendix.pdf) can be built with Tectonic:
 
@@ -203,11 +203,11 @@ tectonic --only-cached -o paper paper/appendix.tex
 
 A fresh Tectonic installation may first need a run without `--only-cached` to download standard TeX resources. In Overleaf, paste the integrated source into `main.tex` within the existing group project.
 
-## 8. Add RQ1/RQ2 contributions
+## 8. RQ1/RQ2 contributions
 
-Supply `RQ1/experiment.py` or `RQ2/experiment.py` with a `main()` function. This enables `python -m RQ1` or `python -m RQ2`; until then they report the missing contribution. `python -m RQ1 --status` and `python -m RQ2 --status` show the current status.
+RQ1 still requires `RQ1/experiment.py` with a `main()` function. RQ2 is available: use `python -m RQ2 list` and the [RQ2 guide](RQ2/README.md) for reproduction, verification and reporting. `python -m RQ1 --status` and `python -m RQ2 --status` show the current status.
 
-Reuse the shared detector/baseline and write outputs under `results/RQ1/` or `results/RQ2/`. Include source IDs, train/test splits, settings, software versions, predictions or detection statuses and a reproduction command. RQ2 must distinguish technical recovery from visually plausible landmarks. State any different dataset selection or baseline explicitly.
+Reuse the shared detector/baseline where relevant. RQ1 outputs belong under `results/RQ1/`; RQ2 retains its existing `experiments/hand_detection_recovery/runs/<name>/` layout. Include source IDs, train/test splits, settings, software versions, predictions or detection statuses and a reproduction command. RQ2 must distinguish technical recovery from visually plausible landmarks. State any different dataset selection or baseline explicitly.
 
 ## 9. Documentation
 

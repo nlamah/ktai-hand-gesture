@@ -18,3 +18,14 @@ __pycache__/
 
 /captures/
 /reproduction_inputs.json
+
+# RQ2 generated outputs and local paper artifacts.
+/experiments/hand_detection_recovery/runs/
+/experiments/hand_detection_recovery/.locks/
+/paper/
+/results/
+/rq2*_evidence.zip
+
+# Local editor files.
+/.idea/
+*~

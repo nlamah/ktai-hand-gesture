@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<title>Hand detection recovery — visual review</title>
+<style>
+body{font:16px system-ui;color:#17334f;max-width:1300px;margin:30px auto;padding:0 20px}
+nav{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0}
+button,select,input{font:inherit;padding:6px}main{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+figure{margin:0} .photo{position:relative}img{display:block;width:100%}svg{position:absolute;inset:0;width:100%;height:100%}
+figcaption{padding:10px 0}#status{min-height:1.5em} @media(max-width:700px){main{grid-template-columns:repeat(2,1fr)}}
+</style><h1>Hand detection recovery</h1>
+<p>Compare the original with independently processed inputs. Points show each retry's estimated landmarks.
+Record visible changes and possible explanations separately in your review file.</p>
+<nav><button id="n47">N47 example</button><label>Letter <select id="letter"><option value="">All</option></select></label>
+<label>Outcome <select id="outcome"><option value="all">All baseline misses</option><option value="recovered">Recovered</option>
+<option value="still_no_hand">Still no hand in every variant</option><option value="unrecovered">No accepted retry</option></select></label>
+<input id="query" placeholder="Filename, e.g. A59.jpg" aria-label="Filename">
+<label><input type="checkbox" id="points" checked>Show landmarks</label></nav>
+<nav><button id="previous">Previous</button><button id="next">Next</button><span id="status" aria-live="polite"></span></nav>
+<h2 id="filename"></h2><main></main><script>
+const data=__DATA__;
+const letter=document.querySelector('#letter'),outcome=document.querySelector('#outcome'),query=document.querySelector('#query');
+for(const value of [...new Set(data.map(r=>r.letter))].sort())letter.add(new Option(value,value));
+let selected=[],position=0;
+function filter(){selected=data.filter(r=>(!letter.value||r.letter===letter.value)&&r.filename.toLowerCase().includes(query.value.toLowerCase())&&
+ (outcome.value==='all'||(outcome.value==='unrecovered'?!r.recovered:r[outcome.value])));position=0;render();}
+function render(){const row=selected[position],main=document.querySelector('main');main.replaceChildren();
+ document.querySelector('#filename').textContent=row?row.filename:'';
+ document.querySelector('#status').textContent=row?(position+1)+' / '+selected.length:'No matching images';
+ document.querySelector('#previous').disabled=position===0;document.querySelector('#next').disabled=position>=selected.length-1;
+ if(!row)return;
+ const panels=[{variant:'Original',status:'no_hand',url:row.original,points:[]},...row.pictures];
+ for(const panel of panels){const figure=document.createElement('figure'),photo=document.createElement('div'),img=document.createElement('img');
+ photo.className='photo';img.src=panel.url;img.alt=row.filename+' '+panel.variant;photo.append(img);
+ if(document.querySelector('#points').checked){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');
+ for(const point of panel.points){const dot=document.createElementNS(svg.namespaceURI,'circle');dot.setAttribute('cx',100*point[0]);dot.setAttribute('cy',100*point[1]);
+ dot.setAttribute('r','.65');dot.setAttribute('fill','#aaff55');dot.setAttribute('stroke','#123');dot.setAttribute('stroke-width','.15');svg.append(dot);}photo.append(svg);}
+ const caption=document.createElement('figcaption'),link=document.createElement('a');link.href=panel.url;link.target='_blank';link.textContent=panel.variant+' — '+panel.status;
+ caption.append(link);figure.append(photo,caption);main.append(figure);}}
+letter.onchange=outcome.onchange=query.oninput=filter;document.querySelector('#points').onchange=render;
+document.querySelector('#previous').onclick=()=>{position--;render()};document.querySelector('#next').onclick=()=>{position++;render()};
+document.querySelector('#n47').onclick=()=>{letter.value='';outcome.value='all';query.value='N47.jpg';filter()};filter();
+</script></html>
