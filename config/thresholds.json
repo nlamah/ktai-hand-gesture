@@ -1,0 +1,36 @@
+{
+  "flexion": {
+    "extended_min_deg": 155,
+    "bent_max_deg": 80
+  },
+  "finger_flexion": {
+    "extended_min_deg": 150,
+    "bent_max_deg": 130
+  },
+  "workbook_spread": {
+    "minimum_gap_ratio": 0.25,
+    "maximum_depth_ratio": 0.6,
+    "minimum_joint_angle_deg": 120
+  },
+  "spread": {
+    "minimum_spread_ratio": 0.9
+  },
+  "thumb_position": {
+    "contact_max_ratio": 0.1,
+    "near_max_ratio": 0.825
+  },
+  "workbook_thumb": {
+    "b_min_deviation_deg": 16
+  },
+  "thumb_mcp_position": {
+    "neutral_max_deviation_deg": 0
+  },
+  "workbook_crossing": {
+    "minimum_swap_ratio": 0.0,
+    "maximum_depth_ratio": 0.7,
+    "minimum_joint_angle_deg": 120
+  },
+  "crossing": {
+    "minimum_lateral_swap_ratio": 0.0
+  }
+}
