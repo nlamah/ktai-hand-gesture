@@ -8,7 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from RQ2.experiment import ROOT, main
+from baseline.runner import ROOT
+from RQ2.__main__ import main
 from RQ2.workflows import commands_for
 
 
@@ -19,7 +20,8 @@ class RQ2InterfaceTests(unittest.TestCase):
             sentinel = root / 'experiments/hand_detection_recovery/runs/kept/progress.sqlite'
             sentinel.parent.mkdir(parents=True)
             sentinel.write_bytes(b'existing progress')
-            with patch('RQ2.experiment.ROOT', root), patch('RQ2.experiment.subprocess.run') as run, contextlib.redirect_stdout(io.StringIO()) as output:
+            with patch('baseline.runner.ROOT', root), patch('baseline.runner.subprocess.run') as run, \
+                    contextlib.redirect_stdout(io.StringIO()) as output:
                 self.assertEqual(main(['recovery', '--name', 'kept', '--limit', '110', '--dry-run']), 0)
             run.assert_not_called()
             self.assertEqual(sentinel.read_bytes(), b'existing progress')
@@ -28,7 +30,7 @@ class RQ2InterfaceTests(unittest.TestCase):
             self.assertIn('plot_results.py', output.getvalue())
 
     def test_resume_uses_same_limit_and_runs_from_repo_root(self):
-        with patch('RQ2.experiment.subprocess.run') as run, contextlib.redirect_stdout(io.StringIO()):
+        with patch('baseline.runner.subprocess.run') as run, contextlib.redirect_stdout(io.StringIO()):
             main(['recovery', '--name', 'kept', '--limit', '110', '--resume'])
         self.assertEqual(run.call_count, 3)
         command = run.call_args_list[0].args[0]
@@ -47,7 +49,9 @@ class RQ2InterfaceTests(unittest.TestCase):
                 self.assertTrue((ROOT / command[0]).is_file())
 
     def test_failure_stops_following_steps_and_preserves_exit_code(self):
-        with patch('RQ2.experiment.subprocess.run', side_effect=subprocess.CalledProcessError(7, ['python'])) as run, contextlib.redirect_stdout(io.StringIO()):
+        error = subprocess.CalledProcessError(7, ['python'])
+        with patch('baseline.runner.subprocess.run', side_effect=error) as run, \
+                contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(main(['recovery', '--name', 'failed']), 7)
         self.assertEqual(run.call_count, 1)
 
@@ -58,6 +62,8 @@ class RQ2InterfaceTests(unittest.TestCase):
         for options in cases:
             with self.subTest(options=options), self.assertRaises(ValueError):
                 commands_for('recovery', **options)
+        with self.assertRaises(ValueError):
+            commands_for('compare', 'verify', name='repeat', reference='first')
 
     def test_compare_requires_distinct_named_runs(self):
         command = commands_for('compare', name='repeat', reference='first')[0]
@@ -69,17 +75,26 @@ class RQ2InterfaceTests(unittest.TestCase):
 
     def test_status_and_list_do_not_run_experiments(self):
         for args in [['list'], ['--status']]:
-            with patch('RQ2.experiment.subprocess.run') as run, contextlib.redirect_stdout(io.StringIO()) as output:
+            with patch('baseline.runner.subprocess.run') as run, contextlib.redirect_stdout(io.StringIO()) as output:
                 self.assertEqual(main(args), 0)
             run.assert_not_called()
             self.assertTrue(output.getvalue())
         manifest = json.loads((ROOT / 'RQ2/contribution.json').read_text())
         self.assertEqual(manifest['status'], 'implemented')
         self.assertTrue((ROOT / manifest['documentation']).is_file())
-        self.assertTrue((ROOT / 'RQ2/experiment.py').is_file())
         rq1 = json.loads((ROOT / 'RQ1/contribution.json').read_text())
         self.assertNotEqual(rq1['status'], 'implemented')
         self.assertFalse((ROOT / 'RQ1/experiment.py').exists())
+
+    def test_rq_packages_share_one_structure(self):
+        keys = ['question', 'status', 'entry_point', 'shared_baseline', 'main_results']
+        for package in ['RQ1', 'RQ2', 'RQ3']:
+            manifest = json.loads((ROOT / package / 'contribution.json').read_text())
+            self.assertEqual(list(manifest)[:5], keys, package)
+            self.assertTrue((ROOT / manifest['documentation']).is_file(), package)
+        for package in ['RQ2', 'RQ3']:
+            for name in ['__init__.py', '__main__.py', 'workflows.py', 'contribution.json', 'README.md']:
+                self.assertTrue((ROOT / package / name).is_file(), f'{package}/{name}')
 
 
 if __name__ == '__main__':
