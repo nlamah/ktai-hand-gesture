@@ -23,6 +23,7 @@ __pycache__/
 /experiments/hand_detection_recovery/runs/
 /experiments/hand_detection_recovery/.locks/
 /paper/
+/results/
 /rq2*_evidence.zip
 
 # Local editor files.
