@@ -12,7 +12,7 @@ python --version
 python -m pip check
 ```
 
-Use Python 3.12 and the versions in `requirements.txt`. Prepare the local dataset as described in the [RQ2 guide](../experiments/hand_detection_recovery/README.md). The dataset belongs under `data/asl-alphabet-download/`; the full Aâ€“Z experiment needs 3,000 training images per letter. Check this inventory before a complete experiment; see the RQ2 experiment guide for the expected layout. These large local assets are separate from the source code.
+Use Python 3.12 and the versions in `requirements.txt`. Prepare the local dataset as described in the [RQ2 guide](../experiments/hand_detection_recovery/README.md). The dataset belongs under `data/asl-alphabet-download/`; the full A–Z experiment needs 3,000 training images per letter. Check this inventory before a complete experiment; see the RQ2 experiment guide for the expected layout. These large local assets are separate from the source code.
 
 ## Validation commands
 

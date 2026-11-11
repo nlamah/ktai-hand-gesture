@@ -1,10 +1,12 @@
 {
-  "question": "To what extent does applying a 3x3 dilation filter recover visually plausible hand landmarks in ASL Alphabet training images for which MediaPipe initially detects no_hand?",
+  "question": "To what extent does applying a 3 x 3 dilation filter recover visually plausible hand landmarks in ASL Alphabet training images for which MediaPipe initially detects no_hand?",
   "status": "implemented",
-  "shared_detector": "research.data.Detector",
-  "shared_baseline": "Original-image detection using research.data.Detector; no letter classifier is trained",
-  "outputs": "experiments/hand_detection_recovery/runs/<name>/",
-  "note": "Automatic recovery is no_hand to ok; visual plausibility requires separate recorded review.",
   "entry_point": "python -m RQ2 --help",
+  "shared_baseline": "Original-image detection with research.data.Detector; no letter classifier is trained",
+  "main_results": "experiments/hand_detection_recovery/runs/test_all/",
+  "supporting_controls": [
+    "compare"
+  ],
+  "note": "Automatic recovery is no_hand to ok; visual plausibility requires separate recorded review. Run folders are local and excluded from git.",
   "documentation": "RQ2/README.md"
 }

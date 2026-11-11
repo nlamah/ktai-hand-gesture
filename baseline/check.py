@@ -23,12 +23,12 @@ def status():
         try:
             versions[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
-            versions[name] = 'NIET GEINSTALLEERD'
+            versions[name] = 'NOT INSTALLED'
     files = {p: (ROOT / p).exists() for p in required}
     data = {p: (ROOT / p).exists() for p in ['data/asl_kaggle/manifest.json',
             'data/asl_kaggle/research/inputs.npz', 'data/asl_kaggle/research/summary.json',
             'data/asl_kaggle/research/inputs_metadata.json', 'runs/mirror_01/detections']}
-    return {'baseline': 'Shin DS: 190 afstanden + 630 richtingen = 820 inputs',
+    return {'baseline': 'Shin DS: 190 distances + 630 directions = 820 inputs',
             'feature_version': VERSION, 'versions': versions, 'required_files': files,
             'local_reproduction_data': data,
             'contributions': {rq: json.loads((ROOT / rq / 'contribution.json').read_text())['status']

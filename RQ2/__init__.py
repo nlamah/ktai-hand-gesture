@@ -1,1 +1,1 @@
-"""RQ2: image preprocessing for hand detection recovery; code not supplied."""
+"""RQ2: image preprocessing to recover missed hand detections from the group paper."""

@@ -4,6 +4,8 @@ The numerical implementations retain their frozen research.* module names.
 This registry is the maintained public interface; it does not copy algorithms.
 """
 
+ACTIONS = ('reproduce', 'verify', 'report')
+
 
 def module(name, *args):
     return ['-m', 'research.studies.' + name, *args]
