@@ -239,3 +239,7 @@ Reuse the shared detector/baseline where relevant. RQ1 outputs belong under `res
 
 - [RQ3 guide](RQ3/README.md): question, variants, findings and limitations.
 - [Live test guide](docs/LIVE_TESTPLAN.md): free comparisons and optional collection protocols.
+
+## 10. Use of generative AI
+
+Generative AI (OpenAI Codex) was used to generate and revise parts of the code and text, assist with debugging and testing, and execute experiments through the project tools. The authors remain responsible for the methods, results and final content.
