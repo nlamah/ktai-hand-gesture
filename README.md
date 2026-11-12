@@ -128,7 +128,11 @@ Only the 78,000 A-Z training images are in scope; `space`, `del` and `nothing` a
 
 ## 4. Retrain the shared baseline
 
-With the **frozen paper inputs**:
+There are two routes. Use **4.1** to rerun classification on the exact saved paper landmarks. Use **4.2** to check the complete baseline, starting with the original photographs and estimating landmarks again.
+
+### 4.1 Classification from the frozen paper landmarks
+
+After restoring both archives as described in Section 3:
 
 ```bash
 python -m baseline train --dry-run
@@ -137,19 +141,30 @@ python -m baseline train
 
 This trains DS only, using SVM and LightGBM across the five fixed folds. Matching RQ3 baseline checkpoints are reused. `python -m baseline verify` checks the published DS scores; the full RQ3 export also checks checkpoint predictions.
 
-### Separate replication from fresh detections
+### 4.2 Complete baseline from the original photographs
 
-Use separate paths to avoid replacing the paper inputs:
+First complete installation in Section 1, then download and extract the photographs into `data/asl-alphabet-download/` as described under **Raw images for redetection or photographic figures** in Section 3. Run all commands below from the repository root. This route needs no frozen input or result archives.
+
+Use separate paths to avoid replacing the paper inputs. Execute these five steps in order; detection and model training can take substantial time:
 
 ```bash
+# 1. Import the original A-Z photographs and their labels.
 python -m research.dataset import --source data/asl-alphabet-download --project runs/new_detection
+# 2. Estimate landmarks with the baseline detector settings.
 python -m research.dataset analyze --project runs/new_detection --detection-confidence 0.5 --presence-confidence 0.5
+# 3. Inspect acceptance counts and rejected photographs before training.
 python -m research.detection_report --project runs/new_detection --out runs/new_detection_report
+# 4. Build feature rows and five source-group folds from accepted detections.
 python -m research.prepare --project runs/new_detection --out runs/new_cache
+# 5. Train and evaluate the DS baseline with SVM and LightGBM.
 python -m baseline train --cache runs/new_cache --out runs/new_baseline
 ```
 
-This is a new method replication with its own hashes, counts, folds, predictions and scores. The output protocol rejects reuse with different inputs. Import supports `--resume`; detection resumes unfinished images by default. `research.prepare` requires a new output directory.
+Step 3 prints overall detection counts and writes `runs/new_detection_report/by_letter.csv` and `rejected_images.csv`. The historical counts for comparison are 78,000 A-Z training images, 60,251 accepted detections, 17,598 `no_hand` and 151 multiple hands. Wait until `pending` is zero before preparing features.
+
+Step 5 fits ten models (two classifiers across five folds). It writes held-out predictions to `runs/new_baseline/predictions.csv`, scores to `runs/new_baseline/metrics.csv`, plus models and a protocol. Compare the rows with `fold=pooled` to the baseline table in Section 1; precision and F1 in the CSV are fractions (multiply by 100 for percentages). `baseline verify` checks restored historical predictions, not this fresh run.
+
+This is a new method replication with its own hashes, counts, folds, predictions and scores; exact historical counts and scores are not assumed. The output protocol rejects reuse with different inputs. Import supports `--resume`; detection resumes unfinished images by default. `research.prepare` requires a new output directory.
 
 ## 5. Reproduce RQ3
 
@@ -208,11 +223,9 @@ python -m streamlit run app.py
 
 Select a model, enable **Camera on**, optionally enter the intended letter and use **Save capture**. The intended letter does not affect recognition. Only one tool can use the camera at a time; macOS may require camera permission. See the [live test guide](docs/LIVE_TESTPLAN.md).
 
-## 7. Separate paper project and review proposal
+## 7. Separate paper project
 
 The paper is maintained in a separate Overleaf repository, not in a `paper/` directory in this software checkout. This computer's paper checkout is `~/Documents/GitHub/6aba6ebfe26cf023a6c2efc0`; compile its `main.tex`. Obtain that source project separately when reproducing the complete submission.
-
-The [paper integration guide](docs/GROUP_INTEGRATION.md) describes the separate project and the discussion proposal. It includes a before/after PDF, complete proposed paper, source patch and Overleaf source ZIP. RQ1/RQ2 edits, a shared abstract/conclusion and the compact RQ3 contribution with its literature comparison are applied locally in the paper checkout for group review; they have not been committed or pushed.
 
 Published classification evidence is restored from `rq3_results.zip` under `results/feature_factorial_01/`. Results, frozen inputs, raw images and private captures are distributed separately as described above. Executable RQ1 code and its raw experiment inputs still need to be supplied. RQ2 is implemented; its historical run outputs are distributed separately from Git. See each contribution guide for its exact scope and required inputs.
 
@@ -226,4 +239,3 @@ Reuse the shared detector/baseline where relevant. RQ1 outputs belong under `res
 
 - [RQ3 guide](RQ3/README.md): question, variants, findings and limitations.
 - [Live test guide](docs/LIVE_TESTPLAN.md): free comparisons and optional collection protocols.
-- [Paper integration guide](docs/GROUP_INTEGRATION.md): separate paper checkout, discussion proposal and safe integration.

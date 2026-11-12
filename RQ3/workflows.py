@@ -1,4 +1,4 @@
-"""Reproduction order for the actual experiments cited in the group paper.
+"""Reproduction order for feature comparisons and orientation checks.
 
 The numerical implementations retain their frozen research.* module names.
 This registry is the maintained public interface; it does not copy algorithms.

@@ -1,6 +1,6 @@
-"""Audit the published 26-letter G/H rotation comparison without private photos.
+"""Audit the 26-letter G/H rotation comparison without private photos.
 
-The historical report also replays selected private captures. Those are optional
+The full diagnostic workflow also replays selected private captures. Those are optional
 diagnostics, not part of this reproducible dataset/model audit.
 """
 import json

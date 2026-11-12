@@ -14,9 +14,28 @@ from research.feature_review import CONNECTIONS, hand_crop
 from research.studies import gh_live_diagnostics
 
 
+def replay_to_results():
+    """Keep the fixed replay's figure and table exports in its result folder."""
+    original_path = gh_live_diagnostics.Path
+
+    def result_path(value):
+        path = Path(value)
+        if path.suffix == '.pdf':
+            return gh_live_diagnostics.OUT / path.name
+        if path.suffix == '.tex':
+            return gh_live_diagnostics.OUT / 'live_examples_rows.tex'
+        return path
+
+    try:
+        gh_live_diagnostics.Path = result_path
+        gh_live_diagnostics.main()
+    finally:
+        gh_live_diagnostics.Path = original_path
+
+
 def main():
     # The fixed numerical replay still checks original model/input/capture hashes.
-    gh_live_diagnostics.main()
+    replay_to_results()
     out = gh_live_diagnostics.OUT
     rows = pd.read_csv(out / 'predictions.csv', keep_default_na=False)
     fig, axes = plt.subplots(2, 2, figsize=(9.2, 6.4), layout='constrained')
@@ -35,7 +54,7 @@ def main():
         ax.set_title(f"{row['panel']}. Intended {row['expected']} | {view}\n"
                      f"Reference: {row['reference']} | Rotation: {row['rotation']}", fontsize=11)
         ax.axis('off')
-    figure = Path('paper/figures/gh_live_diagnostics.pdf')
+    figure = out / 'gh_live_diagnostics.pdf'
     fig.savefig(figure)
     plt.close(fig)
     verification = json.loads((out / 'verification.json').read_text())
@@ -47,7 +66,7 @@ def main():
         view = 'Palm visible' if row['panel'] == 'D' else 'Back visible'
         lines.append(f"{row['panel']} & {row['expected']} & {view} & "
                      f"{row['reference']} & {row['rotation']} \\\\")
-    Path('paper/gh_live_diagnostics_rows_nl.tex').write_text('\n'.join(lines) + '\n')
+    (out / 'live_examples_rows.tex').write_text('\n'.join(lines) + '\n')
 
 
 if __name__ == '__main__':

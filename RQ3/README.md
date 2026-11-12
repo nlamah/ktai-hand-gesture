@@ -1,6 +1,6 @@
 # RQ3: hand-shape features and joint measurements
 
-This guide describes the RQ3 contribution. Installation, the input bundle and the shared baseline are covered in the main [README](../README.md). Numbering follows the group paper: RQ1 targeted data collection, RQ2 detection recovery, RQ3 feature comparison.
+This guide describes the RQ3 contribution. Installation, the input bundle and the shared baseline are covered in the main [README](../README.md). The project has three contributions: RQ1 targeted data collection, RQ2 detection recovery, RQ3 feature comparison.
 
 ## Question and main comparison
 
@@ -61,7 +61,7 @@ Alongside the main feature study, we briefly explored a few ideas for practical 
 - **Left/right hands:** mirror training and normalization to detector-Right. These help on an artificial mirror mixture, but neither improves classification on original images. They do not establish better recognition for new left-handed users.
 - **G/H views:** rotate the existing training landmarks to try to bridge the palm/back view difference. The model learns that artificial geometry, but two selected live G examples remain H. A coarse occlusion/noise approximation adds no demonstrated improvement.
 
-These are small exploratory follow-ups, not extra main research questions or independent final validation. The systematic eight-way feature comparison remains the core contribution. Detailed protocols/results are described in the appendix and supplied in `rq3_results.zip` so the attempts can be checked.
+These are small exploratory follow-ups, not extra main research questions or independent final validation. The systematic eight-way feature comparison remains the core contribution. Detailed protocols/results are supplied in `rq3_results.zip` and generated in the result folders below so the attempts can be checked.
 
 ### Reproduction details for the exploratory checks
 
@@ -79,12 +79,12 @@ Each supports `--dry-run` and `--action verify`. The result archive does not con
 
 On originals, mirror training loses 26 correct predictions and normalization loses 136. G/H rotation corrects four errors and introduces five. On artificially rotated held-out G/H geometry, macro-F1 rises from 0.8693 to 0.9757; that creates no new photograph or detector output. The selected live cases do not estimate precision/F1 or error frequency. The G/H dataset/model audit is `verification_core.json`.
 
-## Live tool, paper and references
+The `live_examples` workflow writes its diagnostic figure and English table export to `results/gh_live_diagnostics_20261107/` alongside the predictions and verification files.
+
+## Live tool
 
 ```bash
 python -m research.live_camera
 ```
 
 Keys: **1** DS, **2** DSJ, **9** G/H rotation, **7/8** matched mirror reference/mirror training, **0** right normalization. The default is DSJ. **Space → intended letter → Enter** saves an example. See the [live guide](../docs/LIVE_TESTPLAN.md) for optional capture protocols.
-
-The English paper is maintained in a separate Overleaf repository. RQ3 uses `rq3_methods_en.tex`, `rq3_results_en.tex` and `rq3_appendix_en.tex`, loaded by `main.tex`. Related work and discussion are maintained in `rq3_related_en.tex` and `rq3_discussion_en.tex`. The bibliography `rq3_references.bib` contains seven sources: Shin, MediaPipe documentation, Kaggle ASL Alphabet, scikit-learn permutation documentation, LightGBM documentation, Vicars for G/H, and Zhang and Notni (2025) for constrained geometric features and participant-separated evaluation. The latter source was checked against its complete six-page publisher PDF. See the [paper integration guide](../docs/GROUP_INTEGRATION.md) for the current discussion proposal.
