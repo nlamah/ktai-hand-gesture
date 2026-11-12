@@ -106,12 +106,21 @@ A mirror cache can optionally be added to the input archive with `--with-mirrors
 
 ### Raw images for redetection or photographic figures
 
-Download [ASL Alphabet by grassknoted](https://www.kaggle.com/datasets/grassknoted/asl-alphabet). The importer accepts both `asl_alphabet_train/A/A1.jpg` and the doubly nested layout; the source directory must contain the train and test directories.
+**Skip this section for the main RQ3 feature comparison and coordinate control:** the frozen input bundle already supplies their landmarks. Raw photographs are needed for RQ2, mirror extraction without a supplied mirror cache, photographic controls or new detections.
+
+The original photographs are **not committed**: `data/` is ignored by Git, and neither reproduction archive includes the photographs. Download [ASL Alphabet by grassknoted](https://www.kaggle.com/datasets/grassknoted/asl-alphabet), save the downloaded ZIP as `asl-alphabet.zip` in your Downloads folder, and run from the repository root:
+
+```bash
+mkdir -p data/asl-alphabet-download
+python -m zipfile -e ~/Downloads/asl-alphabet.zip data/asl-alphabet-download
+```
+
+The resulting source folder must contain `asl_alphabet_train/` and `asl_alphabet_test/`. For example, a training photograph is at `data/asl-alphabet-download/asl_alphabet_train/A/A1.jpg`; the extra nesting `asl_alphabet_train/asl_alphabet_train/A/A1.jpg` is also supported. This source path is also the default used by RQ2.
 
 If raw images are needed alongside the frozen inputs, **import the images first, then extract the input bundle**:
 
 ```bash
-python -m research.dataset import --source /path/to/asl-alphabet --project data/asl_kaggle
+python -m research.dataset import --source data/asl-alphabet-download --project data/asl_kaggle
 python -m zipfile -e /path/to/rq3_inputs.zip .
 ```
 
@@ -133,7 +142,7 @@ This trains DS only, using SVM and LightGBM across the five fixed folds. Matchin
 Use separate paths to avoid replacing the paper inputs:
 
 ```bash
-python -m research.dataset import --source /path/to/asl-alphabet --project runs/new_detection
+python -m research.dataset import --source data/asl-alphabet-download --project runs/new_detection
 python -m research.dataset analyze --project runs/new_detection --detection-confidence 0.5 --presence-confidence 0.5
 python -m research.detection_report --project runs/new_detection --out runs/new_detection_report
 python -m research.prepare --project runs/new_detection --out runs/new_cache
