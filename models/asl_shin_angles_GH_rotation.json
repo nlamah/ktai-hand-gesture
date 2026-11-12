@@ -50,8 +50,8 @@
       "thresholds": "5d5ac3b753389d44b0dc0e88a0e270be298f566ce393f2234abc35d61d5103fd"
     },
     "cache_sha256": "61dfa56e440df4d0381cbdabcd8008259c446ed61384a528db0de58c427d458f",
-    "development": "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/captures/guided/development_20261031T160814Z_3dd178e6",
-    "evaluation": "/Users/tonheijligers/Documents/GitHub/ktai-hand-gesture/captures/guided/evaluation_20261031T162427Z_bddd0d80",
+    "development": "captures/guided/development_20261031T160814Z_3dd178e6",
+    "evaluation": "captures/guided/evaluation_20261031T162427Z_bddd0d80",
     "policy": "One fixed candidate; no hyperparameter search or selection using evaluation outcomes. Captures never enter training.",
     "limitation": "Rotation in normalized landmark-feature space is an approximation, not a physical wrist or detector simulation.",
     "augmented_letters": [

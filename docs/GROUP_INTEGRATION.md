@@ -1,42 +1,23 @@
-# Current group paper and RQ3 integration
+# Separate paper project and discussion proposal
 
-The complete local Overleaf project is `/Users/tonheijligers/Documents/Github/6aba6ebfe26cf023a6c2efc0`; compile `main.tex` there. The repository's equivalent main is `paper/group_integration/group_report.tex`. The transfer package is `paper/group_integration_ton.zip`.
+The LaTeX paper lives in a separate Overleaf repository. On this computer its checkout is `~/Documents/GitHub/6aba6ebfe26cf023a6c2efc0`; the main document is `main.tex`. The software repository does not contain the former `paper/` working directory. Obtain the current paper source separately for reproduction.
 
-The current version contains the supplied RQ1/RQ2 prose, tables, bibliography, recovery figure and code appendices. Only the own introduction and RQ3 prose have been shortened. No model or numerical result was changed. Named boundary comments are removed and dotted separators remain.
+## Discussion version
 
-## Current layout
+The separate paper repository contains `review_proposal/` for the 13 November 2026 discussion:
 
-- Body: pages 1–5.
-- References: start on page 5 and continue on page 6.
-- Coauthor code/illustrations: appendix A.
-- RQ3 definitions, feature tool and practical orientation checks: appendices B–E.
+- `changes.pdf`: RQ1/RQ2 suggestions, exact current/proposed wording, abstract/conclusion, compact RQ3 scope and the full-text literature comparison (page five).
+- `proposed_paper.pdf`: complete proposed paper, with five body pages, references starting on page six, two original coauthor appendix pages and two RQ3 appendix pages.
+- `changes.patch`: complete source comparison against the paper before this proposal.
+- `overleaf_proposal.zip`: independent source project; compile `main.tex` after import.
+- `README.md`, `scope.json` and `verification.json`: instructions, edit list and preservation/build/test checks.
 
-The five-page count concerns the body; whether references are excluded remains a course requirement to check. The existing N47 illustration is now included in appendix A, so its body reference resolves. Long code lines wrap without changing the supplied code files.
+The proposed sources are also applied locally in the paper checkout, without staging, committing or pushing. This replaces the earlier RQ3-only proposal. RQ1's question and captions match its measured comparison; RQ2's heading, coverage interpretation and figure caption are clarified. Its technical research question is retained. The shared abstract and conclusion summarize the three separate outcomes. RQ1 table bodies, RQ3 numerical cells, original figures, the coauthor bibliography and code appendices are preserved. The own bibliography adds Zhang and Notni (2025), compared in related work and discussion after full-text inspection. No experiment or trained model is changed. The RQ3 appendix is reduced from six pages to two.
 
-## Update Overleaf
+## Review before publishing
 
-1. Use the current local Overleaf project as the working project. Keep any newer coauthor edits.
-2. Upload the changed `main.tex`, all `ton_*.tex`, `ton_references.bib` and `code-snippets/n47-example.tex`. Keep the existing three own figures and original group files. The three RQ3 figures were checked against their numerical/photo sources and need no replacement.
-3. Do not paste a second RQ3 contribution: the six prose inputs, appendix input and bibliography entry are already present.
-4. Compile `main.tex`. Check the feature table, N47 reference, all figures and page count. The generated local `main.pdf` is for review; it is not a source file to upload.
-5. Review the diff before committing or uploading. Coauthor prose, numerical table values and both original code-snippet files must remain unchanged.
+Read the two PDFs or import the source ZIP as a separate Overleaf project. The comparison works without native Track Changes or additional rights in the shared project.
 
-The package contains a complete equivalent project with `group_report.tex` as main, plus `group_report_paste_ready.tex` as an alternative with the own prose/tables/bibliography embedded. Choose one main. Keep the accompanying group figures and code files; the paste-ready alternative still uses those files.
+Overleaf offers [Track Changes](https://docs.overleaf.com/collaborating/track-changes) in projects with the relevant premium feature and permissions. [Git pushes can displace tracked changes and comments](https://docs.overleaf.com/integrations-and-add-ons/git-integration-and-github-synchronization/git-integration/advanced-git-operations). The supplied PDFs and patch can be reviewed independently of that metadata.
 
-## If the group has newer main-file edits
-
-Retain that newer main and update only these existing inputs:
-
-| Section | Contribution file |
-|---|---|
-| Related works | `ton_related_en.tex` |
-| Methods | `ton_methods_en.tex` |
-| Datasets | `ton_dataset_en.tex` |
-| Implementation details | `ton_implementation_en.tex` |
-| Results | `ton_results_en.tex` |
-| Discussion | `ton_discussion_en.tex` |
-| Technical appendix | `ton_appendix_en.tex` |
-
-Keep the four `ton_*_rows_en.tex` table files and `ton_references.bib`. Do not add another research question, bibliography command or copy of the appendix. Filenames and citation/label prefixes avoid collisions; they are not printed author notes.
-
-All active figure paths resolve. N47's original, dilated and overlay views are retained; unused template images and the duplicate recovery figure are removed.
+After group approval, inspect the latest `git diff` and commit the intended manuscript changes together with all renamed RQ3 source and figure files. The contribution uses `rq3_*.tex`, `rq3_references.bib` and `figures/rq3_*`; include `main.tex`, `shared_abstract_en.tex` and `shared_conclusion_en.tex` as well. Do not retain duplicate aliases with personal prefixes. Retain any newer coauthor edits. The root `main.pdf` is a local preview; the review PDFs and ZIP can remain local. Do not paste a second copy of the contribution. Compile the latest main and check references and page count before sharing a submission version.

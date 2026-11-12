@@ -11,6 +11,10 @@ def module(name, *args):
     return ['-m', 'research.studies.' + name, *args]
 
 
+def portable(name, *args):
+    return ['-m', 'RQ3.portable_study', name, *args]
+
+
 FEATURES = [
     module('feature_factorial', '--stage', 'parity'),
     module('feature_factorial', '--stage', 'train', '--model', 'svm'),
@@ -52,12 +56,12 @@ WORKFLOWS = {
                     'verify': [['-m', 'baseline.frozen_worker', 'gh_rotation', 'verify']],
                     'report': [['-m', 'baseline.frozen_worker', 'gh_rotation', 'report']]},
     'occlusion': {'results': 'results/gh_occlusion_01',
-                  'reproduce': [module('gh_occlusion', '--stage', 'prepare'),
-                                module('gh_occlusion', '--stage', 'screen'),
-                                module('gh_occlusion', '--stage', 'train', '--arm', 'noise002'),
-                                module('gh_occlusion', '--stage', 'train', '--arm', 'noise005'),
-                                module('gh_occlusion', '--stage', 'report'),
-                                module('gh_occlusion_rotated_test'), module('verify_gh_occlusion'),
+                  'reproduce': [portable('gh_occlusion', '--stage', 'prepare'),
+                                portable('gh_occlusion', '--stage', 'screen'),
+                                portable('gh_occlusion', '--stage', 'train', '--arm', 'noise002'),
+                                portable('gh_occlusion', '--stage', 'train', '--arm', 'noise005'),
+                                portable('gh_occlusion', '--stage', 'report'),
+                                portable('gh_occlusion_rotated_test'), module('verify_gh_occlusion'),
                                 module('report_gh_occlusion')],
                   'verify': [module('verify_gh_occlusion')], 'report': [module('report_gh_occlusion')]},
     'live_examples': {'results': 'results/gh_live_diagnostics_20261107',

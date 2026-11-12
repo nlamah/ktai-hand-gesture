@@ -18,6 +18,7 @@ __pycache__/
 
 /captures/
 /reproduction_inputs.json
+/rq3_results_manifest.json
 
 # RQ2 generated outputs and local paper artifacts.
 /experiments/hand_detection_recovery/runs/

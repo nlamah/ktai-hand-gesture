@@ -1,6 +1,0 @@
-{
-  "status": "withdrawn",
-  "reason": "User reports incorrect execution of the recent G/H captures and requests removal. These attempts and derived examples must not be used as evidence or training data.",
-  "audit": "results/gh_capture_reset_20261107/withdrawal.json",
-  "restorable_archive": "runs/discarded_gh_20261107/derived/gh_examples_20261107"
-}

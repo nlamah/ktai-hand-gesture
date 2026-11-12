@@ -47,10 +47,10 @@ def verify_inputs():
     for name, value in expected.items():
         relative = Path(name)
         if relative.is_absolute() or '..' in relative.parts or relative.parts[0] not in ('data', 'runs'):
-            raise ValueError(f'Ongeldig invoerpad in bundelmanifest: {name}')
+            raise ValueError(f'Invalid input path in bundle manifest: {name}')
         path = ROOT / relative
         if not path.is_file() or digest(path) != value:
-            raise ValueError(f'Ontbrekende of gewijzigde paperinvoer: {name}')
+            raise ValueError(f'Missing or changed paper input: {name}')
     return {'status': 'passed', 'input_files_verified': len(expected),
             'scope': 'Byte-identical supplied inputs; no redetection or model fitting.'}
 
@@ -82,7 +82,7 @@ def verify_baseline():
                         'macro_precision': float(p.mean()), 'macro_recall': float(r.mean()), 'macro_f1': float(f.mean())}
             saved = scores[(scores.model == model) & (scores.variant == 'DS') & (scores.fold == fold)]
             if len(saved) != 1:
-                raise ValueError(f'Ontbrekende score: {model}, fold {fold}')
+                raise ValueError(f'Missing score: {model}, fold {fold}')
             for key, value in measured.items():
                 np.testing.assert_allclose(value, saved.iloc[0][key], atol=1e-12, rtol=0)
             if fold == 'pooled':

@@ -83,15 +83,18 @@ class AlphabetSession(ProtocolSession):
         expected_role='development' if self.plan['participant']['kind']=='development' else 'evaluation'
         if self.plan['role']!=expected_role:raise ValueError('Participant role has changed.')
         if set(self.plan['examples'])!=set(LABELS):raise ValueError('Examples are missing.')
-        self.mirror_preview=self.plan.get('display',{}).get('preview_mirrored',True)
+        if self.plan.get('display')!={'preview_mirrored':False,'example_hand':'right'}:
+            raise ValueError('Unknown alphabet display format. Start a new capture session.')
+        self.mirror_preview=False
         self.example_images={}
         for letter,info in self.plan['examples'].items():
+            if info.get('display_hand')!='right' or not isinstance(info.get('display_mirror'),bool):
+                raise ValueError('Invalid right-hand example display settings.')
             path=ROOT/info['path']
             if sha256(path.read_bytes()).hexdigest()!=info['sha256']:raise ValueError('An example has changed.')
             image=cv2.imread(str(path))
             if image is None:raise ValueError('An example cannot be opened.')
-            # Old sessions retain their recorded display. New sessions normalize each example to right hand.
-            self.example_images[letter]=cv2.flip(image,1) if info.get('display_mirror',True) else image
+            self.example_images[letter]=cv2.flip(image,1) if info['display_mirror'] else image
         self.participant_confirmed=None;self.assistance=False
         self.refresh()
 
@@ -137,8 +140,8 @@ class AlphabetSession(ProtocolSession):
             im=cv2.resize(image,(round(w*scale),round(h*scale)));x=660+(280-im.shape[1])//2;y=55+(310-im.shape[0])//2
             panel[y:y+im.shape[0],x:x+im.shape[1]]=im
             cv2.putText(panel,f"Letter {t['letter']}",(675,398),cv2.FONT_HERSHEY_SIMPLEX,1,(120,240,240),2,cv2.LINE_AA)
-            cv2.putText(panel,'Right hand - dataset' if t and self.plan['examples'][t['letter']].get('display_hand')=='right' else 'Dataset example (old session)',(660,428),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
-            cv2.putText(panel,'Unmirrored camera image' if not self.mirror_preview else 'No prediction',(660,453),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
+            cv2.putText(panel,'Right hand - dataset',(660,428),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
+            cv2.putText(panel,'Unmirrored camera image',(660,453),cv2.FONT_HERSHEY_SIMPLEX,.49,(220,220,220),1,cv2.LINE_AA)
         cv2.rectangle(panel,(12,488),(628,532),(235,235,235),-1)
         cv2.putText(panel,prompt or 'Take photo [Space] - save immediately',(24,516),cv2.FONT_HERSHEY_SIMPLEX,.62,(0,0,0),1,cv2.LINE_AA)
         if t:

@@ -11,6 +11,7 @@ def main():
     sub.add_parser('check', help='Check installation, inputs and contribution status.')
     sub.add_parser('verify', help='Recompute shared DS scores from saved held-out predictions.')
     sub.add_parser('verify-data', help='Check SHA256 hashes of extracted paper inputs.')
+    sub.add_parser('verify-results', help='Check SHA256 hashes of separately supplied RQ3 results.')
     train = sub.add_parser('train', help='Train the DS baseline on the five fixed folds.')
     train.add_argument('--model', choices=['svm', 'lightgbm', 'both'], default='both')
     train.add_argument('--dry-run', action='store_true')
@@ -19,6 +20,8 @@ def main():
     bundle = sub.add_parser('bundle', help='Export local fixed inputs for instructor reproduction.')
     bundle.add_argument('--output', required=True)
     bundle.add_argument('--with-mirrors', action='store_true')
+    results = sub.add_parser('bundle-results', help='Export RQ3 CSV/JSON evidence separately from Git.')
+    results.add_argument('--output', required=True)
     args = parser.parse_args()
     if args.command == 'check':
         print(json.dumps(status(), indent=2, ensure_ascii=False))
@@ -26,9 +29,15 @@ def main():
         print(json.dumps(verify_baseline(), indent=2))
     elif args.command == 'verify-data':
         print(json.dumps(verify_inputs(), indent=2))
+    elif args.command == 'verify-results':
+        from baseline.bundle import verify_results
+        print(json.dumps(verify_results(), indent=2))
     elif args.command == 'bundle':
         from baseline.bundle import create_bundle
         print(json.dumps(create_bundle(args.output, args.with_mirrors), indent=2))
+    elif args.command == 'bundle-results':
+        from baseline.bundle import create_results_bundle
+        print(json.dumps(create_results_bundle(args.output), indent=2))
     else:
         models = ['svm', 'lightgbm'] if args.model == 'both' else [args.model]
         if bool(args.cache) != bool(args.out):

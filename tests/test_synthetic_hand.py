@@ -1,6 +1,4 @@
 """Controls for the exploratory volume/landmark proxy; no webcam data needed."""
-import json
-from pathlib import Path
 import unittest
 
 import numpy as np
@@ -9,15 +7,16 @@ from research.gh_vertical import rotate_vertical
 from research.live_model import detection_inputs
 from research.studies.gh_occlusion import perturb, transformed
 from research.synthetic_hand import render_hand
+from tests.test_asl_categorical_features import synthetic_hand
 
 
 class OcclusionProxyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        p=json.loads(Path('results/gh_training_rotation_01/provenance.json').read_text())
-        # Read only the two already-published training examples.
-        samples=p.get('examples',p.get('samples',[]))
-        cls.points=np.asarray(samples[0]['original_image_landmarks'])
+        cls.points=synthetic_hand()
+        # Overlapping index/middle fingers at different depths exchange occlusion on rotation.
+        cls.points[9:13,0]=cls.points[5:9,0]+.02
+        cls.points[9:13,2]=.2
 
     def test_noise_preserves_all_unselected_points_and_input(self):
         p=self.points.copy();before=p.copy();noise=np.ones((21,3));hidden=[7,8,11,12]

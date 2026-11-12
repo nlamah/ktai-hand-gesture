@@ -1,8 +1,0 @@
-{
-  "oof_rows": 482008,
-  "unique_images_per_model_variant": 60251,
-  "all_eight_metrics_reconciled": true,
-  "same_frozen_outer_folds": true,
-  "svm_angle_accuracy_improves_in_all_5_folds": true,
-  "previous_svm_no_category_ablation_correct_count_reproduced": 58892
-}

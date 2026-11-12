@@ -17,12 +17,40 @@ from research.live_model import DEFAULT_MODEL
 
 
 class AlphabetProtocolTests(unittest.TestCase):
+    def setUp(self):
+        # Session behaviour must be testable without the private Kaggle images.
+        # Asymmetric pixels exercise both mirrored and unmirrored examples.
+        fixture = tempfile.TemporaryDirectory()
+        self.addCleanup(fixture.cleanup)
+        directory = Path(fixture.name)
+        examples = {}
+        for index, letter in enumerate('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            pixels = np.zeros((12, 20, 3), dtype=np.uint8)
+            pixels[:, :, 0] = np.arange(20, dtype=np.uint8)
+            pixels[:, :, 1] = index * 9
+            pixels[:, :, 2] = np.arange(12, dtype=np.uint8)[:, None]
+            path = directory / f'{letter}.png'
+            Image.fromarray(pixels).save(path)
+            mirrored = bool(index % 2)
+            examples[letter] = {
+                'path': str(path),
+                'sha256': sha256(path.read_bytes()).hexdigest(),
+                'source_hand': 'left' if mirrored else 'right',
+                'display_mirror': mirrored,
+                'display_hand': 'right',
+            }
+        config = directory / 'examples.json'
+        config.write_text(json.dumps({'examples': examples}), encoding='utf-8')
+        example_config = patch('research.alphabet_protocol.EXAMPLES', config)
+        example_config.start()
+        self.addCleanup(example_config.stop)
+
     def test_balanced_plan_and_explicit_participant_kind(self):
         plan=tasks();self.assertEqual(len(plan),130)
         self.assertEqual(Counter(t['letter'] for t in plan),{c:5 for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'})
         self.assertEqual([t['letter'] for t in plan[:26]],list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
         self.assertEqual(profile(' Zoë ', 'development','beginner','left')['name'],'Zoë')
-        with self.assertRaises(ValueError):profile('Ton','','unknown','right')
+        with self.assertRaises(ValueError):profile('Participant','','unknown','right')
         with self.assertRaises(ValueError):tasks(0)
 
     def test_name_role_examples_and_guidance_survive_saved_capture_resume(self):
@@ -40,7 +68,7 @@ class AlphabetProtocolTests(unittest.TestCase):
             self.assertEqual(set(resumed.example_images),set('ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
             with self.assertRaises(ValueError):AlphabetSession(s.directory,'different-model')
 
-    def test_right_hand_reference_policy_and_legacy_display_are_preserved(self):
+    def test_right_hand_reference_policy_is_preserved(self):
         import cv2
         with tempfile.TemporaryDirectory() as root:
             sha=sha256(DEFAULT_MODEL.read_bytes()).hexdigest()
@@ -52,15 +80,15 @@ class AlphabetProtocolTests(unittest.TestCase):
                 source=cv2.imread(info['path'])
                 expected=cv2.flip(source,1) if info['display_mirror'] else source
                 np.testing.assert_array_equal(session.example_images[letter],expected)
-            # Legacy plans keep their old mirrored preview and all-flipped references.
-            session.plan.pop('display')
-            for info in session.plan['examples'].values():
-                for key in ['display_hand','display_mirror','source_hand']:info.pop(key,None)
+
+    def test_capture_display_settings_cannot_be_changed_on_resume(self):
+        with tempfile.TemporaryDirectory() as root:
+            sha=sha256(DEFAULT_MODEL.read_bytes()).hexdigest()
+            session=AlphabetSession.create(root,profile('Test','new','unknown','right'),sha)
+            session.plan['display']['preview_mirrored']=True
             (session.directory/'session.json').write_text(json.dumps(session.plan))
-            legacy=AlphabetSession(session.directory,sha)
-            self.assertTrue(legacy.mirror_preview)
-            source=cv2.imread(legacy.plan['examples']['D']['path'])
-            np.testing.assert_array_equal(legacy.example_images['D'],cv2.flip(source,1))
+            with self.assertRaisesRegex(ValueError,'display format'):
+                AlphabetSession(session.directory,sha)
 
     def test_single_space_saves_no_hand_attempts_without_confirmation_or_example_in_model_image(self):
         camera,detector=MagicMock(),MagicMock();camera.isOpened.return_value=True

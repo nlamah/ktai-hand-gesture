@@ -1,21 +1,21 @@
 # ASL alphabet: shared baseline and three research questions
 
-This is the instructor's reproduction guide. The project recognizes **static AÃ¢â‚¬â€œZ images** using MediaPipe landmarks and a letter classifier. It does not model continuous signing or the movements of J and Z.
+This is the instructor's reproduction guide. The project recognizes **static A-Z images** using MediaPipe landmarks and a letter classifier. It does not model continuous signing or the movements of J and Z.
 
 The numbering follows the supplied **group paper**:
 
 | Component | Research | Implementation status |
 |---|---|---|
 | Shared baseline | Shin distances and directions: **DS, 820 inputs** | [baseline/](baseline/), available |
-| RQ1 | Targeted versus general data collection | [RQ1/](RQ1/), methods/results supplied; executable code missing |
-| RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2 guide](RQ2/README.md), implemented; detection recovery and visual assessment |
+| RQ1 | Targeted additional training images | [RQ1/](RQ1/), methods/results supplied; executable code missing |
+| RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2 guide](RQ2/README.md), implemented; technical recovery and visual-review tools |
 | RQ3 | Own hand-shape features and joint measurements, with/without Shin directions | [RQ3 guide](RQ3/README.md), implemented; includes brief practical explorations |
 
 **The complete group study still requires the missing RQ1 code.** RQ2 is available through `python -m RQ2`; see its guide for raw-image inputs, running, verification and reporting. The shared baseline, RQ3 and supporting controls below are also available.
 
 ## 1. Install and check
 
-Run from the repository root with Python 3.12 and the pinned package versions:
+Run from the repository root with Python 3.12 and the package constraints:
 
 ```bash
 conda create -n ktai-hand-gesture python=3.12
@@ -23,12 +23,11 @@ conda activate ktai-hand-gesture
 python -m pip install -r requirements.txt
 python -m baseline check
 python -m unittest discover -s tests -v
-python -m baseline verify
 ```
 
 For an existing environment, activate it and install `requirements.txt`. If LightGBM cannot find `libomp` on macOS, use `conda install -c conda-forge llvm-openmp`.
 
-`baseline check` reports dependencies, required files, local research inputs and contribution status. `baseline verify` independently recomputes the DS scores from published out-of-fold predictions, without a camera, raw photographs or retraining.
+`baseline check` reports dependencies, required files, local research inputs and contribution status. Missing research inputs are expected before restoring the bundles below. Unit tests run without `results/`, raw images or the input bundle. The dependency versions recorded by the frozen RQ3 protocols are pinned in `requirements.txt`.
 
 Expected shared baseline on **60,251 accepted original single-hand detections**:
 
@@ -43,7 +42,7 @@ These are our fixed model profiles using Shin features, not an exact replication
 
 ```text
 baseline/         Shared Shin interface, classifier profiles, checks and input export
-RQ1/              Integration slot for targeted/general augmentation
+RQ1/              Integration slot for targeted data collection
 RQ2/              Public interface and guide for image preprocessing and detection recovery
 RQ3/              Public experiment workflows and the RQ3 guide
 research/         Shared processing, live tools and fixed numerical implementations
@@ -51,13 +50,12 @@ research/studies/ Numerical implementations called by the RQ3 workflows
 tests/            Tests for the active software
 models/           Trusted trained models and the MediaPipe model file
 assets/, config/  Workbook, examples and fixed measurement rules
-results/          Predictions, metrics, protocols and verification
-paper/            LaTeX sources, tables, figures and PDFs
+results/          Local predictions, metrics and protocols; excluded from Git
 data/, runs/      Local inputs and training checkpoints; excluded from Git
 captures/         Local webcam captures; excluded from Git
 ```
 
-`baseline.shin` imports the unchanged functions from `research/shin.py`. Source hashes and saved model classes require stable module paths. The mirror and G/H experiments also require a specific `research/live_model.py` implementation. That dependency is supplied in `baseline/frozen_sources/`; the RQ3 entry points use it in a temporary workspace. The current live app uses its own implementation. A complete mirror cache is reused.
+`baseline.shin` imports the unchanged functions from `research/shin.py`. Source hashes and saved model classes require stable module paths. The mirror and G/H experiments also require a specific `research/live_model.py` implementation. That dependency is supplied in `baseline/frozen_sources/`; the RQ3 entry points use it in a temporary workspace. The current live app uses its own implementation. A complete supplied mirror cache is reused when available; otherwise mirror extraction needs the raw images.
 
 Example for contributions:
 
@@ -75,23 +73,36 @@ classifier = build_classifier("svm", training_images=len(X_train))
 
 ## 3. Inputs for the paper results
 
-Git includes code, results and deployment models, but **not raw Kaggle images, the frozen landmark cache, fold models or private captures**. Exact classifier reproduction requires the frozen inputs. Redetection is a separate run: not all detector settings were retained in the original cache, so identical detection output is not assumed.
+Git includes code, assets and deployment models. **The entire `results/` folder is ignored and is not included in a new checkout.** Raw Kaggle images, frozen landmark inputs, fold models and private captures are also excluded.
 
-Supply `paper_inputs_20261108.zip` separately (approximately 689 MiB, created under `runs/reproduction/`). It contains the dataset manifest with estimated landmarks, `inputs.npz`, source IDs, five fixed folds, independently detected mirror inputs and SHA256 checksums. It excludes raw photographs, webcam captures, credentials and fold models.
+For the paper's RQ3 reproduction, transfer these two local files separately from Git:
 
-Extract into a clean checkout from the repository root:
+- `rq3_inputs.zip`: the frozen manifest, landmark arrays, source IDs, five folds and checksums. It excludes raw images, mirror detections, private captures and trained fold models.
+- `rq3_results.zip`: the reported RQ3 CSV/JSON tables, protocols and reference predictions, with checksums. It excludes photographs, captures, trained models and run checkpoints.
+
+These files are created under `runs/reproduction/` on the research computer:
 
 ```bash
-python -m zipfile -e /path/to/paper_inputs_20261108.zip .
+python -m baseline bundle --output runs/reproduction/rq3_inputs.zip
+python -m baseline bundle-results --output runs/reproduction/rq3_results.zip
+```
+
+Use new output filenames when exporting again. Copy both archives outside the checkout before moving to another location. From the new repository root, restore and check them:
+
+```bash
+python -m zipfile -e /path/to/rq3_inputs.zip .
+python -m zipfile -e /path/to/rq3_results.zip .
 python -m baseline verify-data
+python -m baseline verify-results
 python -m baseline check
+python -m baseline verify
 ```
 
-Recorded protocols check input hashes and reject changed settings. Do not alter a protocol to accept different inputs. To create a new input bundle on the research computer:
+`baseline verify-results` checks the restored reference archive before retraining. The RQ3 workflow verifiers check regenerated results. `baseline verify` recomputes both DS scores from the restored out-of-fold predictions; it does not fit models. Actual retraining follows in Sections 4-5. The result archive also supplies the frozen protocols/reference predictions required by the supplementary workflows. Recorded protocols reject changed inputs/settings; do not edit them to bypass a mismatch.
 
-```bash
-python -m baseline bundle --output runs/reproduction/paper_inputs_new.zip --with-mirrors
-```
+The main eight-way feature comparison and coordinate control need no raw photographs. Mirror extraction and the photographic occlusion control require the raw images described below. Replaying the four selected live cases requires their private capture folders separately; neither archive includes them.
+
+A mirror cache can optionally be added to the input archive with `--with-mirrors` after all 78 chunks exist under `runs/mirror_01/detections/`. That cache is currently not part of `rq3_inputs.zip`. Redetecting landmarks is a separate run, not a substitute for the frozen classifier inputs.
 
 ### Raw images for redetection or photographic figures
 
@@ -101,10 +112,10 @@ If raw images are needed alongside the frozen inputs, **import the images first,
 
 ```bash
 python -m research.dataset import --source /path/to/asl-alphabet --project data/asl_kaggle
-python -m zipfile -e /path/to/paper_inputs_20261108.zip .
+python -m zipfile -e /path/to/rq3_inputs.zip .
 ```
 
-Only the 78,000 AÃ¢â‚¬â€œZ training images are in scope; `space`, `del` and `nothing` are excluded. Supplied test images that duplicate training images are not an independent test. The original inventory contains 60,251 accepted single hands, 17,598 `no_hand` results and 151 multiple-hand detections.
+Only the 78,000 A-Z training images are in scope; `space`, `del` and `nothing` are excluded. Supplied test images that duplicate training images are not an independent test. The original inventory contains 60,251 accepted single hands, 17,598 `no_hand` results and 151 multiple-hand detections.
 
 ## 4. Retrain the shared baseline
 
@@ -141,7 +152,7 @@ python -m RQ3 features --dry-run
 python -m RQ3 features
 ```
 
-`features` runs input checks, training, permutation tests, export, independent verification and reporting. It fits **80 fold models**: eight representations Ãƒâ€” two learners Ãƒâ€” five folds. D is always present; S, E and J are switched on/off: DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. The full representation has 905 inputs.
+`features` runs input checks, training, permutation tests, export, independent verification and reporting. It fits **80 fold models**: eight representations x two learners x five folds. D is always present; S, E and J are switched on/off: DS, D, DSE, DE, DSJ, DJ, DSEJ and DEJ. The full representation has 905 inputs.
 
 Classification uses 60,251 accepted images. Permutation uses 13,000 fixed held-out images and 3,900 group interventions, without refitting. The optimized SVM route checks parity with ordinary classifier predictions. Matching checkpoints under `runs/feature_factorial_01/` are resumable; the complete run is computationally expensive.
 
@@ -160,7 +171,7 @@ The coordinate control supports the main feature comparison. Left/right and G/H 
 | Command | Inputs and dependencies |
 |---|---|
 | `python -m RQ3 coordinate_control` | Joint measurements from Shin's image points; frozen cache and manifest |
-| `python -m RQ3 mirrors` | Original/mirror training; complete mirror detections are reused |
+| `python -m RQ3 mirrors` | Raw photographs, or a separately supplied complete mirror cache; restores the matched reference and mirror models |
 | `python -m RQ3 normalization` | Detector-Right normalization; run `mirrors` first |
 | `python -m RQ3 gh_rotation` | Separate G/H rotation training; frozen cache and manifest |
 | `python -m RQ3 occlusion` | Coarse rendering, point noise and artificial rotation testing; run `gh_rotation` first; raw images needed for the 64-photo detection control |
@@ -168,7 +179,7 @@ The coordinate control supports the main feature comparison. Left/right and G/H 
 
 The orientation comparisons retain their **835-input DSJ reference**. Primary classification scores exclude rejected detections. The artificial mirror mixture is a different test presentation. A high artificial G/H rotation score does not establish better live recognition. Four selected webcam examples do not estimate precision/F1 or error frequency.
 
-The 22 withdrawn guided G/H captures are not current training/test data. Private captures are excluded from Git and the input bundle; drawing their figures again requires those local files. Existing figures and provenance are in `paper/figures/` and `results/`.
+The 22 withdrawn guided G/H captures are not current training/test data. Private captures are excluded from Git and the input bundle; drawing their figures again requires those local files. Figure assets are in the separate paper project; measurement provenance is in `results/`.
 
 ## 6. Live recognition and feature inspection
 
@@ -178,7 +189,7 @@ Use the supplied deployment models without retraining:
 python -m research.live_camera
 ```
 
-Choose **1** for DS, **2** for DSJ, **9** for G/H rotation, **7/8** for the matched mirror reference/mirror-trained models and **0** for right normalization. The default is DSJ. **Space Ã¢â€ â€™ intended letter Ã¢â€ â€™ Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
+Choose **1** for DS, **2** for DSJ, **9** for G/H rotation, **7/8** for the matched mirror reference/mirror-trained models and **0** for right normalization. The default is DSJ. **Space -> intended letter -> Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
 
 For the browser feature tool:
 
@@ -188,20 +199,13 @@ python -m streamlit run app.py
 
 Select a model, enable **Camera on**, optionally enter the intended letter and use **Save capture**. The intended letter does not affect recognition. Only one tool can use the camera at a time; macOS may require camera permission. See the [live test guide](docs/LIVE_TESTPLAN.md).
 
-## 7. Paper and evidence
+## 7. Separate paper project and review proposal
 
-The current group contribution is in [group_report.tex](paper/group_integration/group_report.tex), with an equivalent [paste-ready version](paper/group_integration/group_report_paste_ready.tex). The [transfer package](paper/group_integration_ton.zip) includes the supplied group figures, bibliography and code appendices. The shortened body fits five pages; references continue onto page 6. See the [integration steps](docs/GROUP_INTEGRATION.md) before updating a newer group main. The own contribution uses six references.
+The paper is maintained in a separate Overleaf repository, not in a `paper/` directory in this software checkout. This computer's paper checkout is `~/Documents/GitHub/6aba6ebfe26cf023a6c2efc0`; compile its `main.tex`. Obtain that source project separately when reproducing the complete submission.
 
-The original group illustration and code appendices are now included, and the N47 reference resolves. Executable RQ1 code, separately distributed raw experiment inputs and the shared abstract still need to be supplied. RQ2 detection recovery is implemented; see its guide. Existing coauthor prose and code remain unchanged.
+The [paper integration guide](docs/GROUP_INTEGRATION.md) describes the separate project and the discussion proposal. It includes a before/after PDF, complete proposed paper, source patch and Overleaf source ZIP. RQ1/RQ2 edits, a shared abstract/conclusion and the compact RQ3 contribution with its literature comparison are applied locally in the paper checkout for group review; they have not been committed or pushed.
 
-The standalone [working paper](paper/report.pdf) and [technical supplement](paper/appendix.pdf) can be built with Tectonic:
-
-```bash
-tectonic --only-cached -o paper paper/report.tex
-tectonic --only-cached -o paper paper/appendix.tex
-```
-
-A fresh Tectonic installation may first need a run without `--only-cached` to download standard TeX resources. In Overleaf, paste the integrated source into `main.tex` within the existing group project.
+Published classification evidence is restored from `rq3_results.zip` under `results/feature_factorial_01/`. Results, frozen inputs, raw images and private captures are distributed separately as described above. Executable RQ1 code and its raw experiment inputs still need to be supplied. RQ2 is implemented; its historical run outputs are distributed separately from Git. See each contribution guide for its exact scope and required inputs.
 
 ## 8. RQ1/RQ2 contributions
 
@@ -213,5 +217,4 @@ Reuse the shared detector/baseline where relevant. RQ1 outputs belong under `res
 
 - [RQ3 guide](RQ3/README.md): question, variants, findings and limitations.
 - [Live test guide](docs/LIVE_TESTPLAN.md): free comparisons and optional collection protocols.
-- [Figure guide](docs/APPENDIX_VISUALS.md): appendix figures and required source files.
-- [Integration checklist](paper/INTEGRATION_TODO.md): outstanding group contributions.
+- [Paper integration guide](docs/GROUP_INTEGRATION.md): separate paper checkout, discussion proposal and safe integration.
