@@ -114,3 +114,49 @@ Copy `visual_review_template.csv` to a separate file such as `visual_review_comp
 | Figures | [plot_results.py](../experiments/hand_detection_recovery/plot_results.py) |
 | Repeated-run comparison | [compare_runs.py](../experiments/hand_detection_recovery/compare_runs.py) |
 | Tests | [test_rq2_interface.py](../tests/test_rq2_interface.py), [test_recovery_paths.py](../tests/test_recovery_paths.py) |
+
+## Additional paper analysis and unchanged-PNG control
+
+These modules write to a **separate, new output directory**. They never replace the source run or its checkpoints. Existing analysis output is rejected; the PNG control requires an explicit `--resume` to reuse its own checkpoint.
+
+Recompute the rejection categories, recoveries without successful dilation, and per-letter results:
+
+```bash
+python -m RQ2.paper_analysis --run experiments/hand_detection_recovery/runs/test_all --output experiments/hand_detection_recovery/runs/paper_analysis_01
+```
+
+Outputs are `summary.json`, `by_letter.csv`, `rejection_combinations.csv` and `other_rejected_images.csv`. The analysis verifies the source exports first and records their hashes. Per-letter miss percentage uses all originals of that letter; recovery percentage uses only that letter's original misses. For a letter without original misses, recovery percentage is left empty rather than reported as measured zero. Status counts distinguish unique images from retries, and an image may appear in more than one rejection-status group.
+
+For the saved `test_all` run, 1,239 unique images were recovered without a successful dilation retry. The 20 unrecovered images with at least one status other than `no_hand` all have `multiple_hands` (21 retries); none has `invalid_geometry`. The remaining 39 attempts within those 20 images have `no_hand`.
+
+The optional null control decodes each original miss, saves the unmodified pixels as PNG, reads it back and checks exact pixel equality. It then runs the detector on both the decoded original and the reloaded PNG, recording both outcomes and landmarks. A nonzero result is retained, never treated as an expected-zero assertion.
+
+For a small technical check:
+
+```bash
+python -m RQ2.png_control --run experiments/hand_detection_recovery/runs/test_all --output experiments/hand_detection_recovery/runs/png_control_check_01 --limit 20
+```
+
+For all original misses, use a different output name and omit the limit:
+
+```bash
+python -m RQ2.png_control --run experiments/hand_detection_recovery/runs/test_all --output experiments/hand_detection_recovery/runs/png_control_full_01
+```
+
+Resume with the same source and limit (if used):
+
+```bash
+python -m RQ2.png_control --run experiments/hand_detection_recovery/runs/test_all --output experiments/hand_detection_recovery/runs/png_control_full_01 --resume
+```
+
+The control writes `settings.json`, `per_image.csv`, `detections.jsonl`, `summary.json`, unchanged PNGs under `images/`, and `progress.sqlite`. Each completed pair is checkpointed. A source/model/version change is rejected; resumed controls also reject changed code or saved PNGs. A forced process termination can leave `control.lock`: confirm that no control process is active before removing a stale lock.
+
+`png_recoveries_vs_historical` counts PNG outcomes that are now `ok` among historical misses. `original_recoveries_vs_historical` identifies changes already present when replaying the original. `paired_png_recoveries` counts current-original `no_hand` to current-PNG `ok`. Pixel equality does not guarantee deterministic detector outcomes. The comparison uses sequential calls on the same detector; it does not by itself distinguish nondeterminism from an ordering effect. Model and MediaPipe/OpenCV versions must match the source settings, while current code hashes and differences from historical code are recorded explicitly.
+
+The first 20-image technical check returned zero original or PNG recoveries, no paired status changes and identical pixels for every PNG round trip. This is not a result for all 17,598 original misses; run the full control before making that claim in the paper. The limit selects a deterministic letter/filename ordering, not a representative sample.
+
+Run the additional tests with:
+
+```bash
+python -m unittest tests.test_rq2_paper_checks tests.test_rq2_interface tests.test_recovery_paths tests.test_import -v
+```
