@@ -19,7 +19,6 @@ def main():
     train.add_argument('--out', help='Required with --cache: new output directory under runs/.')
     bundle = sub.add_parser('bundle', help='Export local fixed inputs for instructor reproduction.')
     bundle.add_argument('--output', required=True)
-    bundle.add_argument('--with-mirrors', action='store_true')
     results = sub.add_parser('bundle-results', help='Export RQ3 CSV/JSON evidence separately from Git.')
     results.add_argument('--output', required=True)
     args = parser.parse_args()
@@ -34,7 +33,7 @@ def main():
         print(json.dumps(verify_results(), indent=2))
     elif args.command == 'bundle':
         from baseline.bundle import create_bundle
-        print(json.dumps(create_bundle(args.output, args.with_mirrors), indent=2))
+        print(json.dumps(create_bundle(args.output), indent=2))
     elif args.command == 'bundle-results':
         from baseline.bundle import create_results_bundle
         print(json.dumps(create_results_bundle(args.output), indent=2))

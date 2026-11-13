@@ -6,9 +6,7 @@ from baseline.check import digest
 from baseline.runner import ROOT
 
 
-RESULT_SETS = ('feature_factorial_01', 'direction_joint_01', 'angles', 'model_comparison',
-               'mirror_01', 'handedness_01', 'rotation_GH_y180_01',
-               'gh_occlusion_01', 'gh_live_diagnostics_20261107')
+RESULT_SETS = ('feature_factorial_01', 'feature_diagnostics_01', 'direction_joint_01')
 
 
 def create_results_bundle(output):
@@ -52,22 +50,16 @@ def verify_results():
     return {'status': 'passed', 'result_files_verified': len(record['files_sha256'])}
 
 
-def create_bundle(output, with_mirrors=False):
+def create_bundle(output):
     output = Path(output).resolve()
     if output.exists():
         raise FileExistsError(f'Choose a new filename: {output}')
     names = ['data/asl_kaggle/manifest.json', 'data/asl_kaggle/research/inputs.npz',
              'data/asl_kaggle/research/inputs_metadata.json', 'data/asl_kaggle/research/summary.json']
-    if with_mirrors:
-        parts = sorted((ROOT / 'runs/mirror_01/detections').glob('chunk_*.npz'))
-        if not parts:
-            raise FileNotFoundError('The mirror detection cache is missing.')
-        names += [str(p.relative_to(ROOT)) for p in parts]
     for name in names:
         if not (ROOT / name).is_file():
             raise FileNotFoundError(name)
-    record = {'version': 'shared-paper-inputs-v1', 'with_mirrors': with_mirrors,
-              'files_sha256': {name: digest(ROOT / name) for name in names},
+    record = {'version': 'shared-paper-inputs-v1', 'files_sha256': {name: digest(ROOT / name) for name in names},
               'excluded': ['webcam captures', 'raw images', 'trained fold models', 'credentials'],
               'usage': 'Extract from the repository root, then python -m baseline check. Read README.md first.'}
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -82,4 +74,4 @@ def create_bundle(output, with_mirrors=False):
     finally:
         temporary.unlink(missing_ok=True)
     return {'path': str(output), 'bytes': output.stat().st_size,
-            'files': len(names), 'sha256': digest(output), 'with_mirrors': with_mirrors}
+            'files': len(names), 'sha256': digest(output)}

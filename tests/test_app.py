@@ -27,11 +27,11 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
     def test_current_models_and_archive_preserve_selection(self):
         app=AppTest.from_file(str(APP),default_timeout=30).run()
         choices=app.selectbox(key='asl_live_model_choice')
-        self.assertEqual(len(choices.options),6)
-        choices.select('GH_back').run()
-        self.assertEqual(app.selectbox(key='asl_live_model_choice').value,'GH_back')
+        self.assertEqual(len(choices.options),2)
+        choices.select('reference').run()
+        self.assertEqual(app.selectbox(key='asl_live_model_choice').value,'reference')
         app.toggle(key='asl_model_archive').set_value(True).run()
-        self.assertEqual(len(app.selectbox(key='asl_live_model_choice').options),10)
+        self.assertEqual(len(app.selectbox(key='asl_live_model_choice').options),5)
         app.selectbox(key='asl_live_model_choice').select('tilt').run()
         app.toggle(key='asl_model_archive').set_value(False).run()
         self.assertEqual(app.selectbox(key='asl_live_model_choice').value,'angles')
@@ -46,7 +46,7 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
              patch('research.live_model.load_bundle',return_value={}), \
              patch('research.capture.save_capture',return_value=Path('/tmp/test-capture')) as save:
             app=AppTest.from_file(str(APP),default_timeout=30).run()
-            app.selectbox(key='asl_live_model_choice').select('GH_back').run()
+            app.selectbox(key='asl_live_model_choice').select('reference').run()
             app.text_input(key='asl_live_target_letter').set_value('G').run()
             app.toggle(key='asl_live_camera_active').set_value(True).run()
             app.session_state['asl_live_feature_camera']={'frame':payload}
@@ -58,7 +58,7 @@ class ASLLiveFeatureAppTests(unittest.TestCase):
             self.assertFalse(app.exception,str(app.exception))
             packet,label,bundle,path,*_=save.call_args.args
             self.assertEqual(label,'G')
-            self.assertEqual(path,next(p for k,_,p in MODEL_CHOICES if k=='GH_back'))
+            self.assertEqual(path,next(p for k,_,p in MODEL_CHOICES if k=='reference'))
             self.assertEqual(packet['detection']['status'],'no_hand')
             self.assertIsNone(packet['prediction'])
             self.assertEqual(packet['browser_frame_id'],'known-frame')

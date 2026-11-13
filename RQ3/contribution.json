@@ -6,12 +6,8 @@
   "main_results": "results/feature_factorial_01/",
   "supporting_controls": [
     "coordinate_control",
-    "mirrors",
-    "normalization",
-    "gh_rotation",
-    "occlusion",
-    "live_examples"
+    "diagnostics"
   ],
-  "note": "Supporting orientation checks retain their own 835-input DSJ reference.",
+  "note": "All feature variants use the same accepted sources and fixed folds.",
   "documentation": "RQ3/README.md"
 }

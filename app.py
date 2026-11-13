@@ -312,7 +312,6 @@ with st.sidebar:
     model_path = paths[selected_model]
     st.caption(MODEL_HELP.get(selected_model,"Exploratory variant; see model metadata for its exact transformation."))
     recognition_enabled = st.toggle("Recognize letters", value=True, key="asl_live_recognition")
-    st.caption("For G/H, compare World joints [2] with G/H y180 only [9]. Rotation is applied during training.")
 
 settings = st.expander("Workbook and measurement rules")
 with settings:

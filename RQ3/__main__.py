@@ -1,4 +1,4 @@
-"""Run the RQ3 feature and orientation experiments; see RQ3/README.md."""
+"""Run the RQ3 feature comparison and coordinate control; see RQ3/README.md."""
 import argparse
 import subprocess
 

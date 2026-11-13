@@ -166,7 +166,7 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_open = True
         cv2.setMouseCallback(WINDOW, snapshot_mouse, state)
-        print('Camera started. [1] Reference, [2] World joints, [9] G/H y180; [7/8/0] left/right controls. A: model archive. N: new round. L: landmarks. Space: save example (correct or incorrect). Q/Esc: close.', flush=True)
+        print('Camera started. [1] Reference, [2] World joints. A: additional models. N: new round. L: landmarks. Space: save example (correct or incorrect). Q/Esc: close.', flush=True)
         while True:
             if protocol and (protocol.directory/'withdrawn.json').exists():
                 raise ValueError('This capture round was withdrawn. Close the window and start a new session.')
@@ -227,10 +227,8 @@ def run_camera(model_path=DEFAULT_MODEL, camera=0, output=DEFAULT_CAPTURE_DIR, g
                 state['requested']=None
                 if key in (10,13):protocol.participant_confirmed=protocol.current['participant']
                 continue
-            if ord('1')<=key<=ord('9') and not protocol:
-                state['model_request']=MODEL_CHOICES[key-ord('1')][0]
-            if key==ord('0') and len(MODEL_CHOICES)>=10 and not protocol:
-                state['model_request']=MODEL_CHOICES[9][0]
+            if ord('1') <= key < ord('1') + len(MODEL_CHOICES) and not protocol:
+                state['model_request'] = MODEL_CHOICES[key-ord('1')][0]
             if key in (ord('n'),ord('N')) and not protocol:
                 state['round_request']=True
             if key in (ord('a'),ord('A')) and not protocol:
@@ -296,7 +294,7 @@ def main():
     parser.add_argument('--camera', type=int, default=0, help='Camera index; default 0.')
     parser.add_argument('--model', type=Path, default=DEFAULT_MODEL)
     parser.add_argument('--output', type=Path, default=None, help='Directory for manually saved confusions.')
-    parser.add_argument('--round-name',help='Optional label stored with each capture, e.g. GH-back-of-hand.')
+    parser.add_argument('--round-name',help='Optional label stored with each capture, e.g. feature-check.')
     parser.add_argument('--guided', action='store_true', help='Guided C/D/O tilt protocol, 27 planned captures.')
     parser.add_argument('--role', choices=('development','evaluation'), default=None)
     parser.add_argument('--resume', type=Path, help='Resume an existing guided session directory.')

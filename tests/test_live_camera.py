@@ -10,22 +10,20 @@ from research import live_camera
 
 
 class LiveCameraTests(unittest.TestCase):
-    def test_compact_model_buttons_keep_standalone_gh_and_stable_shortcuts(self):
-        from research.model_choices import visible_model_buttons,model_shortcut
-        buttons=visible_model_buttons()
-        self.assertEqual(len(buttons),6)
-        self.assertIn('GH_back',[b[0] for b in buttons])
-        self.assertNotIn('GH_rotation',[b[0] for b in buttons])
-        self.assertEqual(model_shortcut('GH_back'),'9')
-        rect=next(b[-1] for b in buttons if b[0]=='GH_back')
-        state={}
-        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)
-        self.assertEqual(state['model_request'],'GH_back')
-        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,230,live_camera.ROUND_BUTTON[1]+5,0,state)
+    def test_primary_model_buttons_keep_stable_shortcuts(self):
+        from research.model_choices import visible_model_buttons, model_shortcut
+        buttons = visible_model_buttons()
+        self.assertEqual([b[0] for b in buttons], ['reference', 'angles'])
+        self.assertEqual(model_shortcut('angles'), '2')
+        rect = buttons[1][-1]
+        state = {}
+        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN, rect[0]+5, rect[1]+5, 0, state)
+        self.assertEqual(state['model_request'], 'angles')
+        live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN, 230, live_camera.ROUND_BUTTON[1]+5, 0, state)
         self.assertTrue(state['archive'])
-        self.assertEqual(len(visible_model_buttons(True)),10)
+        self.assertEqual(len(visible_model_buttons(True)), 5)
 
-    def test_zero_key_selects_canonical_model(self):
+    def test_unassigned_digit_keys_leave_the_current_model_active(self):
         capture, detector = MagicMock(), MagicMock()
         capture.isOpened.return_value = True
         capture.read.return_value = (True, np.zeros((40,60,3), np.uint8))
@@ -33,10 +31,11 @@ class LiveCameraTests(unittest.TestCase):
         with ExitStack() as stack:
             self.patches(stack, capture, detector)
             stack.enter_context(patch.object(live_camera.Path, 'read_bytes', return_value=b'model'))
-            stack.enter_context(patch.object(live_camera.cv2, 'waitKey', side_effect=[ord('0'),ord('q')]))
+            stack.enter_context(patch.object(live_camera.cv2, 'waitKey', side_effect=[ord('9'),ord('0'),ord('q')]))
             stack.enter_context(patch.object(live_camera, 'predict_letter', return_value=None))
             live_camera.run_camera()
-            self.assertEqual(live_camera.load_bundle.call_args.args[0].name, 'asl_shin_angles_right_hand.joblib')
+            self.assertEqual(live_camera.load_bundle.call_count, 1)
+            self.assertEqual(live_camera.load_bundle.call_args.args[0], live_camera.DEFAULT_MODEL)
 
     def test_preview_size_does_not_change_with_frame_or_letter(self):
         for shape in ((480, 640, 3), (720, 1280, 3), (640, 480, 3)):
@@ -129,7 +128,7 @@ class LiveCameraTests(unittest.TestCase):
         plain=live_camera.render_preview(frame,'G',{'status':'no_hand','image_landmarks':points})
         self.assertEqual(int(plain[240,409].sum()),0)
 
-    def test_new_round_and_fifth_model_keep_correct_snapshot_metadata(self):
+    def test_new_round_and_additional_model_keep_correct_snapshot_metadata(self):
         capture,detector=MagicMock(),MagicMock();capture.isOpened.return_value=True
         capture.read.return_value=(True,np.zeros((40,60,3),np.uint8))
         detector.analyze.return_value={'status':'no_hand'}
@@ -140,9 +139,9 @@ class LiveCameraTests(unittest.TestCase):
             stack.enter_context(patch.object(live_camera,'predict_letter',return_value=None))
             stack.enter_context(patch.object(live_camera,'confirm_expected',return_value=(True,'G')))
             saved=stack.enter_context(patch.object(live_camera,'save_capture',return_value=Path('/tmp/capture')))
-            live_camera.run_camera(round_name='GH-rug')
+            live_camera.run_camera(round_name='feature-check')
             first,second=[c.args[0] for c in saved.call_args_list]
-            self.assertEqual(first['capture_round']['name'],'GH-rug')
+            self.assertEqual(first['capture_round']['name'],'feature-check')
             self.assertEqual(first['capture_round']['number'],1)
             self.assertEqual(second['capture_round']['number'],2)
             self.assertNotEqual(first['session_id'],second['session_id'])

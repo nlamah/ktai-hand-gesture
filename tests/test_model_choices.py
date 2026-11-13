@@ -31,7 +31,7 @@ class ModelChoiceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             path=Path(temp)/'model.joblib';joblib.dump(bundle,path);load_bundle(path)
             frame=np.zeros((30,40,3),np.uint8)
-            packet={'frame':frame,'model_frame':frame,'detection':d,'prediction':pred,'captured_at_utc':'test','capture_round':{'id':'r1','name':'GH-rug','number':2},'session_id':'r1'}
+            packet={'frame':frame,'model_frame':frame,'detection':d,'prediction':pred,'captured_at_utc':'test','capture_round':{'id':'r1','name':'feature-check','number':2},'session_id':'r1'}
             saved=save_capture(packet,'C',bundle,path,'hash',frame,Path(temp)/'captures')
             record=json.loads((saved/'capture.json').read_text())
             self.assertEqual(record['input_variant'],'shin')
@@ -75,12 +75,12 @@ class ModelChoiceTests(unittest.TestCase):
             self.assertEqual(loader.call_count,3)
         capture.release.assert_called_once();detector.close.assert_called_once()
 
-    def test_sixth_model_button_and_new_round_have_separate_hit_regions(self):
+    def test_second_model_button_and_new_round_have_separate_hit_regions(self):
         from research.model_choices import visible_model_buttons
-        rect=visible_model_buttons()[5][-1]
+        rect=visible_model_buttons()[1][-1]
         state={'shown':object()}
         live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)
-        self.assertEqual(state['model_request'],'right_hand')
+        self.assertEqual(state['model_request'],'angles')
         self.assertNotIn('round_request',state)
         state={'shown':object()};rect=live_camera.ROUND_BUTTON
         live_camera.snapshot_mouse(live_camera.cv2.EVENT_LBUTTONDOWN,rect[0]+5,rect[1]+5,0,state)

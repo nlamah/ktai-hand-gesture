@@ -1,37 +1,34 @@
-# Live comparisons and capture collection
+# Live model comparison and optional data collection
 
-See [RQ3/README.md](../RQ3/README.md) for the question, completed experiments, findings and reproduction commands. This guide covers collecting new examples.
+The [RQ3 guide](../RQ3/README.md) covers the controlled feature study. This guide covers inspecting models and collecting new examples; these activities are not completed final validation.
 
-## Compare models freely
+## Inspect predictions
+
+From the repository root:
 
 ```bash
 conda activate ktai-hand-gesture
-python -m research.live_camera --model models/asl_shin_angles_GH_y180.joblib
+python -m research.live_camera
 ```
 
-This starts with the G/H rotation model. Keys: **1** Shin DS, **2** world joints DSJ, **9** G/H rotation, **7/8** matched mirror reference/mirror training, **0** right normalization. Without `--model`, the default is DSJ.
+Keys: **1** shared Shin DS, **2** world-joint DSJ (default), **A** additional existing model variants, **L** landmarks, **N** new round, **Q/Esc** close.
 
-**Space → intended letter → Enter** saves the frame, exact detector input, landmarks, model hash and prediction under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Keep successful examples too. Free captures support error analysis; they do not estimate precision/F1 or error frequency and are not automatically used for training.
+**Space -> intended letter -> Enter** saves the displayed frame, exact detector input, landmarks, model hash and prediction under `captures/confusions/`. Keep successful examples too. Free captures support error analysis; they do not estimate precision/F1 or error frequency and are not automatically used for training. The preview is reflected for convenience; model inputs remain unchanged.
 
-The four current paper examples are in `results/gh_live_diagnostics_20261107/`. They are separate from the 22 withdrawn guided G/H captures. Withdrawn attempts are not research evidence; their exclusion is recorded in `results/gh_capture_reset_20261107/withdrawal.json`.
+For feature inspection in the browser:
+
+```bash
+python -m streamlit run app.py
+```
+
+Select DS or DSJ, enable Camera on, optionally enter the intended letter and save a capture. The intended letter selects feature expectations and never controls the predicted letter. Only one tool can use the camera at a time.
 
 ## Optional predefined evaluation
 
-Fix tasks in advance and retain correct, incorrect and failed-detection attempts. Hide predictions during collection and evaluate both models on the same saved images. Fix hand, lighting, distance, guidance, repetitions and participant roles. Anyone whose errors influenced development is a development participant.
+Fix tasks and models before collection. Retain correct, incorrect and failed-detection attempts and hide predictions during recording. Keep lighting, camera, distance, guidance and participant roles consistent. Anyone whose results influenced development is a development participant.
 
-| Goal | Start | Protocol |
-|---|---|---|
-| G/H viewpoints: 40 attempts per person | `python -m research.gh_view_capture --participants 1` | [G/H capture](GH_CAPTURE.md) |
-| Shin DS versus DSJ, five alphabets: 130 attempts per person | `python -m research.alphabet_capture` | [Alphabet capture and evaluation](ALPHABET_CAPTURE.md) |
+```bash
+python -m research.alphabet_capture
+```
 
-The alphabet evaluator compares DS and DSJ, not all eight feature variants. The G/H tool records a protocol but has no current public evaluator for a new session. `RQ3 live_examples` replays only the four existing free examples. A new G/H evaluation therefore requires analysis of the new sessions.
-
-Check G/H execution beforehand using [ASL University / Vicars](https://www.lifeprint.com/asl101/topics/feedback.htm): the palm faces inward or sideways. Palm-facing images are an experimental control. Screen left/right alone cannot establish correct execution.
-
-## Outstanding group contributions
-
-- **RQ1:** targeted/general augmentation methods, code and results.
-- **RQ2:** executable code for the supplied detection-recovery text and visual review of recovered landmarks.
-- **Shared paper:** abstract, missing RQ2 figure/code appendices/group bibliography, and author checks of sources and conclusions.
-
-See the [integration checklist](../paper/INTEGRATION_TODO.md). New capture sessions are optional further work, not completed final validation.
+The [alphabet guide](ALPHABET_CAPTURE.md) describes the five A-Z rounds (130 attempts per participant), pause/resume and paired evaluation of DS and DSJ on the same saved images. It does not evaluate all eight feature combinations. Report detection coverage and classification separately, and distinguish new participants from those involved in development. Obtain participant agreement before sharing captured images.

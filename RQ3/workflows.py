@@ -1,4 +1,4 @@
-"""Reproduction order for feature comparisons and orientation checks.
+"""Reproduction order for the feature comparison and coordinate control.
 
 The numerical implementations retain their frozen research.* module names.
 This registry is the maintained public interface; it does not copy algorithms.
@@ -11,9 +11,6 @@ def module(name, *args):
     return ['-m', 'research.studies.' + name, *args]
 
 
-def portable(name, *args):
-    return ['-m', 'RQ3.portable_study', name, *args]
-
 
 FEATURES = [
     module('feature_factorial', '--stage', 'parity'),
@@ -24,50 +21,20 @@ FEATURES = [
     module('feature_factorial', '--stage', 'permutation', '--model', 'lightgbm'),
     module('feature_factorial', '--stage', 'export'),
     module('verify_feature_factorial'),
+    ['-m', 'RQ3.comparison_diagnostics'],
     module('report_feature_factorial'),
 ]
-MIRRORS = [module('mirror_dataset', '--workers', '4'),
-           module('mirror_augmentation', '--stage', 'cv'),
-           module('mirror_augmentation', '--stage', 'train'),
-           module('verify_mirror'), module('report_mirror')]
-GH_ROTATION = [module('gh_rotation_standalone', '--stage', stage) for stage in ['freeze', 'cv', 'train']]
-GH_ROTATION += [['-m', 'RQ3.gh_rotation']]
 
 WORKFLOWS = {
+    'diagnostics': {'results': 'results/feature_diagnostics_01',
+                    'reproduce': [['-m', 'RQ3.comparison_diagnostics']],
+                    'verify': [['-m', 'RQ3.comparison_diagnostics', '--verify']]},
     'features': {'results': 'results/feature_factorial_01', 'reproduce': FEATURES,
                  'verify': [module('verify_feature_factorial')], 'report': [module('report_feature_factorial')]},
     'coordinate_control': {'results': 'results/direction_joint_01',
                            'reproduce': [module('compare_direction_joint'), module('verify_direction_joint')],
                            'verify': [module('verify_direction_joint')]},
-    'mirrors': {'results': 'results/mirror_01',
-                'reproduce': [['-m', 'baseline.frozen_worker', 'mirrors', 'reproduce']],
-                'verify': [['-m', 'baseline.frozen_worker', 'mirrors', 'verify']],
-                'report': [['-m', 'baseline.frozen_worker', 'mirrors', 'report']]},
-    'normalization': {'results': 'results/handedness_01',
-                      'reproduce': [module('handedness_normalization', '--stage', 'geometry'),
-                                    module('handedness_normalization', '--stage', 'cv', '--model', 'svm'),
-                                    module('handedness_normalization', '--stage', 'cv', '--model', 'lightgbm'),
-                                    module('handedness_normalization', '--stage', 'export'),
-                                    module('handedness_normalization', '--stage', 'train'),
-                                    module('verify_handedness'), module('report_handedness')],
-                      'verify': [module('verify_handedness')], 'report': [module('report_handedness')]},
-    'gh_rotation': {'results': 'results/rotation_GH_y180_01',
-                    'reproduce': [['-m', 'baseline.frozen_worker', 'gh_rotation', 'reproduce']],
-                    'verify': [['-m', 'baseline.frozen_worker', 'gh_rotation', 'verify']],
-                    'report': [['-m', 'baseline.frozen_worker', 'gh_rotation', 'report']]},
-    'occlusion': {'results': 'results/gh_occlusion_01',
-                  'reproduce': [portable('gh_occlusion', '--stage', 'prepare'),
-                                portable('gh_occlusion', '--stage', 'screen'),
-                                portable('gh_occlusion', '--stage', 'train', '--arm', 'noise002'),
-                                portable('gh_occlusion', '--stage', 'train', '--arm', 'noise005'),
-                                portable('gh_occlusion', '--stage', 'report'),
-                                portable('gh_occlusion_rotated_test'), module('verify_gh_occlusion'),
-                                module('report_gh_occlusion')],
-                  'verify': [module('verify_gh_occlusion')], 'report': [module('report_gh_occlusion')]},
-    'live_examples': {'results': 'results/gh_live_diagnostics_20261107',
-                      'reproduce': [['-m', 'RQ3.live_examples']],
-                      'verify': [['-m', 'RQ3.live_examples']],
-                      'report': [['-m', 'RQ3.live_examples']]},
+
 }
 
 

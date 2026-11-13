@@ -9,7 +9,7 @@ The numbering follows the supplied **group paper**:
 | Shared baseline | Shin distances and directions: **DS, 820 inputs** | [baseline/](baseline/), available |
 | RQ1 | Targeted additional training images | [RQ1/](RQ1/), methods/results supplied; executable code missing |
 | RQ2 | Recovering hand detections using dilation, erosion and a Canny overlay | [RQ2 guide](RQ2/README.md), implemented; technical recovery and visual-review tools |
-| RQ3 | Own hand-shape features and joint measurements, with/without Shin directions | [RQ3 guide](RQ3/README.md), implemented; includes brief practical explorations |
+| RQ3 | Own hand-shape features and joint measurements, with/without Shin directions | [RQ3 guide](RQ3/README.md), implemented; controlled feature comparison |
 
 **The complete group study still requires the missing RQ1 code.** RQ2 is available through `python -m RQ2`; see its guide for raw-image inputs, running, verification and reporting. The shared baseline, RQ3 and supporting controls below are also available.
 
@@ -55,7 +55,7 @@ data/, runs/      Local inputs and training checkpoints; excluded from Git
 captures/         Local webcam captures; excluded from Git
 ```
 
-`baseline.shin` imports the unchanged functions from `research/shin.py`. Source hashes and saved model classes require stable module paths. The mirror and G/H experiments also require a specific `research/live_model.py` implementation. That dependency is supplied in `baseline/frozen_sources/`; the RQ3 entry points use it in a temporary workspace. The current live app uses its own implementation. A complete supplied mirror cache is reused when available; otherwise mirror extraction needs the raw images.
+`baseline.shin` imports the unchanged functions from `research/shin.py`. Source hashes and saved model classes require stable module paths. The live tools use the same feature definitions for the shared baseline and world-joint model.
 
 Example for contributions:
 
@@ -77,7 +77,7 @@ Git includes code, assets and deployment models. **The entire `results/` folder 
 
 For the paper's RQ3 reproduction, transfer these two local files separately from Git:
 
-- `rq3_inputs.zip`: the frozen manifest, landmark arrays, source IDs, five folds and checksums. It excludes raw images, mirror detections, private captures and trained fold models.
+- `rq3_inputs.zip`: the frozen manifest, landmark arrays, source IDs, five folds and checksums. It excludes raw images, private captures and trained fold models.
 - `rq3_results.zip`: the reported RQ3 CSV/JSON tables, protocols and reference predictions, with checksums. It excludes photographs, captures, trained models and run checkpoints.
 
 These files are created under `runs/reproduction/` on the research computer:
@@ -100,13 +100,11 @@ python -m baseline verify
 
 `baseline verify-results` checks the restored reference archive before retraining. The RQ3 workflow verifiers check regenerated results. `baseline verify` recomputes both DS scores from the restored out-of-fold predictions; it does not fit models. Actual retraining follows in Sections 4-5. The result archive also supplies the frozen protocols/reference predictions required by the supplementary workflows. Recorded protocols reject changed inputs/settings; do not edit them to bypass a mismatch.
 
-The main eight-way feature comparison and coordinate control need no raw photographs. Mirror extraction and the photographic occlusion control require the raw images described below. Replaying the four selected live cases requires their private capture folders separately; neither archive includes them.
+The eight-way feature comparison and coordinate control use the frozen landmark inputs and need no raw photographs. Redetecting landmarks is a separate replication, with its own detector outputs and checksums.
 
-A mirror cache can optionally be added to the input archive with `--with-mirrors` after all 78 chunks exist under `runs/mirror_01/detections/`. That cache is currently not part of `rq3_inputs.zip`. Redetecting landmarks is a separate run, not a substitute for the frozen classifier inputs.
+### Raw images for redetection
 
-### Raw images for redetection or photographic figures
-
-**Skip this section for the main RQ3 feature comparison and coordinate control:** the frozen input bundle already supplies their landmarks. Raw photographs are needed for RQ2, mirror extraction without a supplied mirror cache, photographic controls or new detections.
+**Skip this section for the main RQ3 feature comparison and coordinate control:** the frozen input bundle already supplies their landmarks. Raw photographs are needed for RQ2 or a new landmark-extraction run.
 
 The original photographs are **not committed**: `data/` is ignored by Git, and neither reproduction archive includes the photographs. Download [ASL Alphabet by grassknoted](https://www.kaggle.com/datasets/grassknoted/asl-alphabet), save the downloaded ZIP as `asl-alphabet.zip` in your Downloads folder, and run from the repository root:
 
@@ -143,7 +141,7 @@ This trains DS only, using SVM and LightGBM across the five fixed folds. Matchin
 
 ### 4.2 Complete baseline from the original photographs
 
-First complete installation in Section 1, then download and extract the photographs into `data/asl-alphabet-download/` as described under **Raw images for redetection or photographic figures** in Section 3. Run all commands below from the repository root. This route needs no frozen input or result archives.
+First complete installation in Section 1, then download and extract the photographs into `data/asl-alphabet-download/` as described under **Raw images for redetection** in Section 3. Run all commands below from the repository root. This route needs no frozen input or result archives.
 
 Use separate paths to avoid replacing the paper inputs. Execute these five steps in order; detection and model training can take substantial time:
 
@@ -188,22 +186,18 @@ python -m RQ3 features --action verify
 
 Model replay requires the inputs and fold models; published CSVs alone are insufficient.
 
-### Coordinate control and brief practical explorations
+### Coordinate control and paired diagnostics
 
-The coordinate control supports the main feature comparison. Left/right and G/H attempts are short exploratory follow-ups motivated by camera use, not extra main research questions. Their detailed commands are retained for reproduction. Run dependencies in the order below; each supports `--dry-run` and `--action verify`.
+The coordinate control derives joint measurements from the same image coordinates as Shin. The diagnostics analyse corrected/new errors and precision/F1 differences by fold and letter, without fitting models:
 
-| Command | Inputs and dependencies |
-|---|---|
-| `python -m RQ3 coordinate_control` | Joint measurements from Shin's image points; frozen cache and manifest |
-| `python -m RQ3 mirrors` | Raw photographs, or a separately supplied complete mirror cache; restores the matched reference and mirror models |
-| `python -m RQ3 normalization` | Detector-Right normalization; run `mirrors` first |
-| `python -m RQ3 gh_rotation` | Separate G/H rotation training; frozen cache and manifest |
-| `python -m RQ3 occlusion` | Coarse rendering, point noise and artificial rotation testing; run `gh_rotation` first; raw images needed for the 64-photo detection control |
-| `python -m RQ3 live_examples` | Replay four specific local captures, which must be supplied separately |
+```bash
+python -m RQ3 coordinate_control
+python -m RQ3 coordinate_control --action verify
+python -m RQ3 diagnostics
+python -m RQ3 diagnostics --action verify
+```
 
-The orientation comparisons retain their **835-input DSJ reference**. Primary classification scores exclude rejected detections. The artificial mirror mixture is a different test presentation. A high artificial G/H rotation score does not establish better live recognition. Four selected webcam examples do not estimate precision/F1 or error frequency.
-
-The 22 withdrawn guided G/H captures are not current training/test data. Private captures are excluded from Git and the input bundle; drawing their figures again requires those local files. Figure assets are in the separate paper project; measurement provenance is in `results/`.
+See [RQ3/README.md](RQ3/README.md) for the outputs and interpretation limits. Both commands support `--dry-run`.
 
 ## 6. Live recognition and feature inspection
 
@@ -213,7 +207,7 @@ Use the supplied deployment models without retraining:
 python -m research.live_camera
 ```
 
-Choose **1** for DS, **2** for DSJ, **9** for G/H rotation, **7/8** for the matched mirror reference/mirror-trained models and **0** for right normalization. The default is DSJ. **Space -> intended letter -> Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
+Choose **1** for DS and **2** for DSJ; DSJ is the default. **A** shows additional existing model variants. **Space -> intended letter -> Enter** saves a capture under `captures/confusions/`. **L** toggles landmarks, **N** starts a round and **Q/Esc** exits. Saved records include the model hash, exact detector input, landmarks and prediction. Free captures are error analysis, not automatic training data.
 
 For the browser feature tool:
 

@@ -147,12 +147,10 @@ def evaluate():
         rows.append({'id':r['id'],'session_id':r.get('session_id'),'intended':r['expected_letter'],
                      'path':str(path),'saved_prediction':r['predicted_letter'],**predictions})
     write_csv(OUT/'capture_predictions.csv',rows)
-    latest=json.loads(Path('results/GH_capture_review_20261031/analysis.json').read_text())
-    session=latest['session_id'];selected=[r for r in rows if r['session_id']==session]
-    atomic_json(OUT/'capture_summary.json',{'latest_GH_round':{'session_id':session,'images':len(selected),
-        'correct':{name:sum(r[name]==r['intended'] for r in selected) for name in models},'predictions':selected},
-        'note':'Known selected errors, not an independent webcam test. All saved valid captures replayed without redetection.'})
-    print(json.dumps({'latest_GH_round':selected}),flush=True)
+    atomic_json(OUT/'capture_summary.json',{'images':len(rows),
+        'correct':{name:sum(r[name]==r['intended'] for r in rows) for name in models},
+        'note':'Saved captures are selected examples, not an independent webcam test.'})
+    print(json.dumps({'images':len(rows)}),flush=True)
 
 
 def main():

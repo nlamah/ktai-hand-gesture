@@ -1,1 +1,1 @@
-"""RQ3: hand features and supporting orientation controls."""
+"""RQ3: hand features and joint measurements."""
