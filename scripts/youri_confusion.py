@@ -1,0 +1,214 @@
+
+from pathlib import Path
+from matplotlib.colors import LinearSegmentedColormap
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import (
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+    classification_report,
+)
+
+INPUT = Path(
+    "experiments/shin2021_kaggle_01/"
+    "svm/shin2021_combined/cv_predictions.csv"
+)
+
+OUTPUT = Path("experiments/youri/results")
+
+
+def main():
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+
+    df = pd.read_csv(INPUT)
+
+    required = {"id", "label", "prediction"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing columns: {missing}")
+
+    if df["id"].duplicated().any():
+        raise ValueError("Duplicate prediction IDs")
+
+    labels = sorted(set(df["label"]))
+
+    print("Samples:", len(df))
+    print("Accuracy:", (df.label == df.prediction).mean())
+
+    print("\nClassification report:")
+    print(classification_report(
+        df.label,
+        df.prediction,
+        labels=labels,
+        zero_division=0,
+    ))
+
+    cm = confusion_matrix(
+        df.label,
+        df.prediction,
+        labels=labels,
+    )
+
+    row_totals = cm.sum(axis=1, keepdims=True)
+
+    cm_normalized = np.divide(
+        cm,
+        row_totals,
+        out=np.zeros_like(cm, dtype=float),
+        where=row_totals != 0,
+    )
+
+    n = len(labels)
+
+    colors = np.ones((n, n, 3))
+
+    for i in range(n):
+        for j in range(n):
+            intensity = cm_normalized[i, j]
+
+            if i == j:
+                # Green for correct predictions
+                target = np.array([0.10, 0.65, 0.30])
+            else:
+                # Red for misclassifications
+                target = np.array([0.85, 0.15, 0.15])
+
+            colors[i, j] = (
+                (1 - intensity) * np.array([1, 1, 1])
+                + intensity * target
+            )
+
+    fig, ax = plt.subplots(figsize=(12, 10))
+
+    ax.imshow(colors, interpolation="nearest")
+
+    ax.set_xticks(range(n))
+    ax.set_yticks(range(n))
+    ax.set_xticklabels(labels, rotation=90)
+    ax.set_yticklabels(labels)
+
+    ax.set_xlabel("Predicted label")
+    ax.set_ylabel("True label")
+    ax.set_title("ASL Alphabet Confusion Matrix")
+
+    # Show absolute counts inside cells
+    for i in range(n):
+        for j in range(n):
+            value = cm[i, j]
+
+            if value == 0:
+                continue  # Hide zero labels for readability
+
+            ax.text(
+                j, i, str(value),
+                ha="center",
+                va="center",
+                fontsize=7,
+                color="white" if cm_normalized[i, j] > 0.55 else "black",
+            )
+
+    fig.tight_layout()
+    fig.savefig(
+        OUTPUT / "confusion_matrix.png",
+        dpi=180,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+    # Find the most confused letter pairs.
+    pairs = []
+
+    for i, a in enumerate(labels):
+        for b in labels[i + 1:]:
+            a_to_b = int(cm[
+                labels.index(a),
+                labels.index(b)
+            ])
+            b_to_a = int(cm[
+                labels.index(b),
+                labels.index(a)
+            ])
+
+            support_a = int(cm[labels.index(a)].sum())
+            support_b = int(cm[labels.index(b)].sum())
+
+            total = a_to_b + b_to_a
+            support = support_a + support_b
+            mutual_confusion_rate = total / support if support else 0
+
+            pairs.append({
+                "letter_a": a,
+                "letter_b": b,
+                "a_to_b": a_to_b,
+                "b_to_a": b_to_a,
+                "total_errors": total,
+                "mutual_confusion_rate": mutual_confusion_rate,
+                "mutual_confusion_percentage": round(mutual_confusion_rate * 100, 2)
+            })
+
+    ranking = pd.DataFrame(pairs).sort_values(
+        ["mutual_confusion_rate", "total_errors"],
+        ascending=False,
+    )
+
+    ranking.to_csv(
+        OUTPUT / "confusion_pairs.csv",
+        index=False,
+    )
+
+    print("\nTop confused pairs:")
+    print(ranking.head(15).to_string(index=False))
+
+    # Save individual errors for manual inspection.
+    errors = df[df.label != df.prediction].copy()
+    errors.to_csv(
+        OUTPUT / "misclassified_samples.csv",
+        index=False,
+    )
+
+    m_total = (df.label == "M").sum()
+    n_total = (df.label == "N").sum()
+    m_to_n = ((df.label == "M") &
+              (df.prediction == "N")).sum()
+    n_to_m = ((df.label == "N") &
+              (df.prediction == "M")).sum()
+    mutual_confusion_mn = (m_to_n + n_to_m) / (m_total + n_total)
+    print("\nM/N analysis:")
+    print(f"M -> N: {m_to_n}/{m_total}")
+    print(f"N -> M: {n_to_m}/{n_total}")
+    print(f"Mutual confusion M/N: {mutual_confusion_mn} (approx. {round(mutual_confusion_mn*100, 2)}%)")
+    
+    mn_errors = df[
+        ((df.label == "M") & (df.prediction == "N")) |
+        ((df.label == "N") & (df.prediction == "M"))
+    ]
+    mn_errors.to_csv(
+        OUTPUT / "mn_errors.csv",
+        index=False,
+    )
+    
+    r_total = (df.label == "R").sum()
+    u_total = (df.label == "U").sum()
+    r_to_u = ((df.label == "R") &
+              (df.prediction == "U")).sum()
+    u_to_r = ((df.label == "U") &
+              (df.prediction == "R")).sum()
+    mutual_confusion_ru = (r_to_u + u_to_r) / (r_total + u_total)
+    print("\nR/U analysis:")
+    print(f"R -> U: {r_to_u}/{r_total}")
+    print(f"U -> R: {u_to_r}/{u_total}")
+    print(f"Mutual confusion R/U: {mutual_confusion_ru} (approx {round(mutual_confusion_ru*100, 2)}%)")
+
+    ru_errors = df[
+        ((df.label == "R") & (df.prediction == "U")) |
+        ((df.label == "U") & (df.prediction == "R"))
+    ]
+    ru_errors.to_csv(
+        OUTPUT / "ru_errors.csv",
+        index=False,
+    )
+
+
+if __name__ == "__main__":
+    main()
